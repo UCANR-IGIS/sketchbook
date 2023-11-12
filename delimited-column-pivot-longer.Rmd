@@ -1,0 +1,247 @@
+---
+title: "Pivoting Wider on Delimited Column "
+output: 
+  html_notebook:
+    toc: yes
+    toc_float: yes
+
+---
+
+## Introduction
+
+This notebook explores how to pivot longer based on a column containing delimited values. This is a relatively common use case where someone has encoded a simple one-to-many relationship using a column containing delimited values. 
+
+First we load some tidyverse packages:
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(readr)
+library(DT)
+options(DT.options = list(searching = FALSE))
+```
+
+\
+
+Example of a table with a delimited column: 
+
+```{r message=FALSE}
+names_flavors_tbl <- readr::read_csv("./data/names_flavors_delim.csv", show_col_types = FALSE)
+
+names_flavors_tbl |> DT::datatable()
+```
+
+\
+
+### Case 1: Delimited Column Follows a Consistent Pattern
+
+In a strict case, the delimited values may follow a very consistent format. For example:
+
+`crew-XXL-blue`  
+`crew-M-blue`   
+`vneck-L-white`
+
+If we had a column like this, we could use `tidyr::separate_wider_delim()`, and split the delimited column into additional columns by specify the delimiter character or position. Unfortunately, the 'flavors' column above doesn't follow a consistent pattern, because some people have one favorite flavor, and others multiple.
+
+\
+
+### Case 2 (our case): Variable length and order
+
+In the most generic case, the delimited values may be of varying length. This can be seen in the sample data above, where some rows have a single value in 'flavors', and others have multiple. They are also not in any particular order.
+
+\
+
+### Desired Output
+
+Our desired output has the delimited values as individual columns, shown as follows:
+
+```{r message=FALSE}
+readr::read_csv("./data/names_flavors_wide.csv", show_col_types = FALSE) |> datatable()
+```
+
+
+\
+
+## Best Option: Go Long, Then Wide
+
+There are a few ways to do this, but the one that is the cleanest involves using dplyr and tidyr to i) split the delimited column into rows (i.e., go long), ii) add a column for the values that will go into the new columns, and iii) use that new column to pivot from longer to wider. 
+
+\
+
+### Step 1: Go Long
+
+The first step is to convert the individual values in the delimited column to extra rows, using tidyr::separate_longer_delim. To deal whitespace before or after the delimiters, we follow that up with  str_trim:
+ 
+```{r}
+names_flavors_long_tbl <- names_flavors_tbl |> 
+  separate_longer_delim(flavors, delim = ",") |>    ## split individual values in 'flavors' column into rows
+  mutate(flavor = str_trim(flavors)) |>             ## trim leading/trailing white space
+  select(!flavors)                                  ## drop the 'flavors' column
+
+names_flavors_long_tbl |> datatable()
+```
+
+\
+
+### Step 2: Add a Values Column and Pivot
+
+We now have a well-structured long table. Before we pivot wider, we have to add a column containing the values that will go in the new columns. In this example, we use a 'presence/absence' logic:
+
+```{r}
+names_flavors_wide_tbl <- names_flavors_long_tbl |> 
+  mutate(fav = TRUE) |> 
+  pivot_wider(id_cols = c(fname, lname), names_from = flavor, values_from = fav)
+
+names_flavors_wide_tbl |> datatable()
+```
+
+\
+
+### Step 3: Deal with `NAs`
+
+To convert the `NA` cells to `FALSE` we can use `mutate()` with an `across()` expression that in turn calls `replace_na()`:
+
+```{r}
+names_flavors_wide_tf_tbl <- names_flavors_wide_tbl |> 
+  mutate(across(-c(fname, lname), ~replace_na(., FALSE)))
+
+names_flavors_wide_tf_tbl |> datatable()
+```
+
+\
+
+### Final Answer
+
+Putting it all together as a single piped expression, we get:
+
+```{r}
+names_flavors_yn_tbl <- names_flavors_tbl |> 
+  separate_longer_delim(flavors, delim = ",") |>    ## split individual values in 'flavors' column into rows
+  mutate(flavor = str_trim(flavors)) |>             ## trim leading/trailing white space
+  select(!flavors) |>                               ## drop the 'flavors' column
+  mutate(fav = TRUE) |>                             ## add a column for the values that will go in the cols
+  pivot_wider(id_cols = c(fname, lname),            ## pivot wider
+              names_from = flavor, 
+              values_from = fav) |> 
+  mutate(across(-c(fname, lname),                   ## replace NAs with FALSE
+                ~replace_na(., FALSE)))
+
+names_flavors_yn_tbl |> datatable()
+```
+
+\
+
+## Fill New Columns with Normalized Values
+
+This example is similar to the one above, but here we fill the columns not with Logical values, but with numeric values normalized by the number of values in the delimited column. This would be appropriate for example if there was an assumption that numeric value (number of dollars, amount of time, etc.) was distributed evenly across the entities in the 'many' column.
+
+Our (fake) sample dataset contains the grant amounts received by different non-profits to implement programs in one or more counties:
+
+```{r message=FALSE}
+grantees_counties_tbl <- read_csv("./data/grantees_counties.csv")
+
+grantees_counties_tbl |> datatable()
+```
+
+\
+
+As above, step 1 is to convert the delimited 'counties' column into extra rows with a single 'county' column:
+
+```{r}
+grantees_counties_long_tbl <- grantees_counties_tbl |> 
+  separate_longer_delim(counties, delim = ",") |> 
+  mutate(county = str_trim(counties)) |> 
+  select(!counties)
+
+grantees_counties_long_tbl |> datatable()
+```
+
+\
+
+Next we add a column containing the award amount per county (assuming even distribution). We can do this by combining `group_by()` with `mutate()`. When `mutate()` comes after `group_by()`, any aggregate functions in the mutate expression (like `mean()` or `n()`) are applied to the group of rows, and you get back all of the rows.
+
+```{r}
+awards_by_county_tbl <- grantees_counties_long_tbl |> 
+  group_by(grantee_name) |> 
+  mutate(county_amt = grantee_award / n())
+  
+awards_by_county_tbl |> datatable()
+```
+
+\
+
+If we wanted to see the amount by each grantee, we could pivot wider on the `grantee_name` column:
+
+```{r}
+awards_by_county_tbl |> 
+  pivot_wider(id_cols = !grantee_award, 
+              names_from = grantee_name, 
+              values_from = county_amt) |> 
+  datatable()
+```
+
+\
+
+We may also want to compute the totals by county:
+
+```{r}
+awards_county_totals_tbl <- awards_by_county_tbl |> 
+  group_by(county) |> 
+  summarise(county_total = round(sum(county_amt)), .groups = "drop_last")
+
+awards_county_totals_tbl |> datatable()
+```
+
+\
+
+### Create a Map
+
+We can create a choropleth map by joining the county totals to the counties spatial layer:
+
+Import the counties:
+
+```{r}
+library(sf)
+ca_counties_sf <- st_read("./data/ca_counties.geojson")
+head(ca_counties_sf)
+```
+
+\
+
+Do a left join (to keep all the counties, even if there are no awards to them):
+
+```{r}
+ca_counties_amts_sf <- ca_counties_sf |> 
+  left_join(awards_county_totals_tbl, by = c("COUNTY" = "county")) 
+
+ca_counties_amts_sf |> 
+  arrange(desc(county_total)) |> 
+  datatable()
+```
+
+\
+
+Create a choropleth map:
+
+```{r}
+library(tmap)
+tmap_mode("plot")
+tm_shape(ca_counties_amts_sf) +
+  tm_polygons(col = "county_total", n = 5, colorNA = "#ffffff")
+```
+
+\
+
+Make it interactive:
+
+```{r}
+# Interactive tmap maps don't work well in notebooks
+# tmap_mode("view")
+# tmap_last()
+```
+
+
+
+
+
