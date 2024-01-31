@@ -1,0 +1,498 @@
+---
+title: "Importing CIMIS Station Data with the Synoptic API"
+date: "January 27, 2024"
+author: "Andy Lyons"
+format: html
+project:
+    execute-dir: 'D:/GitHub/sketchbook'
+---
+
+```{css echo = FALSE}
+div.shadedbox {
+ border:5px solid #777; 
+ background-color:#eee; 
+ padding:0.5em; 
+ border-radius:10px; 
+ margin:0 2em;"
+}
+```
+
+## Intro
+
+The [CIMIS Web API](https://et.water.ca.gov/) works well when it works, but has some problems with reliability [^1]. At times the API returns an error, and/or doesn't return anything at all. The timeout errors usually just last for a few minutes, but they can be hard to predict. This makes it problematic to use in a production DST, such as the [Irrigation Calculator](https://ucanr-igis.shinyapps.io/irrigation-calc/).
+
+[^1]: DWR is working to improve the CIMIS API. Part of their challenge is that CIMIS is one of the few publicly available sources of weather data in CA, so many people use it.
+
+This notebook documents how we can use the [Synoptic API](https://synopticdata.com/weatherapi/) as an alternative source for CIMIS station data. Synoptic is a third-party aggregator of weather data. They seem to be well established, have a pretty generous free tier for academics (are a b-corps), and have a well documented API.
+
+<div class="shadedbox">
+
+**TLDR:** The Synoptic API hosts a copy of data from the CIMIS network, and can be used to access station data. The latency period (i.e., the number of minutes it takes from a measurement at a station to find its way to Synoptic) is pretty good (< 2 hours for the station we look at). However not all of the fields are imported, and for some reason there has been no data from CIMIS flowing into Synoptic for the past 2 weeks (which we assume to be a temporary glitch). Conclusions:
+
+- The Synoptic API is a good source for CIMIS station data for research purposes, and is probably the preferred source for use-cases where you want to compare CIMIS station data against other weather stations.
+
+- The Synoptic API is probably **not** a good substitute for the CIMIS API for production apps (i.e., an irrigation calculator). At least not until the data start flowing again. There are also limits on the number of calls and simultaneous access using a free educational Synoptic account. One could however use the Synoptic API to cache CIMIS data. 
+
+</div>
+
+\
+
+## Accessing the Synoptic API
+
+We start by loading some packages, including [httr2](https://httr2.r-lib.org/) which we'll use to make calls to the Synoptic API:
+
+```{r message=FALSE}
+library(httr2)
+library(lubridate)
+library(dplyr)
+library(purrr)
+library(stringr)
+library(ggplot2)
+library(tidyr)
+```
+
+\
+
+### Where are the Weather Stations?
+
+You can find weather stations available thru Synoptic using the [Synoptic Data Viewer](https://viewer.synopticdata.com/). But here, we'll use the [Metadata](https://docs.synopticdata.com/services/metadata) endpoint to map all the weather stations Synoptic hosts (not just CIMIS) within a geographic area. 
+
+Step 1 is to load one of my public tokens for the Synoptic API, which I keep saved in a text file. (If you don't already have one, you can sign-up for one [here](https://customer.synopticdata.com/free-trial/)). 
+
+```{r}
+my_public_token <- readLines("~/My Keys/synoptic-api.txt", n=1)
+```
+
+To find stations, we'll use the Metadata API. 
+
+<div class="shadedbox">
+
+**Pro Tip:** A good way to learn how construct a Synoptic API URL, including all the optional arguments, is to use the [Weather API Query Builder](https://demos.synopticdata.com/query-builder/index.html)). 
+
+</div>
+
+```{r}
+ventura_stations_metadata_url <- paste0(
+  "https://api.synopticdata.com/v2/stations/metadata?",
+  "&token=", my_public_token,
+  "&complete=1", 
+  "&state=CA", 
+  "&county=Ventura")
+```
+
+Next, we create a request object with this URL as the centerpiece.
+
+```{r}
+ventura_stations_metadata_req <- request(ventura_stations_metadata_url)
+```
+
+We don't need to add any headers (if we did, we could modify the request object using various [`req_*()`](https://httr2.r-lib.org/reference/index.html) functions), so we can just send it:
+
+```{r}
+ventura_stations_metadata_resp <- req_perform(ventura_stations_metadata_req)
+```
+
+From here we can extract the body of the response as a list:
+
+```{r}
+venstn_lst <- resp_body_json(ventura_stations_metadata_resp)
+```
+
+Now we can drill down into the stations:
+
+<div class="shadedbox">
+
+**Pro Tip:** a good way to explore the structure of a big list object is to open it in the View pane in RStudio (click on the Preview button next to the list in the environment pane).
+
+</div>
+
+```{r}
+## Number of stations found:
+venstn_lst$SUMMARY$NUMBER_OF_OBJECTS
+```
+
+View the metadata for the first station:
+
+```{r}
+venstn_lst$STATION[[1]]
+```
+
+Use `purrr::map_dfr` to create a tibble of the stations that we can use in a map:
+
+```{r}
+venstn_loc_tbl <- map_dfr(
+  venstn_lst$STATION,
+  `[`, 
+  c("STID", "NAME", "LONGITUDE", "LATITUDE", "STATUS", "MNET_ID")
+)
+
+venstn_period_tbl <- map_dfr(
+  venstn_lst$STATION,
+  function(x) data.frame(DATA_START = ifelse(is.null(x[["PERIOD_OF_RECORD"]][["start"]]), NA, x[["PERIOD_OF_RECORD"]][["start"]]) ,
+                         DATA_END = ifelse(is.null(x[["PERIOD_OF_RECORD"]][["end"]]), NA, x[["PERIOD_OF_RECORD"]][["end"]]))) |>
+  mutate(DATA_START = str_sub(DATA_START, start = 1, end = 10),
+         DATA_END = str_sub(DATA_END, start = 1, end = 10))
+
+venstn_tbl <- bind_cols(venstn_loc_tbl, venstn_period_tbl)
+head(venstn_tbl)
+```
+
+The station metadata includes the network ID (`MNET_ID`), but not the name of the network (i.e., 'CIMIS'). So we need to get the Networks table so we can add that to our map:
+
+```{r}
+networks_lst <- paste0("https://api.synopticdata.com/v2/networks?&token=", 
+                       my_public_token) |> 
+  request() |> 
+  req_perform() |> 
+  resp_body_json()
+
+networks_tbl <- networks_lst$MNET |> 
+  map_dfr(`[`, c("ID", "SHORTNAME", "LONGNAME", "URL", 
+                 "CATEGORY", "LAST_OBSERVATION", "ACTIVE_STATIONS")) |> 
+  rename(MNET_ID = ID, 
+         network_short = SHORTNAME, 
+         network_long = LONGNAME)
+
+networks_tbl |> head()
+```
+
+## Make a leaflet map
+
+We now have everything we need to make a leaflet map. The first step is to make a sf object for the stations.
+
+```{r}
+library(sf)
+
+## Create a sf object
+venstn_sf <- venstn_tbl |> 
+  st_as_sf(coords = c("LONGITUDE", "LATITUDE"), crs = 4326) |> 
+  left_join(networks_tbl, by = "MNET_ID")
+
+head(venstn_sf)
+```
+
+Now we can make the leaflet map:
+
+```{r}
+library(leaflet)
+
+## Create the leaflet object
+m <- leaflet(venstn_sf) |> 
+  addCircleMarkers(radius = 5,
+                   fillColor = ~ifelse(STATUS == "ACTIVE", "#0000ff", "#333"),
+                   stroke = FALSE,
+                   fillOpacity = 0.6,
+                   popup = ~paste0("<h3>", NAME, "</h3>",
+                                   "<p>Status: ", STATUS, "<br/>",
+                                   "Network: ", network_short, " (", 
+                                   network_long, ")<br/>",
+                                   "Latest observation: ", DATA_END, "<br/>", 
+                                   "Station ID (Synoptic): <tt>", STID, "</tt></p>")) |> 
+  addTiles()
+
+m
+```
+
+\
+
+This map is also available at <https://rpubs.com/ajlyons/weather-stations-ventura>.
+
+## Exploring Data for One Station
+
+To explore the data available from Synoptic, we'll import time series data from CIMIS Station #152 (Camarillo) via the Synoptic API.
+
+Synoptic hosts data from thousands of weather stations across the USA, and each one has a unique ID. To query station data, you need to know the Synoptic Station ID (STID). The easiest way to find the SDID for a station is thru the [Synoptic Data Viewer](https://synopticdata.com/data-viewer/). You can also find a station ID via the API by downloading metadata for all the stations in a network and then search by name (not shown here). The Station ID for CIMIS station #152 is **`CI152`**. 
+
+
+<div class="shadedbox">
+
+**Pro Tip:** To see the availability of data for a specific station, you can use the data availability tool:
+
+<https://availability.synopticdata.com/stations/>
+
+</div>
+
+\
+
+As of this writing, the latest availability of this station is 1/8/24 (>2 weeks ago). To check the availability of CIMIS data in general, we can check the availability of the CIMIS network (CIMIS Network ID = 66). 
+
+<https://availability.synopticdata.com/networks/#66>
+
+This reveals that as of this writing there have been no data from the CIMIS network have been ingested since for over 2 weeks (in other words, it's not just this station).
+
+Following the documentation for the [timeseries endpoint](https://docs.synopticdata.com/services/time-series), we'll construct a URL to retrieve hourly data for one week in December 2023. 
+
+<div class="shadedbox">
+
+**Important notes about the Timeseries Endpoint:**
+
+#1. The Synoptic API only serves CIMIS data at its finest temporal resolution (i.e., hourly). If you want daily, weekly, or monthly averages, you'll hve to compute them yourself.
+
+#2. The [time series documentation](https://docs.synopticdata.com/services/time-series) tells us that we have to pass the date-time values for the *start* and *end* arguments in **UTC**, which is 8 hours ahead of local time.
+
+</div>
+
+\
+
+Construct a URL for the timeseries end point:
+
+```{r}
+# Time Series for a single station (CI152), date range, four variables (only), English units, local time
+start_dt_utc_chr <- "202312010800"
+end_dt_utc_chr <- "202312080800"
+ci152_url <- paste0("https://api.synopticdata.com/v2/stations/timeseries?token=",
+                    my_public_token,
+                    "&stid=CI152",            ## CIMIS Station #152
+                    "&vars=air_temp,evapotranspiration,precip_accum_one_hour,soil_temp",
+                    "&varsoperator=and",      ## get all variables
+                    "&units=english",         ## imperial units
+                    "&start=", start_dt_utc_chr,  ## UTC time (+8)
+                    "&end=", end_dt_utc_chr,      ## UTC time (+8)
+                    "&obtimezone=local")      ## send back timestamps in local time
+```
+
+Send the request:
+
+```{r}
+ci152_resp <- ci152_url |> 
+  request() |> 
+  req_perform()
+
+ci152_resp |> resp_status_desc()
+```
+
+Convert the response body to a list:
+
+```{r}
+ci152_data_lst <- resp_body_json(ci152_resp)
+```
+
+View some properties:
+
+```{r}
+## How many objects (we expect 1 - CIMIS Station 152)
+ci152_data_lst$SUMMARY$NUMBER_OF_OBJECTS
+
+## View the first station ID and name
+ci152_data_lst$STATION[[1]]$STID
+ci152_data_lst$STATION[[1]]$NAME
+
+## View the period of record for this station (not the data)
+ci152_data_lst$STATION[[1]]$PERIOD_OF_RECORD$start
+ci152_data_lst$STATION[[1]]$PERIOD_OF_RECORD$end
+
+## View the time zone of these data
+(ci152_data_tz <- ci152_data_lst$STATION[[1]]$TIMEZONE)
+
+## View the air temp units
+ci152_data_lst$UNITS$air_temp
+```
+
+To convert the list to data frame, we first extract the variables we want as individual vectors:
+
+```{r}
+## Get the date times for the time series
+ci152_data_datetime_chr <- ci152_data_lst$STATION[[1]]$OBSERVATIONS$date_time |> unlist()
+
+## Explore the format
+ci152_data_datetime_chr[1:2]
+
+## Convert to a POSIXct object, in the local timezone
+ci152_data_datetime_chr[1:2] |> ymd_hms(tz = ci152_data_tz)
+```
+
+Create a vector of time stamps:
+
+```{r}
+ci152_data_dt <- ci152_data_datetime_chr |> 
+  ymd_hms(tz = ci152_data_tz)
+```
+
+Create a vector of air temp values:
+
+```{r}
+ci152_data_airtemp <- ci152_data_lst$STATION[[1]]$OBSERVATIONS$air_temp_set_1 |> unlist()
+glimpse(ci152_data_airtemp)
+```
+
+Create a vector of precipitation values:
+
+```{r}
+ci152_data_precip_accum <- ci152_data_lst$STATION[[1]]$OBSERVATIONS$precip_accum_one_hour_set_1 |> unlist()
+glimpse(ci152_data_precip_accum)
+```
+
+Create a vector of ET values:
+
+```{r}
+ci152_data_et <- ci152_data_lst$STATION[[1]]$OBSERVATIONS$evapotranspiration_set_1 |> unlist()
+glimpse(ci152_data_et)
+```
+
+Create a vector of ET values:
+
+```{r}
+ci152_data_stemp <- ci152_data_lst$STATION[[1]]$OBSERVATIONS$soil_temp_set_1 |> unlist()
+glimpse(ci152_data_stemp)
+```
+
+Put them all together in a tibble:
+
+```{r}
+## Compute a tibble with the hourly values
+ci152_data_tbl <- tibble(dt = ci152_data_dt,
+                         date = date(ci152_data_dt),
+                         air_temp_syn = ci152_data_airtemp,
+                         precip_syn = ci152_data_precip_accum,
+                         et_syn = ci152_data_et, 
+                         soil_temp_syn = ci152_data_stemp)
+
+head(ci152_data_tbl)
+```
+
+```{r}
+ggplot(ci152_data_tbl, aes(x=dt, y=air_temp_syn)) + 
+  geom_line() +
+  ggtitle("Hourly Air Temp",
+          subtitle = "CIMIS Station 152, Dec 1-7, 2023")
+```
+
+## Check the latency
+
+The [Latency](https://docs.synopticdata.com/services/latency) end point tells us how long it takes for a measurement on the weather station to be available in Synoptic.
+
+First, construct a URL for the Latency endpoint as described in the docs:
+
+```{r}
+latency_url <- paste0("https://api.synopticdata.com/v2/stations/latency?token=",
+                      my_public_token, 
+                      "&stid=CI152",
+                      "&start=", start_dt_utc_chr,
+                      "&end=", end_dt_utc_chr,
+                      "&stats=mean")
+```
+
+Next, create the request object, perform the request, and parse the results into a list:
+
+```{r}
+latency_lst <- latency_url |> 
+  request() |> 
+  req_perform() |> 
+  resp_body_json()
+```
+
+Pull out the latency values for this time period into a tibble:
+
+```{r}
+ci152_latency_tbl <- tibble(
+  dt = ymd_hms(latency_lst$STATION[[1]]$LATENCY$date_time, tz = ci152_data_tz), 
+  latency_minutes = latency_lst$STATION[[1]]$LATENCY$values |> unlist()  
+)
+
+ggplot(ci152_latency_tbl, aes(x=latency_minutes)) +
+  geom_histogram()
+```
+
+Compute the mean and median:
+
+```{r}
+median(ci152_latency_tbl$latency_minutes)
+
+mean(ci152_latency_tbl$latency_minutes)
+```
+
+This shows that the vast majority of measurements from this CIMIS station were available in Synoptic within **95 minutes** of being recorded.
+
+## Download the Same Data Using the CIMIS API
+
+For comparison purposes, next we download the same data from the CIMIS API.
+
+First, we load cimir and my CIMIS API key:
+
+```{r}
+library(cimir)
+
+## Set my API key
+my_cimis_key <- readLines("~/My Keys/cimis_webapi.txt", n=1, warn = FALSE)
+set_key(my_cimis_key)
+```
+
+Next, we get the same set of variables for Station #152, for the same time period as above, using `cimir::cimis_data()`. This function allows us to import either hourly or daily data. 
+
+```{r}
+camrillo_hly_lng_fn <- "synoptic-cimis_camrillo_hly_lng.Rds"
+
+## If I already downloaded the data, load the cached copy
+if (file.exists(camrillo_hly_lng_fn)) {
+  camrillo_hly_lng_tbl <- readRDS(camrillo_hly_lng_fn)
+  
+} else {
+  ### Query CIMIS data (Camrillo)
+  camrillo_hly_lng_tbl <- cimis_data(targets = 152, 
+                             start.date = "2023-12-01", 
+                             end.date = "2023-12-07",
+                             measure.unit = "E",
+                             items = "hly-air-tmp,hly-eto,hly-asce-eto,hly-precip,hly-soil-tmp")
+  saveRDS(camrillo_hly_lng_tbl, camrillo_hly_lng_fn)
+}
+
+dim(camrillo_hly_lng_tbl)
+camrillo_hly_lng_tbl |> head()
+```
+
+Next, we do a little data wrangling:
+
+1. concatenate the date and time fields into a POSIXct column  
+2. pivot from long to wide  
+3. rename columns to match what we did above  
+
+```{r}
+camrillo_hly_wide_tbl <- camrillo_hly_lng_tbl |> 
+  mutate(dt = make_datetime(
+    year = as.numeric(str_sub(Date, 1, 4)),
+    month = as.numeric(str_sub(Date, 6, 7)),
+    day = as.numeric(str_sub(Date, 9, 10)),
+    hour = as.numeric(str_sub(Hour, 1, 2)),
+    min = as.numeric(str_sub(Hour, 3, 4)),
+    sec = 0,
+    tz = "America/Los_Angeles"
+  )) |> 
+  select(Date, Hour, dt, Item, Value) |> 
+  pivot_wider(id_cols = c(Date, Hour, dt), names_from = Item, values_from = Value) |> 
+  rename(air_temp_cim = HlyAirTmp, 
+         precip_cim = HlyPrecip,
+         et_cim = HlyEto,
+         soil_temp_cim = HlySoilTmp)
+
+camrillo_hly_wide_tbl |> head()
+```
+
+## Compare
+
+To compare the data, we'll put them in the same tibble.
+
+```{r}
+cam_syncimis_comb_tbl <- ci152_data_tbl |> 
+  left_join(camrillo_hly_wide_tbl, by = "dt") |> 
+  select(dt, date, air_temp_syn, air_temp_cim, soil_temp_syn, soil_temp_cim, precip_syn, precip_cim, 
+         et_syn, et_cim, HlyAsceEto)
+
+cam_syncimis_comb_tbl |> head()
+```
+
+Compare all rows:
+
+```{r}
+cam_syncimis_comb_tbl
+```
+
+As expected, we don't see any difference between the hourly data from CIMIS and Synoptic. 
+
+## Compute and Compare daily and hourly data
+
+One thing the Synoptic API does *not* provide, and the CIMIS API does, are daily aggregations. In this section, we will try to re-create the daily aggregations from the CIMIS API using the Synoptic data. 
+
+<center>
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/Wikidata_logo_under_construction_sign_square.svg/240px-Wikidata_logo_under_construction_sign_square.svg.png"/>
+</center>
+
