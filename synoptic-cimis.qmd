@@ -29,7 +29,7 @@ This notebook documents how we can use the [Synoptic API](https://synopticdata.c
 
 **TLDR:** The Synoptic API hosts a copy of data from the CIMIS network, and can be used to access station data. The latency period (i.e., the number of minutes it takes from a measurement at a station to find its way to Synoptic) is pretty good (< 2 hours for the station we look at). However not all of the fields are imported, and for some reason there has been no data from CIMIS flowing into Synoptic for the past 2 weeks (which we assume to be a temporary glitch). Conclusions:
 
-- The Synoptic API is a good source for CIMIS station data for research purposes, and is probably the preferred source for use-cases where you want to compare CIMIS station data against other weather stations.
+- The Synoptic API is a good source for CIMIS station data for research purposes, and would be a good choice for use-cases where you want to compare or integrate CIMIS station data with other weather stations (including non-CIMIS).
 
 - The Synoptic API is probably **not** a good substitute for the CIMIS API for production apps (i.e., an irrigation calculator). At least not until the data start flowing again. There are also limits on the number of calls and simultaneous access using a free educational Synoptic account. One could however use the Synoptic API to cache CIMIS data. 
 

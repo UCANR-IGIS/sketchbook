@@ -1,0 +1,212 @@
+---
+title: "Explore Mateo County Restaurant Health Inspections"
+author: Andy Lyons
+format: 
+  html:
+    theme: cosmo
+    df-print: paged
+    link-external-icon: true
+    link-external-newwindow: true
+editor: visual
+---
+
+::: callout-note
+## Summary
+
+In this notebook, we'll explore a dataset from the San Mateo County Open Data Portal, which is built with Socrata.
+
+Specifically, we'll look at the [Restaurant Health Inspections](https://datahub.smcgov.org/dataset/Restaurant-Health-Inspections/pjzf-pe8z/about_data) dataset, which we discovered via [OpenDataNetwork.com](https://www.opendatanetwork.com/).
+:::
+
+## Import Data
+
+First we'll import some [restaurant heath inspections](https://www.opendatanetwork.com/dataset/datahub.smcgov.org/pjzf-pe8z) data from San Mateo County, CA. All we need is the API Endpoint URL for a csv file:
+
+```{r message = FALSE}
+library(dplyr)
+library(readr)
+
+sm_restinsp_tbl <- read_csv("https://datahub.smcgov.org/resource/pjzf-pe8z.csv", 
+                            show_col_types = FALSE)
+  
+head(sm_restinsp_tbl)
+```
+
+How many records are there?
+
+```{r}
+nrow(sm_restinsp_tbl)
+```
+
+## Increasing the Number of Records Returned
+
+By default, you only get 1000 records. You can bump that up by adding the `limit` parameter to the URL:
+
+```{r}
+sm_restinsp_10k_url <- paste0("https://datahub.smcgov.org/resource/pjzf-pe8z.csv", 
+                          "?$limit=10000")
+sm_restinsp_10k_url
+```
+
+\
+
+Try again:
+
+```{r}
+sm_restinsp_10k_tbl <- read_csv(sm_restinsp_10k_url, show_col_types = FALSE)
+dim(sm_restinsp_10k_tbl)
+```
+
+::: callout-tip
+## Tip
+
+In theory, you can download 10s of thousands of records thru the API in a single call. But that will consume a lot of resources on the server and reduce performance for everyone else. A better approach if you really need that many records is to download the entire dataset from the data portal.
+:::
+
+## Add a Filter
+
+A good way to manage the size of your download is to add a filter. You can filter both rows and columns by adding SoQL parameters to the URL ([more details](https://dev.socrata.com/docs/queries/)).
+
+The name of the restaurant is saved in a column called `facility_name1`. Here we'll just get inspection reports for Dennys:
+
+```{r}
+## Let's get 5,000 records for just Dennys
+sm_restinsp_dennys_url <- paste0("https://datahub.smcgov.org/resource/pjzf-pe8z.csv", 
+                             "?$limit=10000",
+                             "&facility_name1='DENNYS'")
+sm_restinsp_dennys_url
+```
+
+\
+
+Run that thru:
+
+```{r}
+sm_restinsp_dennys_tbl <- read_csv(sm_restinsp_dennys_url, show_col_types = FALSE)
+dim(sm_restinsp_dennys_tbl)
+head(sm_restinsp_dennys_tbl)
+```
+
+\
+
+::: callout-tip
+## Tips for Downloading Large Datasets
+
+1.  Download the entire dataset from the website
+
+2.  If you have to use the API, use [SoQL filters](https://dev.socrata.com/docs/queries/) to select only the rows and columns you need
+
+3.  Get an [App Token](https://dev.socrata.com/docs/app-tokens) to reduce throttling
+
+4.  Use the [`limit`](https://dev.socrata.com/docs/queries/limit.html) and `offset` parameters to [page thru results](https://dev.socrata.com/docs/paging.html) if there are more than 50,000.
+
+5.  Download off peak hours when the server isn't as busy
+:::
+
+\
+
+Where are the Dennys?
+
+```{r}
+sm_restinsp_dennys_tbl |> select(site_address, city1, zip) |> distinct()
+```
+
+\
+
+What were the dates of inspection?
+
+```{r}
+sm_restinsp_dennys_tbl$activity_date |> as.Date() |> unique() |> sort()
+```
+
+\
+
+::: callout-tip
+## Advantages pf App Tokens
+
+If you'll be downloading data programmatically Socrata data repos a lot, you should get yourself an [App Token](https://support.socrata.com/hc/en-us/articles/210138558-Generating-App-Tokens-and-API-Keys). The benefits include:
+
+-   Less throttling
+
+-   Your app token should work across the entire Socrata ecosystem
+
+-   You can pass your app token either as a URL parameter, or as an argument in `RSocrata::read.socrata()`.
+:::
+
+## Make a Map
+
+Lastly, we'll make a map of all the facilities inspected:
+
+-   use the geojson URL instead of the CSV\
+-   only grab a subset of the columns\
+-   use the `distinct` keyword in the select statement\
+-   run the URL thru URLencode (because it now has a space in it)
+
+```{r}
+library(sf)
+
+sm_restinsp_loc_url <- paste0("https://datahub.smcgov.org/resource/pjzf-pe8z.geojson?",
+                              "$select=distinct facility_name1,site_address,city1,zip,location_2",
+                             "&$limit=2500") |> URLencode()
+sm_restinsp_loc_url
+
+sm_restinsp_loc_sf <- st_read(sm_restinsp_loc_url)
+sm_restinsp_loc_sf
+
+## Get rid of any duplicate locations:
+sm_restinsp_loc_nodups_sf <- sm_restinsp_loc_sf |> distinct(geometry, .keep_all = TRUE)
+
+## Get rid of locations that fall outside SMC
+library(caladaptr)
+smc_bbox_sf <- caladaptr::ca_aoipreset_geom("counties") |> 
+  filter(name == "San Mateo") |> 
+  st_transform(4326) |> 
+  st_bbox() |> 
+  st_as_sfc()
+
+sm_restinsp_loc_nodups_nooutliers_sf <- sm_restinsp_loc_nodups_sf |> 
+  st_intersection(smc_bbox_sf)
+```
+
+\
+
+Make a leaflet map:
+
+```{r}
+library(leaflet)
+m <- leaflet(sm_restinsp_loc_nodups_nooutliers_sf) |>  
+  leaflet::addTiles() |> 
+  addCircleMarkers(radius=3, stroke=FALSE, fillOpacity = 0.5,
+                   popup = ~paste0("<strong>", facility_name1, "</strong><br/>",
+                                   site_address, "<br/>",
+                                   city1, ", CA ", zip))
+
+m
+```
+
+\
+
+## RSocrata
+
+::: callout-note
+## Advantages of Using RSocrata
+
+Although not mandatory, [`RSocrata`](https://github.com/Chicago/RSocrata) offers a number of convenience functions and utilties.
+
+-   Use the resource URL, SODA web query, or human-friendly URL\
+-   Converts dates to R Date objects\
+-   Manages throttling\
+-   List datasets in a hub\
+-   Option to submit your Socrata App Token\
+-   Access private datasets\
+-   Upload data
+:::
+
+Example: list all datasets in the San Mateo Open Data Hub:
+
+```{r}
+library(RSocrata)
+ls.socrata("https://datahub.smcgov.org/") |> 
+  select(theme, title, description, identifier, modified) |> 
+  arrange(theme, title)
+```
