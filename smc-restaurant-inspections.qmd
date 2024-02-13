@@ -1,5 +1,5 @@
 ---
-title: "Explore Mateo County Restaurant Health Inspections"
+title: "Explore San Mateo County Restaurant Health Inspections"
 author: Andy Lyons
 format: 
   html:
