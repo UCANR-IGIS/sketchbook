@@ -1,5 +1,6 @@
 ---
-title: "Vineyard Polygons Exploration"
+title: "Identifying Neighboring Polygons in Vineyard Data"
+subtitle: "Trouble-shooting why the Usual Methods Don't Work" 
 author: "Andy Lyons"
 date: "April 10, 2024"
 format: 
