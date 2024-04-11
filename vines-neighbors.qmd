@@ -236,7 +236,7 @@ tm_shape(shp = grbv_oakville_utm_sf,
 
 ## Investigate Setting the the Precision
 
-Numerous stack overflow posts suggest the issue has to do with rounding and snapping of the coordinates. Points made Stack Overflow posts such as [this one](https://gis.stackexchange.com/questions/467332/extract-touching-polygons-using-st-touches) provide some details:
+Numerous stack overflow posts suggest the challenges with `st_intersects()`, `st_touches()`, and other spatial predicates have to do with i) misunderstanding how these functions actually work under the hood (i.e., the definition of 'touch'), and ii) rounding, snapping, and floating point math of the coordinates. Points made Stack Overflow posts such as [this one](https://gis.stackexchange.com/questions/467332/extract-touching-polygons-using-st-touches) provide some details:
 
 - *You need to review the meaning of the "touch" relationship. Polygon objects which have areal intersection overlap do not touch (they intersect).*
 

@@ -445,7 +445,7 @@ was `touches'
 <p>👍</p>
 <p><br></p>
 </section><section id="investigate-setting-the-the-precision" class="level2"><h2 class="anchored" data-anchor-id="investigate-setting-the-the-precision">Investigate Setting the the Precision</h2>
-<p>Numerous stack overflow posts suggest the issue has to do with rounding and snapping of the coordinates. Points made Stack Overflow posts such as <a href="https://gis.stackexchange.com/questions/467332/extract-touching-polygons-using-st-touches">this one</a> provide some details:</p>
+<p>Numerous stack overflow posts suggest the challenges with <code><a href="https://r-spatial.github.io/sf/reference/geos_binary_pred.html">st_intersects()</a></code>, <code><a href="https://r-spatial.github.io/sf/reference/geos_binary_pred.html">st_touches()</a></code>, and other spatial predicates have to do with i) misunderstanding how these functions actually work under the hood (i.e., the definition of ‘touch’), and ii) rounding, snapping, and floating point math of the coordinates. Points made Stack Overflow posts such as <a href="https://gis.stackexchange.com/questions/467332/extract-touching-polygons-using-st-touches">this one</a> provide some details:</p>
 <ul>
 <li><p><em>You need to review the meaning of the “touch” relationship. Polygon objects which have areal intersection overlap do not touch (they intersect).</em></p></li>
 <li><p><em>Successful use of “Touches” requires perfect topology.</em></p></li>
