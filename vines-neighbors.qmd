@@ -10,14 +10,19 @@ format:
 editor: source
 ---
 
+In this notebook we will try to reproduce and investigate an 'error' finding neighboring polygons within a grid of polygons representing individual vines.
 
-Reproducing the error using the sf package:
+## Import the polygons
+
+Load packages:
 
 ```{r}
-library(sf)
-library(dplyr)
-library(tmap)
-library(leaflet)
+suppressPackageStartupMessages({
+  library(sf)
+  library(dplyr)
+  library(tmap)
+  library(leaflet)
+})
 ```
 
 \
@@ -60,26 +65,24 @@ st_is_valid(GIS_symptoms_sf) |> table()
 grbv_oakville_utm_sf <- GIS_symptoms_sf |> 
   filter(Vineyard == 'Oakville River West')
 
-nrow(grbv_oakville_utm_sf)
-grbv_oakville_utm_sf
+grbv_oakville_utm_sf |> nrow()
+grbv_oakville_utm_sf |> head()
 ```
 
 \
 
-## Plot the polygons for Oakville River West
-
-Plot in leaflet:
+Plot them in leaflet:
 
 ```{r}
 m <- leaflet(grbv_oakville_utm_sf |> st_transform(4326)) |>  
   addPolygons(weight = 1, color = "#222")
 
-# m
+m
 ```
 
 \
 
-## Find neighors
+## Find Neighors
 
 Next, we want to find the neighbors of every single polygon (this is the heart of the problem). Start with `st_intersects()`:
 
