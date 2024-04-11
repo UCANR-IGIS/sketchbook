@@ -1,0 +1,323 @@
+---
+title: "Vineyard Polygons Exploration"
+author: "Andy Lyons"
+date: "April 10, 2024"
+format: 
+  html:
+    df-print: paged
+    code-link: true
+    anchor-sections: true
+editor: source
+---
+
+
+Reproducing the error using the sf package:
+
+```{r}
+library(sf)
+library(dplyr)
+library(tmap)
+library(leaflet)
+```
+
+\
+
+Import the Shapefile:
+
+```{r}
+grbv_fn <- "GRBV-Export.shp"
+file.exists(grbv_fn)
+```
+
+```{r}
+GIS_symptoms_sf <- st_read(grbv_fn)
+dim(GIS_symptoms_sf)
+print(GIS_symptoms_sf)
+```
+\
+
+View the attribute table:
+
+```{r}
+head(GIS_symptoms_sf)
+```
+
+\
+
+Run a couple of checks:
+
+```{r}
+sf::st_is_empty(GIS_symptoms_sf) |> table()
+```
+
+```{r cache=TRUE}
+st_is_valid(GIS_symptoms_sf) |> table()
+```
+
+## Pull out just the polygons for Oakville River West
+
+```{r}
+grbv_oakville_utm_sf <- GIS_symptoms_sf |> 
+  filter(Vineyard == 'Oakville River West')
+
+nrow(grbv_oakville_utm_sf)
+grbv_oakville_utm_sf
+```
+
+\
+
+## Plot the polygons for Oakville River West
+
+Plot in leaflet:
+
+```{r}
+m <- leaflet(grbv_oakville_utm_sf |> st_transform(4326)) |>  
+  addPolygons(weight = 1, color = "#222")
+
+# m
+```
+
+\
+
+## Find neighors
+
+Next, we want to find the neighbors of every single polygon (this is the heart of the problem). Start with `st_intersects()`:
+
+```{r}
+grbv_oakville_nb_lst <- grbv_oakville_utm_sf |> 
+  st_intersects(sparse = TRUE)
+
+class(grbv_oakville_nb_lst)
+length(grbv_oakville_nb_lst)
+names(grbv_oakville_nb_lst) |> head()
+grbv_oakville_nb_lst[[1]]
+```
+
+\
+
+## Spot Check the Neighbors Found
+
+Let's do a spot-check visual inspection of a few polygons and their identified neighbors:
+
+```{r}
+(random_i <- sample(1:nrow(grbv_oakville_utm_sf), 5))
+
+for (i in random_i) {
+  ## Begin with everything in the vicinity
+  this_tmap <- tm_shape(shp = grbv_oakville_utm_sf,
+           bbox = grbv_oakville_utm_sf[grbv_oakville_nb_lst[[i]], ] |> 
+             st_bbox() |> 
+             st_as_sfc() |> 
+             st_buffer(dist = 1)) +
+    tm_borders(col = "gray") +
+    ## Next highlight the identified neighbors
+    tm_shape(shp = grbv_oakville_utm_sf[grbv_oakville_nb_lst[[i]], ]) +
+    tm_borders(col = "blue", lwd = 2) +
+    ## Lastly add the original
+    tm_shape(grbv_oakville_utm_sf[i,]) +
+    tm_polygons(border.col = "darkgreen", lwd = 5) +
+    tm_layout(main.title = paste0("i = ", i)) 
+    
+  print(this_tmap)
+}
+```
+
+\
+
+::: {.callout-note title="Conclusion"}
+
+Based on the spot check above, it appears that `st_intersection()` does not do a very good or very consistent job at identifying neighbors.
+
+:::
+
+## Investigate Neighborless Polygons
+
+Look for any polygons that have *no* neighbors &#128552;.
+
+```{r}
+num_nb <- sapply(grbv_oakville_nb_lst, length)
+table(num_nb)
+```
+\
+
+&#128073; There are 19 polygons that only have 1 'neighbor' (i.e., itself).
+
+\
+
+Next we plot one of the neighborless polygons to see if it actually neighborless, or a mistake
+
+```{r}
+no_nb_idx <- which(num_nb == 1)
+no_nb_idx
+```
+\
+
+Let's plot one of those:
+
+```{r}
+i <- 517 
+
+## Begin with everything in the vicinity
+tm_shape(shp = grbv_oakville_utm_sf,
+         bbox = grbv_oakville_utm_sf[grbv_oakville_nb_lst[[i]], ] |> 
+           st_bbox() |> 
+           st_as_sfc() |> 
+           st_buffer(dist = 1)) +
+  tm_borders(col = "gray") +
+  ## Next highlight the identified neighbors
+  tm_shape(shp = grbv_oakville_utm_sf[grbv_oakville_nb_lst[[i]], ]) +
+  tm_borders(col = "blue", lwd = 2) +
+  ## Lastly add the original
+  tm_shape(grbv_oakville_utm_sf[i,]) +
+  tm_polygons(border.col = "darkgreen", lwd = 5) +
+  tm_layout(main.title = paste0("i = ", i)) 
+```
+
+\
+
+__Why doesn't #517 have any neighbors??__ 
+
+
+## Try some alternate spatial predicates
+
+First we repeat `st_intersects()`: 
+
+```{r}
+grbv_oakville_utm_sf |> 
+  slice(517) |> 
+  st_intersects(grbv_oakville_utm_sf, sparse = TRUE)
+```
+
+\
+
+Let's try `st_touches()`:
+
+```{r}
+grbv_oakville_utm_sf |> 
+  slice(517) |> 
+  st_touches(grbv_oakville_utm_sf, sparse = TRUE)
+```
+&#128073; `st_touches()` is also not good.
+
+\
+
+Try `st_is_within_distance()` with dist = 0.1 (maps units, meter):
+
+```{r}
+idx_within1meter_lst <- grbv_oakville_utm_sf |> 
+  slice(517) |> 
+  st_is_within_distance(grbv_oakville_utm_sf, dist = 0.1, sparse = TRUE)
+idx_within1meter_lst[[1]]
+```
+\
+
+## Plot the neighbors found with `st_is_within_distance()`.
+
+```{r}
+i = 517
+tm_shape(shp = grbv_oakville_utm_sf,
+           bbox = grbv_oakville_utm_sf[idx_within1meter_lst[[1]], ] |> 
+             st_bbox() |> 
+             st_as_sfc() |> 
+             st_buffer(dist = 1)) +
+    tm_borders(col = "gray") +
+    ## Next highlight the identified neighbors
+    tm_shape(shp = grbv_oakville_utm_sf[idx_within1meter_lst[[1]], ]) +
+    tm_borders(col = "blue", lwd = 2) +
+    ## Lastly add the original
+    tm_shape(grbv_oakville_utm_sf[i,]) +
+    tm_polygons(border.col = "darkgreen", lwd = 5) +
+    tm_layout(main.title = paste0("i = ", i)) 
+```
+
+&#128077;
+
+\
+
+## Investigate Setting the the Precision
+
+Numerous stack overflow posts suggest the issue has to do with rounding and snapping of the coordinates. Points made Stack Overflow posts such as [this one](https://gis.stackexchange.com/questions/467332/extract-touching-polygons-using-st-touches) provide some details:
+
+- *You need to review the meaning of the "touch" relationship. Polygon objects which have areal intersection overlap do not touch (they intersect).*
+
+- *Successful use of "Touches" requires perfect topology.*
+
+- *the "touching" predicate is tricky, and can fail due to issues with imprecise data capture and floating point math.*
+
+- *I have found `sf::st_is_within_distance()` more reliable, when used with a reasonable distance argument (that may need tuning for a given context)*
+
+\
+
+To investigate this, we can try different settings for the precision:
+
+The default should be 0:
+
+```{r}
+st_precision(grbv_oakville_utm_sf)
+
+idx_touches_lst <- grbv_oakville_utm_sf |> 
+  slice(517) |> 
+  st_touches(sparse = TRUE)
+
+idx_touches_lst[[1]]
+```
+
+
+```{r}
+precision_vals <- c(0.001, 0.01, 0.1, 0.25, 0.3, 0.5)
+i <- 517
+
+for (prec_dbl in precision_vals) {
+  st_precision(grbv_oakville_utm_sf) <- prec_dbl
+  
+  ## Regenerate the touch list
+  idx_touches_lst <- grbv_oakville_utm_sf |> slice(517) |> 
+    st_touches(grbv_oakville_utm_sf, sparse = TRUE)
+  
+  cat(paste0("Precision = ", prec_dbl, "\n"))
+  print(idx_touches_lst[[1]] )
+  print(length(idx_touches_lst[[1]]))
+  
+  if (length(idx_touches_lst[[1]]) > 0) {
+    my_tmap <- tm_shape(shp = grbv_oakville_utm_sf,
+             bbox = grbv_oakville_utm_sf[idx_touches_lst[[1]], ] |> 
+               st_bbox() |> 
+               st_as_sfc() |> 
+               st_buffer(dist = 1)) +
+      tm_borders(col = "gray") +
+      ## Next highlight the identified neighbors
+      tm_shape(shp = grbv_oakville_utm_sf[idx_touches_lst[[1]], ]) +
+      tm_borders(col = "blue", lwd = 2) +
+      ## Lastly add the original
+      tm_shape(grbv_oakville_utm_sf[i,]) +
+      tm_polygons(border.col = "darkgreen", lwd = 5) +
+      tm_layout(main.title = paste0("i = ", i, ". Precision = ", prec_dbl)) 
+    
+    print(my_tmap)
+    
+  }
+
+}
+
+```
+
+&#128073; Setting the precision has strange effects. This [Stack Overflow ](https://gis.stackexchange.com/questions/467332/extract-touching-polygons-using-st-touches) post suggests why.
+
+It's hard to say why these geometries are affected. It could be a legacy of the Shapefile format, the high level of precision of the data (there are geoprocessing tools to reduce that), etc.
+
+## Way Forward
+
+`st_is_within_distance()` with dist = 0.1 seems to capture the immediate neighbors (assuming you want to define the neighbors using the 'queen' rule as opposed to the 'rook' rule).
+
+This [GH Issue](https://github.com/r-spatial/sf/issues/234) explains how you can transform the results from `st_is_within_distance()` for use in spdep.
+
+Getting `st_touches()` or `st_intersection()` to work may be doable with some further investigation into the coordinates.
+
+
+
+
+
+
+
+
+
