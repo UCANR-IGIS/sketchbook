@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Andy Lyons">
 <meta name="dcterms.date" content="2024-04-10">
-<title>Trap Count Interpolation</title>
+<title>Trap Count Time Series Interpolation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -73,12 +73,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="agv-interpolation-exploration_files/libs/crosstalk-1.2.0/js/crosstalk.min.js"></script><link href="agv-interpolation-exploration_files/libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
 <script src="agv-interpolation-exploration_files/libs/pagedtable-1.1/js/pagedtable.js"></script>
 </head>
-<body class="fullcontent">
+<body>
 
 <div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
-
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="2"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li>
+<a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview"><span class="header-section-number">1</span> Overview</a>
+  <ul class="collapse">
+<li><a href="#load-packages" id="toc-load-packages" class="nav-link" data-scroll-target="#load-packages"><span class="header-section-number">1.1</span> Load Packages</a></li>
+  <li><a href="#load-the-most-recent-data" id="toc-load-the-most-recent-data" class="nav-link" data-scroll-target="#load-the-most-recent-data"><span class="header-section-number">1.2</span> Load the most recent data</a></li>
+  <li><a href="#clean-and-reformat-the-data" id="toc-clean-and-reformat-the-data" class="nav-link" data-scroll-target="#clean-and-reformat-the-data"><span class="header-section-number">1.3</span> Clean and reformat the data</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#exploratory-analysis" id="toc-exploratory-analysis" class="nav-link" data-scroll-target="#exploratory-analysis"><span class="header-section-number">2</span> Exploratory Analysis</a>
+  <ul class="collapse">
+<li><a href="#plot-the-new-observations" id="toc-plot-the-new-observations" class="nav-link" data-scroll-target="#plot-the-new-observations"><span class="header-section-number">2.1</span> Plot the ‘new observations’</a></li>
+  <li><a href="#join-the-count-data-to-the-location-data" id="toc-join-the-count-data-to-the-location-data" class="nav-link" data-scroll-target="#join-the-count-data-to-the-location-data"><span class="header-section-number">2.2</span> Join the count data to the location data</a></li>
+  <li><a href="#define-the-spatial-extent-of-interpolation" id="toc-define-the-spatial-extent-of-interpolation" class="nav-link" data-scroll-target="#define-the-spatial-extent-of-interpolation"><span class="header-section-number">2.3</span> Define the spatial extent of interpolation</a></li>
+  <li>
+<a href="#interpolate-rolling-sum-for-one-day" id="toc-interpolate-rolling-sum-for-one-day" class="nav-link" data-scroll-target="#interpolate-rolling-sum-for-one-day"><span class="header-section-number">2.4</span> Interpolate Rolling Sum for One Day</a>
+  <ul class="collapse">
+<li><a href="#get-count-data-for-one-day" id="toc-get-count-data-for-one-day" class="nav-link" data-scroll-target="#get-count-data-for-one-day">Get Count Data for One Day</a></li>
+  <li><a href="#idw" id="toc-idw" class="nav-link" data-scroll-target="#idw">IDW</a></li>
+  </ul>
+</li>
+  </ul>
+</li>
+  <li><a href="#animate-the-interpolated-surfaces" id="toc-animate-the-interpolated-surfaces" class="nav-link" data-scroll-target="#animate-the-interpolated-surfaces"><span class="header-section-number">3</span> Animate the Interpolated Surfaces</a></li>
+  </ul></nav>
+</div>
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title">Trap Count Interpolation</h1>
+<h1 class="title">Trap Count Time Series Interpolation</h1>
 <p class="subtitle lead">Exploration of the Data and Methology</p>
 </div>
 
@@ -106,8 +135,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header><section id="overview" class="level1" data-number="1"><h1 data-number="1">
 <span class="header-section-number">1</span> Overview</h1>
-<p>The goal of this notebook is to explore how we can interpolate the count data from the AgVantage smart traps, including data cleaning, binning, and interpolation approaches.</p>
-<p>This notebook builds upon <a href="https://ucanr-igis.github.io/sketchbook/avg-heatmaps-xplore.html">Exploring Heatmaps</a></p>
+<p>The goal of this notebook is to explore how we can interpolate the count data from the AgVantage smart traps, including data cleaning, temporal binning, and interpolation approaches. This notebook is intended to develop the code for these steps, rather than meaningful outputs.</p>
+<p>This notebook builds upon the data cleaning steps developed in <a href="https://ucanr-igis.github.io/sketchbook/avg-heatmaps-xplore.html">Exploring Heatmaps</a></p>
 <section id="load-packages" class="level2" data-number="1.1"><h2 data-number="1.1" class="anchored" data-anchor-id="load-packages">
 <span class="header-section-number">1.1</span> Load Packages</h2>
 <div class="cell">
@@ -119,9 +148,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/DT">DT</a></span><span class="op">)</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://zoo.R-Forge.R-project.org/">zoo</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/stars/">stars</a></span><span class="op">)</span>  </span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-spatial/gstat/">gstat</a></span><span class="op">)</span></span>
 <span>  </span>
 <span>  <span class="co">#library(leaflet)</span></span>
-<span>  <span class="co">#library(sf)</span></span>
 <span>  <span class="co"># library(slider)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -141,35 +172,11 @@ Getting the Latest Data
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">devices_csvfn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"./csvs/devices.csv"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">devices_csvfn</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">trapcounts_csvfn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"./csvs/trapcounts.csv"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">trapcounts_csvfn</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] TRUE</code></pre>
 </div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">trapcounts_csvfn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"./csvs/trapcounts.csv"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">trapcounts_csvfn</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>[1] TRUE</code></pre>
-</div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">devices_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">devices_csvfn</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Rows: 11 Columns: 6
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (3): device_name, ranch, pheromone
-dbl (3): device_id, lon, lat
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-</div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">devices_tbl</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-
-<div data-pagedtable="false">
-  <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":["device_id"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["device_name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["ranch"],"name":[3],"type":["chr"],"align":["left"]},{"label":["pheromone"],"name":[4],"type":["chr"],"align":["left"]},{"label":["lon"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["lat"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"1378","2":"442553 36x75","3":"MWF UC NOW Trial","4":"PPO lure","5":"-120.1441","6":"36.11227"},{"1":"1577","2":"442538 56x55","3":"MWF UC NOW Trial","4":"PPO lure","5":"-120.1437","6":"36.11127"},{"1":"1627","2":"442460 46x55","3":"MWF UC NOW Trial","4":"PPO lure","5":"-120.1436","6":"36.11144"},{"1":"1628","2":"442442 26x55","3":"MWF UC NOW Trial","4":"PPO lure","5":"-120.1449","6":"36.11137"},{"1":"1629","2":"44248B 16x65","3":"MWF UC NOW Trial","4":"PPO lure","5":"-120.1456","6":"36.11178"},{"1":"1693","2":"Arroyo 10X10 NE UpShot 442B70","3":"NA","4":"PPO lure","5":"-120.1045","6":"36.25472"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
-</div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">trapcounts_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">trapcounts_csvfn</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">trapcounts_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">trapcounts_csvfn</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 1377 Columns: 6
 ── Column specification ────────────────────────────────────────────────────────
@@ -181,7 +188,7 @@ date (1): date
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">trapcounts_tbl</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">trapcounts_tbl</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
 <div data-pagedtable="false">
@@ -194,22 +201,19 @@ date (1): date
 </section><section id="clean-and-reformat-the-data" class="level2" data-number="1.3"><h2 data-number="1.3" class="anchored" data-anchor-id="clean-and-reformat-the-data">
 <span class="header-section-number">1.3</span> Clean and reformat the data</h2>
 <p>For this exercise, we will work with 3-weeks of data from August and September 2023 (as of today, this is the only time period where we have a mostly-complete data for five traps).</p>
-<p><br></p>
 <p>Define the devices we want to use:</p>
 <div class="cell">
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my_device_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1378</span>, <span class="fl">1577</span>, <span class="fl">1627</span>, <span class="fl">1628</span>, <span class="fl">1629</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">my_device_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1378</span>, <span class="fl">1577</span>, <span class="fl">1627</span>, <span class="fl">1628</span>, <span class="fl">1629</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><br></p>
 <p>Define the start and end dates:</p>
 <div class="cell">
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">start_dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="st">"2023-08-15"</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">start_dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="st">"2023-08-15"</span><span class="op">)</span></span>
 <span><span class="va">end_dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="st">"2023-09-05"</span><span class="op">)</span></span>
 <span><span class="va">all_dates_dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span>from <span class="op">=</span> <span class="va">start_dt</span>, to <span class="op">=</span> <span class="va">end_dt</span>, by <span class="op">=</span> <span class="st">"day"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><br></p>
 <p>Define the dates when the papers were reset:</p>
 <div class="cell">
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">reset_count_dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"2023-08-09"</span>,</span>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">reset_count_dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"2023-08-09"</span>,</span>
 <span>                            <span class="st">"2023-08-15"</span>,</span>
 <span>                            <span class="st">"2023-08-24"</span>,</span>
 <span>                            <span class="st">"2023-08-29"</span>,</span>
@@ -225,14 +229,14 @@ date (1): date
 <li>compute the new observations per day</li>
 </ul>
 <div class="cell">
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_obs_tbl</span> <span class="op">&lt;-</span> <span class="va">trapcounts_tbl</span> <span class="op">|&gt;</span> </span>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_obs_tbl</span> <span class="op">&lt;-</span> <span class="va">trapcounts_tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">device_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">my_device_ids</span>, <span class="va">date</span> <span class="op">&gt;=</span> <span class="va">start_dt</span>, <span class="va">date</span> <span class="op">&lt;=</span> <span class="va">end_dt</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">device_id</span>, <span class="va">date</span>, <span class="va">count</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/complete.html">complete</a></span><span class="op">(</span>date <span class="op">=</span> <span class="va">all_dates_dt</span>, device_id <span class="op">=</span> <span class="va">my_device_ids</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>count <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">device_id</span>, <span class="va">date</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>yesterdays_count <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/lead-lag.html">lag</a></span><span class="op">(</span><span class="va">count</span>, <span class="fl">1</span><span class="op">)</span>,</span>
-<span>         subtract_out <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="op">(</span><span class="va">reset_count_dt</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>, <span class="fl">0</span>, <span class="va">yesterdays_count</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>new_obs <span class="op">=</span> <span class="va">count</span> <span class="op">-</span> <span class="va">subtract_out</span><span class="op">)</span></span>
+<span>         subtract_out <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/if_else.html">if_else</a></span><span class="op">(</span><span class="va">date</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="op">(</span><span class="va">reset_count_dt</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span>, <span class="fl">0</span>, <span class="va">yesterdays_count</span><span class="op">)</span>,</span>
+<span>         new_obs <span class="op">=</span> <span class="va">count</span> <span class="op">-</span> <span class="va">subtract_out</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">new_obs_tbl</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -246,9 +250,8 @@ date (1): date
 </div>
 <p><br></p>
 <p>View the data in DT:</p>
-<p>(filters not working)</p>
 <div class="cell">
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_obs_tbl</span> <span class="op">|&gt;</span> </span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_obs_tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>device_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">as.factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">device_id</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">device_id</span>, <span class="va">date</span>, <span class="va">count</span>, <span class="va">subtract_out</span>, <span class="va">new_obs</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/DT/man/datatable.html">datatable</a></span><span class="op">(</span>filter <span class="op">=</span> <span class="st">"top"</span>,</span>
@@ -257,24 +260,26 @@ date (1): date
 <span>                           pageLenth <span class="op">=</span> <span class="fl">30</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-9afa141064eb1ba68ebc" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-9afa141064eb1ba68ebc">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"factor\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"width: 100%; display: none;\">\n      <select multiple=\"multiple\" style=\"width: 100%;\" data-options=\"[&quot;1378&quot;,&quot;1577&quot;,&quot;1627&quot;,&quot;1628&quot;,&quot;1629&quot;]\"><\/select>\n    <\/div>\n  <\/td>\n  <td data-type=\"date\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"1692057600000\" data-max=\"1.693872e+12\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0\" data-max=\"43\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0\" data-max=\"43\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"-9\" data-max=\"22\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629"],["2023-08-15","2023-08-16","2023-08-17","2023-08-18","2023-08-19","2023-08-20","2023-08-21","2023-08-22","2023-08-23","2023-08-24","2023-08-25","2023-08-26","2023-08-27","2023-08-28","2023-08-29","2023-08-30","2023-08-31","2023-09-01","2023-09-02","2023-09-03","2023-09-04","2023-09-05","2023-08-15","2023-08-16","2023-08-17","2023-08-18","2023-08-19","2023-08-20","2023-08-21","2023-08-22","2023-08-23","2023-08-24","2023-08-25","2023-08-26","2023-08-27","2023-08-28","2023-08-29","2023-08-30","2023-08-31","2023-09-01","2023-09-02","2023-09-03","2023-09-04","2023-09-05","2023-08-15","2023-08-16","2023-08-17","2023-08-18","2023-08-19","2023-08-20","2023-08-21","2023-08-22","2023-08-23","2023-08-24","2023-08-25","2023-08-26","2023-08-27","2023-08-28","2023-08-29","2023-08-30","2023-08-31","2023-09-01","2023-09-02","2023-09-03","2023-09-04","2023-09-05","2023-08-15","2023-08-16","2023-08-17","2023-08-18","2023-08-19","2023-08-20","2023-08-21","2023-08-22","2023-08-23","2023-08-24","2023-08-25","2023-08-26","2023-08-27","2023-08-28","2023-08-29","2023-08-30","2023-08-31","2023-09-01","2023-09-02","2023-09-03","2023-09-04","2023-09-05","2023-08-15","2023-08-16","2023-08-17","2023-08-18","2023-08-19","2023-08-20","2023-08-21","2023-08-22","2023-08-23","2023-08-24","2023-08-25","2023-08-26","2023-08-27","2023-08-28","2023-08-29","2023-08-30","2023-08-31","2023-09-01","2023-09-02","2023-09-03","2023-09-04","2023-09-05"],[2,4,4,4,5,6,9,12,14,null,3,3,4,7,null,7,10,10,10,10,10,11,7,7,10,15,21,23,25,27,24,null,6,7,8,10,null,7,9,9,9,9,10,10,10,14,19,25,37,39,39,43,null,null,null,6,8,9,0,null,1,1,1,1,1,1,13,16,18,28,27,32,32,35,37,null,2,6,9,17,null,22,25,26,26,25,27,27,null,null,3,6,7,7,7,7,6,null,5,7,10,11,null,7,7,null,null,null,null,null],[null,0,4,4,4,5,6,9,12,14,0,3,3,4,7,0,7,10,10,10,10,10,11,0,7,10,15,21,23,25,27,24,0,6,7,8,10,0,7,9,9,9,9,10,10,0,14,19,25,37,39,39,43,null,0,null,6,8,9,0,null,1,1,1,1,1,1,0,16,18,28,27,32,32,35,37,0,2,6,9,17,0,22,25,26,26,25,27,27,0,null,3,6,7,7,7,7,6,0,5,7,10,11,0,7,7,null,null,null,null],[null,4,0,0,1,1,3,3,2,null,3,0,1,3,null,7,3,0,0,0,0,1,-4,7,3,5,6,2,2,2,-3,null,6,1,1,2,null,7,2,0,0,0,1,0,0,14,5,6,12,2,0,4,null,null,null,null,2,1,-9,null,null,0,0,0,0,0,12,16,2,10,-1,5,0,3,2,null,2,4,3,8,null,22,3,1,0,-1,2,0,null,null,null,3,1,0,0,0,-1,null,5,2,3,1,null,7,0,null,null,null,null,null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>device_id<\/th>\n      <th>date<\/th>\n      <th>count<\/th>\n      <th>subtract_out<\/th>\n      <th>new_obs<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"autoWidth":true,"pageLenth":30,"columnDefs":[{"className":"dt-right","targets":[2,3,4]}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-0ab5952d3d284629a463" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-0ab5952d3d284629a463">{"x":{"filter":"top","vertical":false,"filterHTML":"<tr>\n  <td data-type=\"factor\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"width: 100%; display: none;\">\n      <select multiple=\"multiple\" style=\"width: 100%;\" data-options=\"[&quot;1378&quot;,&quot;1577&quot;,&quot;1627&quot;,&quot;1628&quot;,&quot;1629&quot;]\"><\/select>\n    <\/div>\n  <\/td>\n  <td data-type=\"date\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"1692057600000\" data-max=\"1.693872e+12\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0\" data-max=\"43\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"0\" data-max=\"43\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n  <td data-type=\"number\" style=\"vertical-align: top;\">\n    <div class=\"form-group has-feedback\" style=\"margin-bottom: auto;\">\n      <input type=\"search\" placeholder=\"All\" class=\"form-control\" style=\"width: 100%;\"/>\n      <span class=\"glyphicon glyphicon-remove-circle form-control-feedback\"><\/span>\n    <\/div>\n    <div style=\"display: none;position: absolute;width: 200px;opacity: 1\">\n      <div data-min=\"-9\" data-max=\"22\"><\/div>\n      <span style=\"float: left;\"><\/span>\n      <span style=\"float: right;\"><\/span>\n    <\/div>\n  <\/td>\n<\/tr>","data":[["1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1378","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1577","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1627","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1628","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629","1629"],["2023-08-15","2023-08-16","2023-08-17","2023-08-18","2023-08-19","2023-08-20","2023-08-21","2023-08-22","2023-08-23","2023-08-24","2023-08-25","2023-08-26","2023-08-27","2023-08-28","2023-08-29","2023-08-30","2023-08-31","2023-09-01","2023-09-02","2023-09-03","2023-09-04","2023-09-05","2023-08-15","2023-08-16","2023-08-17","2023-08-18","2023-08-19","2023-08-20","2023-08-21","2023-08-22","2023-08-23","2023-08-24","2023-08-25","2023-08-26","2023-08-27","2023-08-28","2023-08-29","2023-08-30","2023-08-31","2023-09-01","2023-09-02","2023-09-03","2023-09-04","2023-09-05","2023-08-15","2023-08-16","2023-08-17","2023-08-18","2023-08-19","2023-08-20","2023-08-21","2023-08-22","2023-08-23","2023-08-24","2023-08-25","2023-08-26","2023-08-27","2023-08-28","2023-08-29","2023-08-30","2023-08-31","2023-09-01","2023-09-02","2023-09-03","2023-09-04","2023-09-05","2023-08-15","2023-08-16","2023-08-17","2023-08-18","2023-08-19","2023-08-20","2023-08-21","2023-08-22","2023-08-23","2023-08-24","2023-08-25","2023-08-26","2023-08-27","2023-08-28","2023-08-29","2023-08-30","2023-08-31","2023-09-01","2023-09-02","2023-09-03","2023-09-04","2023-09-05","2023-08-15","2023-08-16","2023-08-17","2023-08-18","2023-08-19","2023-08-20","2023-08-21","2023-08-22","2023-08-23","2023-08-24","2023-08-25","2023-08-26","2023-08-27","2023-08-28","2023-08-29","2023-08-30","2023-08-31","2023-09-01","2023-09-02","2023-09-03","2023-09-04","2023-09-05"],[2,4,4,4,5,6,9,12,14,null,3,3,4,7,null,7,10,10,10,10,10,11,7,7,10,15,21,23,25,27,24,null,6,7,8,10,null,7,9,9,9,9,10,10,10,14,19,25,37,39,39,43,null,null,null,6,8,9,0,null,1,1,1,1,1,1,13,16,18,28,27,32,32,35,37,null,2,6,9,17,null,22,25,26,26,25,27,27,null,null,3,6,7,7,7,7,6,null,5,7,10,11,null,7,7,null,null,null,null,null],[null,0,4,4,4,5,6,9,12,14,0,3,3,4,7,0,7,10,10,10,10,10,11,0,7,10,15,21,23,25,27,24,0,6,7,8,10,0,7,9,9,9,9,10,10,0,14,19,25,37,39,39,43,null,0,null,6,8,9,0,null,1,1,1,1,1,1,0,16,18,28,27,32,32,35,37,0,2,6,9,17,0,22,25,26,26,25,27,27,0,null,3,6,7,7,7,7,6,0,5,7,10,11,0,7,7,null,null,null,null],[null,4,0,0,1,1,3,3,2,null,3,0,1,3,null,7,3,0,0,0,0,1,-4,7,3,5,6,2,2,2,-3,null,6,1,1,2,null,7,2,0,0,0,1,0,0,14,5,6,12,2,0,4,null,null,null,null,2,1,-9,null,null,0,0,0,0,0,12,16,2,10,-1,5,0,3,2,null,2,4,3,8,null,22,3,1,0,-1,2,0,null,null,null,3,1,0,0,0,-1,null,5,2,3,1,null,7,0,null,null,null,null,null]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th>device_id<\/th>\n      <th>date<\/th>\n      <th>count<\/th>\n      <th>subtract_out<\/th>\n      <th>new_obs<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"autoWidth":true,"pageLenth":30,"columnDefs":[{"className":"dt-right","targets":[2,3,4]}],"order":[],"orderClasses":false,"orderCellsTop":true}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p><br></p>
-</section></section><section id="analysis" class="level1" data-number="2"><h1 data-number="2">
-<span class="header-section-number">2</span> “Analysis”</h1>
-<p>First we make an assumption that missing values (<code>NA</code>s) should be replaced with zeros:</p>
+</section></section><section id="exploratory-analysis" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Exploratory Analysis</h1>
+<p>First we make an assumption that missing values (<code>NA</code>s) should be replaced with zeros.</p>
 <div class="cell">
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_obs_na2zero_tbl</span> <span class="op">&lt;-</span> <span class="va">new_obs_tbl</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/replace_na.html">replace_na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>new_obs <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_obs_na2zero_tbl</span> <span class="op">&lt;-</span> <span class="va">new_obs_tbl</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>na2zero <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">new_obs</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/replace_na.html">replace_na</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>new_obs <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">device_id</span>, <span class="va">date</span>, <span class="va">count</span>, <span class="va">subtract_out</span>, <span class="va">new_obs</span>, <span class="va">na2zero</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">new_obs_na2zero_tbl</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":["date"],"name":[1],"type":["date"],"align":["right"]},{"label":["device_id"],"name":[2],"type":["dbl"],"align":["right"]},{"label":["count"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["yesterdays_count"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["subtract_out"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["new_obs"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"2023-08-15","2":"1378","3":"2","4":"NA","5":"NA","6":"0"},{"1":"2023-08-16","2":"1378","3":"4","4":"2","5":"0","6":"4"},{"1":"2023-08-17","2":"1378","3":"4","4":"4","5":"4","6":"0"},{"1":"2023-08-18","2":"1378","3":"4","4":"4","5":"4","6":"0"},{"1":"2023-08-19","2":"1378","3":"5","4":"4","5":"4","6":"1"},{"1":"2023-08-20","2":"1378","3":"6","4":"5","5":"5","6":"1"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["device_id"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["date"],"name":[2],"type":["date"],"align":["right"]},{"label":["count"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["subtract_out"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["new_obs"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["na2zero"],"name":[6],"type":["lgl"],"align":["right"]}],"data":[{"1":"1378","2":"2023-08-15","3":"2","4":"NA","5":"0","6":"TRUE"},{"1":"1378","2":"2023-08-16","3":"4","4":"0","5":"4","6":"FALSE"},{"1":"1378","2":"2023-08-17","3":"4","4":"4","5":"0","6":"FALSE"},{"1":"1378","2":"2023-08-18","3":"4","4":"4","5":"0","6":"FALSE"},{"1":"1378","2":"2023-08-19","3":"5","4":"4","5":"1","6":"FALSE"},{"1":"1378","2":"2023-08-20","3":"6","4":"5","5":"1","6":"FALSE"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -283,7 +288,7 @@ date (1): date
 <section id="plot-the-new-observations" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="plot-the-new-observations">
 <span class="header-section-number">2.1</span> Plot the ‘new observations’</h2>
 <div class="cell">
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">new_obs_na2zero_tbl</span>, mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">new_obs</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">new_obs_na2zero_tbl</span>, mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">new_obs</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/vars.html">vars</a></span><span class="op">(</span><span class="va">device_id</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -291,22 +296,22 @@ date (1): date
 </div>
 </div>
 <p><br></p>
-<p>Smooth the data a bit by creating a running average (of the last 3 days) for each device_id:</p>
+<p>Smooth the data a bit by creating a running sum (of the last 3 days) for each device_id:</p>
 <div class="cell">
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_obs_na2zero2_tbl</span> <span class="op">&lt;-</span> <span class="va">new_obs_na2zero_tbl</span> <span class="op">|&gt;</span> </span>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_obs_na2zero2_tbl</span> <span class="op">&lt;-</span> <span class="va">new_obs_na2zero_tbl</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">device_id</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>rolling_avg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/rollmean.html">rollmean</a></span><span class="op">(</span><span class="va">new_obs</span>, k<span class="op">=</span><span class="fl">3</span>, fill<span class="op">=</span><span class="cn">NA</span>, align<span class="op">=</span><span class="st">'right'</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>rolling_sum <span class="op">=</span><span class="fu"><a href="https://rdrr.io/pkg/zoo/man/rollmean.html">rollsum</a></span><span class="op">(</span><span class="va">new_obs</span>, k<span class="op">=</span><span class="fl">3</span>, fill<span class="op">=</span><span class="cn">NA</span>, align<span class="op">=</span><span class="st">'right'</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># new_obs_na2zero2_tbl |&gt; arrange(device_id, date) |&gt; View()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><br></p>
-<p>Plot these:</p>
+<p>Plot the rolling sum as separate series:</p>
 <div class="cell">
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">new_obs_na2zero2_tbl</span>, mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">new_obs</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">new_obs_na2zero2_tbl</span>, mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">new_obs</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">rolling_avg</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"darkgreen"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span>mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">rolling_sum</span><span class="op">)</span>, col <span class="op">=</span> <span class="st">"darkgreen"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/vars.html">vars</a></span><span class="op">(</span><span class="va">device_id</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 2 rows containing missing values (`geom_line()`).</code></pre>
@@ -315,7 +320,188 @@ date (1): date
 <p><img src="agv-interpolation-exploration_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
-</section></section></main><!-- /main column --><script id="quarto-html-after-body" type="application/javascript">
+<p><br></p>
+<p>Plot the rolling sum all together:</p>
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">new_obs_na2zero2_range_tbl</span> <span class="op">&lt;-</span> <span class="va">new_obs_na2zero2_tbl</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>rolling_sum_min <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">rolling_sum</span><span class="op">)</span>, </span>
+<span>            rolling_sum_max <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">rolling_sum</span><span class="op">)</span>, </span>
+<span>            .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">new_obs_na2zero2_tbl</span>, mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">rolling_sum</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_segment.html">geom_segment</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">new_obs_na2zero2_range_tbl</span>,</span>
+<span>               mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, xend <span class="op">=</span> <span class="va">date</span>, </span>
+<span>                             y <span class="op">=</span> <span class="va">rolling_sum_min</span>, yend <span class="op">=</span> <span class="va">rolling_sum_max</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Trap Count 3-Day Rolling Sum for Five Traps"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 10 rows containing missing values (`geom_point()`).</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing missing values (`geom_segment()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="agv-interpolation-exploration_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><br></p>
+</section><section id="join-the-count-data-to-the-location-data" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="join-the-count-data-to-the-location-data">
+<span class="header-section-number">2.2</span> Join the count data to the location data</h2>
+<p>To create an interpolation, we have to first join the count data to the trap locations.</p>
+<div class="cell">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">devices_csvfn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://here.r-lib.org//reference/here.html">here</a></span><span class="op">(</span><span class="st">"./csvs/devices.csv"</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">devices_csvfn</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">devices_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">devices_csvfn</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 11 Columns: 6
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (3): device_name, ranch, pheromone
+dbl (3): device_id, lon, lat
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">devices_tbl</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["device_id"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["device_name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["ranch"],"name":[3],"type":["chr"],"align":["left"]},{"label":["pheromone"],"name":[4],"type":["chr"],"align":["left"]},{"label":["lon"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["lat"],"name":[6],"type":["dbl"],"align":["right"]}],"data":[{"1":"1378","2":"442553 36x75","3":"MWF UC NOW Trial","4":"PPO lure","5":"-120.1441","6":"36.11227"},{"1":"1577","2":"442538 56x55","3":"MWF UC NOW Trial","4":"PPO lure","5":"-120.1437","6":"36.11127"},{"1":"1627","2":"442460 46x55","3":"MWF UC NOW Trial","4":"PPO lure","5":"-120.1436","6":"36.11144"},{"1":"1628","2":"442442 26x55","3":"MWF UC NOW Trial","4":"PPO lure","5":"-120.1449","6":"36.11137"},{"1":"1629","2":"44248B 16x65","3":"MWF UC NOW Trial","4":"PPO lure","5":"-120.1456","6":"36.11178"},{"1":"1693","2":"Arroyo 10X10 NE UpShot 442B70","3":"NA","4":"PPO lure","5":"-120.1045","6":"36.25472"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p><br></p>
+<p>Next, we convert the trap locations to a sf object. While we’re at it, we’ll project them in to UTM Zone 10, because very soon we’ll want to define a raster that covers the area.</p>
+<div class="cell">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">utm10n_wgs84_epsg</span> <span class="op">&lt;-</span> <span class="fl">32610</span></span>
+<span></span>
+<span><span class="va">devices_sf</span> <span class="op">&lt;-</span> <span class="va">devices_tbl</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">device_id</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">my_device_ids</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">device_id</span>, <span class="va">device_name</span>, <span class="va">lon</span>, <span class="va">lat</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span>coords <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"lon"</span>, <span class="st">"lat"</span><span class="op">)</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_transform.html">st_transform</a></span><span class="op">(</span><span class="va">utm10n_wgs84_epsg</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">devices_sf</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["device_id"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["device_name"],"name":[2],"type":["chr"],"align":["left"]},{"label":["geometry"],"name":[3],"type":["sf_POINT"],"align":["right"]}],"data":[{"1":"1378","2":"442553 36x75","3":"<sf_POINT>","_rn_":"1"},{"1":"1577","2":"442538 56x55","3":"<sf_POINT>","_rn_":"2"},{"1":"1627","2":"442460 46x55","3":"<sf_POINT>","_rn_":"3"},{"1":"1628","2":"442442 26x55","3":"<sf_POINT>","_rn_":"4"},{"1":"1629","2":"44248B 16x65","3":"<sf_POINT>","_rn_":"5"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p><br></p>
+<p>Plot to make sure they look ok</p>
+<div class="cell">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">devices_sf</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="agv-interpolation-exploration_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><br></p>
+</section><section id="define-the-spatial-extent-of-interpolation" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="define-the-spatial-extent-of-interpolation">
+<span class="header-section-number">2.3</span> Define the spatial extent of interpolation</h2>
+<p>The first step in interpolation is to decide how large of an area to interpolate over. We’ll use the bounding box of the trap locations, plus a 20m buffer. We’ll use <code><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html">stars::st_as_stars()</a></code>, which can accept a <code>bbox</code> object.</p>
+<div class="cell">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">tc_intrp_ext_stars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_bbox.html">st_bbox</a></span><span class="op">(</span><span class="va">devices_sf</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sfc.html">st_as_sfc</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_unary.html">st_buffer</a></span><span class="op">(</span>dist <span class="op">=</span> <span class="fl">20</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://r-spatial.github.io/stars/reference/st_as_stars.html">st_as_stars</a></span><span class="op">(</span>dx <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tc_intrp_ext_stars</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>stars object with 2 dimensions and 1 attribute
+attribute(s):
+        Min. 1st Qu. Median      Mean 3rd Qu. Max.
+values     0       1      1 0.9449275       1    1
+dimension(s):
+  from to offset delta                refsys x/y
+x    1 23 756908    10 WGS 84 / UTM zone 10N [x]
+y    1 15  4e+06   -10 WGS 84 / UTM zone 10N [y]</code></pre>
+</div>
+</div>
+<p><br></p>
+</section><section id="interpolate-rolling-sum-for-one-day" class="level2" data-number="2.4"><h2 data-number="2.4" class="anchored" data-anchor-id="interpolate-rolling-sum-for-one-day">
+<span class="header-section-number">2.4</span> Interpolate Rolling Sum for One Day</h2>
+<section id="get-count-data-for-one-day" class="level3"><h3 class="anchored" data-anchor-id="get-count-data-for-one-day">Get Count Data for One Day</h3>
+<p>Join the devices spatial layer to the cumulative 3-day count for a single day:</p>
+<div class="cell">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">oneday_dt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="st">"2023-08-20"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">oneday_sf</span> <span class="op">&lt;-</span> <span class="va">devices_sf</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">!</span><span class="va">device_name</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html">left_join</a></span><span class="op">(</span><span class="va">new_obs_na2zero2_tbl</span> <span class="op">|&gt;</span> </span>
+<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">date</span> <span class="op">==</span> <span class="va">oneday_dt</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">device_id</span>, <span class="va">date</span>, <span class="va">rolling_sum</span><span class="op">)</span>, </span>
+<span>            by <span class="op">=</span> <span class="st">"device_id"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">oneday_sf</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["device_id"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["geometry"],"name":[2],"type":["sf_POINT"],"align":["right"]},{"label":["date"],"name":[3],"type":["date"],"align":["right"]},{"label":["rolling_sum"],"name":[4],"type":["dbl"],"align":["right"]}],"data":[{"1":"1378","2":"<sf_POINT>","3":"2023-08-20","4":"2"},{"1":"1577","2":"<sf_POINT>","3":"2023-08-20","4":"13"},{"1":"1627","2":"<sf_POINT>","3":"2023-08-20","4":"20"},{"1":"1628","2":"<sf_POINT>","3":"2023-08-20","4":"14"},{"1":"1629","2":"<sf_POINT>","3":"2023-08-20","4":"4"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p><br></p>
+<p>Plot to see how it looks:</p>
+<div class="cell">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">oneday_sf</span>, mapping <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>col <span class="op">=</span> <span class="va">rolling_sum</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="agv-interpolation-exploration_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><br></p>
+</section><section id="idw" class="level3"><h3 class="anchored" data-anchor-id="idw">IDW</h3>
+<p>Perhaps the simplest interpolation method is inverse distance weighted interpolation, which is a weighted average, using weights inverse proportional to distances from the interpolation location.</p>
+<div class="cell">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">tc_intrp_stars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/gstat/man/krige.html">idw</a></span><span class="op">(</span><span class="va">rolling_sum</span><span class="op">~</span><span class="fl">1</span>, <span class="va">oneday_sf</span>, <span class="va">tc_intrp_ext_stars</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[inverse distance weighted interpolation]</code></pre>
+</div>
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">tc_intrp_stars</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>stars object with 2 dimensions and 2 attributes
+attribute(s):
+               Min.  1st Qu.   Median     Mean  3rd Qu.    Max. NA's
+var1.pred  2.134324 6.602429 9.312279 9.749797 13.26887 19.4613    0
+var1.var         NA       NA       NA      NaN       NA      NA  345
+dimension(s):
+  from to offset delta                refsys x/y
+x    1 23 756908    10 WGS 84 / UTM zone 10N [x]
+y    1 15  4e+06   -10 WGS 84 / UTM zone 10N [y]</code></pre>
+</div>
+</div>
+<p><br></p>
+<p>Plot:</p>
+<div class="cell">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://r-spatial.github.io/stars/reference/geom_stars.html">geom_stars</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">tc_intrp_stars</span>, </span>
+<span>                      <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>fill <span class="op">=</span> <span class="va">var1.pred</span>, x <span class="op">=</span> <span class="va">x</span>, y <span class="op">=</span> <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">oneday_sf</span>, col <span class="op">=</span> <span class="st">"yellow"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Interpolated Trap Count 3-Day Total"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Period ending: "</span>, <span class="va">oneday_dt</span><span class="op">)</span>,</span>
+<span>       fill <span class="op">=</span> <span class="st">"IDW Pred"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="agv-interpolation-exploration_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><br></p>
+</section></section></section><section id="animate-the-interpolated-surfaces" class="level1" data-number="3"><h1 data-number="3">
+<span class="header-section-number">3</span> Animate the Interpolated Surfaces</h1>
+<p>Next, we will create an animation of the interpolated rasters.</p>
+<p>Option 1: loop thru the above steps, save the ggplots as PNG files, and combine with gifski</p>
+<p>Option 2: create the interpolated rasters in a single 3-dimensional stars objects, and the create the animated plot with gganimate <strong>==&gt; try this first, also lends itself to visualization in Shiny</strong></p>
+<p>Option 3: instead of an animated GIF, create an MP4 that someone can scrub thru</p>
+</section></main><!-- /main column --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
