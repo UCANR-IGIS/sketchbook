@@ -1,0 +1,149 @@
+---
+title: "Anonymizing Points"
+author: "Andy Lyons"
+date: today
+format: 
+  html:
+    code-tools: true
+    code-link: true
+editor: source
+---
+
+This is an exercise in anonymizing points by:
+
+1) applying a random offset in a 10-150m radius
+2) buffering the offset points by 250m
+
+Load packages:
+
+```{r}
+library(sf) |> suppressPackageStartupMessages()
+library(dplyr) |> suppressPackageStartupMessages()
+library(tmap)
+```
+
+\
+
+Create some fake points:
+
+```{r}
+n <- 20000
+epsg_utm10n <- 32610
+
+lons <- runif(n, min = -121.8, max = -121.7)
+lats <- runif(n, min = 37.5, max = 37.6)
+
+pts_orig_lonlat_df <- data.frame(id = 1:n, lon = lons, lat = lats)
+
+pts_orig_utm10_sf <-  pts_orig_lonlat_df |> 
+  st_as_sf(coords = c("lon", "lat"), crs = 4326) |> 
+  st_transform(epsg_utm10n)
+
+pts_orig_utm10_sf
+
+plot(pts_orig_utm10_sf |> head() |> st_geometry(), pch = 16, axes = TRUE)  
+```
+
+\
+
+Create the offset points:
+
+```{r}
+pts_orig_utm10_df <- pts_orig_utm10_sf |> 
+  st_coordinates() |> 
+  as.data.frame() |> 
+  setNames(c("x", "y"))
+
+head(pts_orig_utm10_df)
+
+rs <- runif(n, min=10, max = 150)
+# summary(rs)
+thetas <- runif(n, min = 0, max = 2 * pi)
+# summary(thetas)
+
+pts_offset_utm10_df <- data.frame(id_offset = 1:n,
+                                  x_offset = pts_orig_utm10_df$x + (rs * cos(thetas)),
+                                  y_offset = pts_orig_utm10_df$y + (rs * sin(thetas)))
+
+pts_orig_offset_tbl <- cbind(pts_orig_utm10_df, pts_offset_utm10_df) |> 
+  mutate(x_diff = x_offset - x, y_diff = y_offset - y)
+
+head(pts_orig_offset_tbl)
+# summary(pts_orig_offset_tbl$x_diff)
+# summary(pts_orig_offset_tbl$y_diff)
+```
+
+\
+
+Convert the offset points to a spatial object:
+
+```{r}
+pts_offset_utm10_sf <- pts_offset_utm10_df |> 
+  st_as_sf(coords = c("x_offset", "y_offset"), crs = epsg_utm10n)
+
+pts_offset_utm10_sf
+```
+
+\
+
+Plot a few of the original and offset points together for a reality-check:
+
+```{r}
+(six_cols <- RColorBrewer::brewer.pal(6, "Paired"))
+plot(pts_offset_utm10_sf |> head() |> st_geometry(), col = six_cols, pch = 16, axes = TRUE)
+plot(pts_orig_utm10_sf |> head() |> st_geometry(), col = six_cols, pch = 16, add = TRUE)
+```
+
+\
+
+Buffer the offsets:
+
+```{r}
+pts_offset_buffed_sf <- pts_offset_utm10_sf |> 
+  st_buffer(dist = 250)
+
+pts_offset_buffed_sf
+```
+
+\
+
+Plot a handful of points, their offsets, and buffers for a reality-check:
+
+```{r}
+for (i in sample(1:n, size = 5)) {
+  one_circle_sf <- pts_offset_buffed_sf |> slice(i)
+  one_pt_sf <- pts_orig_utm10_sf |> slice(i) 
+  one_pt_offset_sf <- pts_offset_utm10_sf |> slice(i) 
+  
+  # combined_bounding_box_sfc <- st_union(one_circle_sf |> st_bbox() |> st_as_sfc(),
+  #                                   one_pt_sf |> st_bbox() |> st_as_sfc())
+  
+  one_pt_ctr <- one_pt_sf |> st_coordinates() |> as.numeric()
+  s <- 400
+  one_pt_ext_df <- data.frame(x = one_pt_ctr[1] + c(-s, s, s, -s, -s),
+                              y = one_pt_ctr[2] + c(s, s, -s, -s, s))
+  
+  one_pt_ext_sf <- st_polygon(x = list(as.matrix(one_pt_ext_df)), dim = "XY") |> 
+    st_sfc(crs = epsg_utm10n) |> 
+    data.frame(id = 1, geom = _) |>
+    st_sf()
+  
+  print(tm_shape(one_pt_ext_sf) +
+    tm_borders(alpha = 0) +
+  tm_shape(one_pt_sf) +
+    tm_symbols(col = "green", border.col = NA) +
+  tm_shape(one_pt_offset_sf) +
+    tm_symbols(col = "red", border.col = NA) +
+  tm_shape(one_circle_sf) +
+    tm_borders(col = "red") +
+  tm_grid() +
+  tm_layout(main.title = paste0("Point: #", i, "\nOffset Distance: ",
+                                round(st_distance(one_pt_sf, one_pt_offset_sf),1))))
+
+}
+```
+
+
+
+
+# DONE!!
