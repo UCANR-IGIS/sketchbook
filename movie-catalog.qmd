@@ -22,6 +22,8 @@ Load packages and import an Excel file with plot summaries of 1000 movies.
 
 ```{r}
 library(readxl)
+library(glue)
+library(dplyr)
 
 movies_tbl <- here::here("data/movie-sampler.xlsx") |> 
   readxl::read_xlsx()
@@ -45,11 +47,24 @@ The code chunk below creates an entry for each film.
 
 ```{r results='asis'}
 for (i in 1:100) {
-  cat("## ", movies_tbl[i,"MovieTitle", drop=TRUE], "\n\n")
-  cat("**Running time:** ", movies_tbl[i,"RunningTime", drop=TRUE], "\n\n")
-  cat("**Year:** ", movies_tbl[i,"Year", drop=TRUE], "\n\n")
-  cat("**Plot Summary:** ", movies_tbl[i,"PlotSummary", drop=TRUE], "\n\n")
+  
+  movies_tbl |> 
+    slice(i) |> 
+    as.list() |> 
+    glue_data("
+      ## {MovieTitle} \n\n
+      **Running time:** {RunningTime} \n\n
+      **Plot Summary:** {PlotSummary} \n\n
+              ") |> 
+    cat()
+  
+  # cat("## ", movies_tbl[i,"MovieTitle", drop=TRUE], "\n\n")
+  # cat("**Running time:** ", movies_tbl[i,"RunningTime", drop=TRUE], "\n\n")
+  # cat("**Year:** ", movies_tbl[i,"Year", drop=TRUE], "\n\n")
+  # cat("**Plot Summary:** ", movies_tbl[i,"PlotSummary", drop=TRUE], "\n\n")
 }
+
+
 ```
 
 
