@@ -12,7 +12,9 @@ format:
 editor: source
 ---
 
-*This notebook demonstrates how you can use Quarto Markdown to generate a report of records from a table. Specifically, we will create a catalog of 100 movies.
+*This notebook demonstrates how you can use Quarto Markdown to generate a report of records from a table. Specifically, we will create a catalog of ~100 movie titles with plot summaries, and use Quarto's built-in TOC feature to create a TOC pane from level 1 & 2 headings.*
+
+A rendered version of this notebook can be found at: <https://ucanr-igis.github.io/sketchbook/movie-catalog.html>
 
 # Setup
 
@@ -27,7 +29,9 @@ movies_tbl <- here::here("data/movie-sampler.xlsx") |>
 #dim(movies_tbl)
 ```
 
-## Preview the data:
+## Preview the data
+
+The first six rows of the table we just imported look like:
 
 ```{r}
 head(movies_tbl)
@@ -37,7 +41,9 @@ head(movies_tbl)
 
 # Movie Summaries
 
-```{r echo=FALSE, results='asis'}
+The code chunk below creates an entry for each film.
+
+```{r results='asis'}
 for (i in 1:100) {
   cat("## ", movies_tbl[i,"MovieTitle", drop=TRUE], "\n\n")
   cat("**Running time:** ", movies_tbl[i,"RunningTime", drop=TRUE], "\n\n")
