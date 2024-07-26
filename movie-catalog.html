@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.555">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Sample Movie Catalog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="movie-catalog_files/libs/clipboard/clipboard.min.js"></script>
+<script src="movie-catalog_files/libs/quarto-html/quarto.js"></script>
+<script src="movie-catalog_files/libs/quarto-html/popper.min.js"></script>
+<script src="movie-catalog_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="movie-catalog_files/libs/quarto-html/anchor.min.js"></script>
+<link href="movie-catalog_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="movie-catalog_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="movie-catalog_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="movie-catalog_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="movie-catalog_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="movie-catalog_files/libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+
+<script src="movie-catalog_files/libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="3">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul class="collapse">
+  <li><a href="#setup" id="toc-setup" class="nav-link active" data-scroll-target="#setup">Setup</a>
+  <ul class="collapse">
+  <li><a href="#preview-the-data" id="toc-preview-the-data" class="nav-link" data-scroll-target="#preview-the-data">Preview the data:</a></li>
+  </ul></li>
+  <li><a href="#movie-summaries" id="toc-movie-summaries" class="nav-link" data-scroll-target="#movie-summaries">Movie Summaries</a>
+  <ul class="collapse">
+  <li><a href="#charlies-angels" id="toc-charlies-angels" class="nav-link" data-scroll-target="#charlies-angels">Charlie’s Angels</a></li>
+  <li><a href="#charmed" id="toc-charmed" class="nav-link" data-scroll-target="#charmed">Charmed</a></li>
+  <li><a href="#charmings-the" id="toc-charmings-the" class="nav-link" data-scroll-target="#charmings-the">Charmings, The</a></li>
+  <li><a href="#chase" id="toc-chase" class="nav-link" data-scroll-target="#chase">Chase</a></li>
+  <li><a href="#cheap-show-the" id="toc-cheap-show-the" class="nav-link" data-scroll-target="#cheap-show-the">Cheap Show, The</a></li>
+  <li><a href="#checking-in" id="toc-checking-in" class="nav-link" data-scroll-target="#checking-in">Checking In</a></li>
+  <li><a href="#checkmate" id="toc-checkmate" class="nav-link" data-scroll-target="#checkmate">Checkmate</a></li>
+  <li><a href="#cheers" id="toc-cheers" class="nav-link" data-scroll-target="#cheers">Cheers</a></li>
+  <li><a href="#chef" id="toc-chef" class="nav-link" data-scroll-target="#chef">Chef!</a></li>
+  <li><a href="#chenji-gettâ-robo-sekai-saigo-no-hi" id="toc-chenji-gettâ-robo-sekai-saigo-no-hi" class="nav-link" data-scroll-target="#chenji-gettâ-robo-sekai-saigo-no-hi">Chenji!! Gettâ robo: sekai saigo no hi</a></li>
+  <li><a href="#chesterfield-sound-off-time" id="toc-chesterfield-sound-off-time" class="nav-link" data-scroll-target="#chesterfield-sound-off-time">Chesterfield Sound Off Time</a></li>
+  <li><a href="#chevy-chase-show-the" id="toc-chevy-chase-show-the" class="nav-link" data-scroll-target="#chevy-chase-show-the">Chevy Chase Show, The</a></li>
+  <li><a href="#chevy-showroom-starring-andy-williams-the" id="toc-chevy-showroom-starring-andy-williams-the" class="nav-link" data-scroll-target="#chevy-showroom-starring-andy-williams-the">Chevy Showroom Starring Andy Williams, The</a></li>
+  <li><a href="#cheyenne" id="toc-cheyenne" class="nav-link" data-scroll-target="#cheyenne">Cheyenne</a></li>
+  <li><a href="#chez-hélène" id="toc-chez-hélène" class="nav-link" data-scroll-target="#chez-hélène">Chez Hélène</a></li>
+  <li><a href="#chibi-maruko-chan" id="toc-chibi-maruko-chan" class="nav-link" data-scroll-target="#chibi-maruko-chan">Chibi Maruko-chan</a></li>
+  <li><a href="#chicago-hope" id="toc-chicago-hope" class="nav-link" data-scroll-target="#chicago-hope">Chicago Hope</a></li>
+  <li><a href="#chicago-sons" id="toc-chicago-sons" class="nav-link" data-scroll-target="#chicago-sons">Chicago Sons</a></li>
+  <li><a href="#chicago-teddy-bears-the" id="toc-chicago-teddy-bears-the" class="nav-link" data-scroll-target="#chicago-teddy-bears-the">Chicago Teddy Bears, The</a></li>
+  <li><a href="#chico-and-the-man" id="toc-chico-and-the-man" class="nav-link" data-scroll-target="#chico-and-the-man">Chico and the Man</a></li>
+  <li><a href="#chief-halftown" id="toc-chief-halftown" class="nav-link" data-scroll-target="#chief-halftown">Chief Halftown</a></li>
+  <li><a href="#chiefs" id="toc-chiefs" class="nav-link" data-scroll-target="#chiefs">Chiefs</a></li>
+  <li><a href="#chiipu-rabu" id="toc-chiipu-rabu" class="nav-link" data-scroll-target="#chiipu-rabu">Chiipu rabu</a></li>
+  <li><a href="#childs-play" id="toc-childs-play" class="nav-link" data-scroll-target="#childs-play">Child’s Play</a></li>
+  <li><a href="#children-in-need" id="toc-children-in-need" class="nav-link" data-scroll-target="#children-in-need">Children in Need</a></li>
+  <li><a href="#children-of-the-stones" id="toc-children-of-the-stones" class="nav-link" data-scroll-target="#children-of-the-stones">Children of the Stones</a></li>
+  <li><a href="#chiller-cinema" id="toc-chiller-cinema" class="nav-link" data-scroll-target="#chiller-cinema">Chiller Cinema</a></li>
+  <li><a href="#chiller" id="toc-chiller" class="nav-link" data-scroll-target="#chiller">Chiller</a></li>
+  <li><a href="#chilly-beach" id="toc-chilly-beach" class="nav-link" data-scroll-target="#chilly-beach">Chilly Beach</a></li>
+  <li><a href="#china-beach" id="toc-china-beach" class="nav-link" data-scroll-target="#china-beach">China Beach</a></li>
+  <li><a href="#china-smith" id="toc-china-smith" class="nav-link" data-scroll-target="#china-smith">China Smith</a></li>
+  <li><a href="#chinese-the" id="toc-chinese-the" class="nav-link" data-scroll-target="#chinese-the">Chinese, The</a></li>
+  <li><a href="#chips" id="toc-chips" class="nav-link" data-scroll-target="#chips">CHiPs</a></li>
+  <li><a href="#chisholms-the" id="toc-chisholms-the" class="nav-link" data-scroll-target="#chisholms-the">Chisholms, The</a></li>
+  <li><a href="#chobits" id="toc-chobits" class="nav-link" data-scroll-target="#chobits">Chobits</a></li>
+  <li><a href="#chocolate-com-pimenta" id="toc-chocolate-com-pimenta" class="nav-link" data-scroll-target="#chocolate-com-pimenta">Chocolate com Pimenta</a></li>
+  <li><a href="#choir-the" id="toc-choir-the" class="nav-link" data-scroll-target="#choir-the">Choir, The</a></li>
+  <li><a href="#chojin-sentai-jettoman" id="toc-chojin-sentai-jettoman" class="nav-link" data-scroll-target="#chojin-sentai-jettoman">Chojin sentai Jettoman</a></li>
+  <li><a href="#chopper-one" id="toc-chopper-one" class="nav-link" data-scroll-target="#chopper-one">Chopper One</a></li>
+  <li><a href="#christi-sánchez-tiene-un-show" id="toc-christi-sánchez-tiene-un-show" class="nav-link" data-scroll-target="#christi-sánchez-tiene-un-show">Christi Sánchez tiene un show</a></li>
+  <li><a href="#christianity-the-first-two-thousand-years" id="toc-christianity-the-first-two-thousand-years" class="nav-link" data-scroll-target="#christianity-the-first-two-thousand-years">Christianity: The First Two Thousand Years</a></li>
+  <li><a href="#christopher-columbus" id="toc-christopher-columbus" class="nav-link" data-scroll-target="#christopher-columbus">Christopher Columbus</a></li>
+  <li><a href="#christophers" id="toc-christophers" class="nav-link" data-scroll-target="#christophers">Christophers</a></li>
+  <li><a href="#christy" id="toc-christy" class="nav-link" data-scroll-target="#christy">Christy</a></li>
+  <li><a href="#chromiumblue.com" id="toc-chromiumblue.com" class="nav-link" data-scroll-target="#chromiumblue.com">ChromiumBlue.com</a></li>
+  <li><a href="#chronicle-the" id="toc-chronicle-the" class="nav-link" data-scroll-target="#chronicle-the">Chronicle, The</a></li>
+  <li><a href="#chuck-norris-karate-kommandos" id="toc-chuck-norris-karate-kommandos" class="nav-link" data-scroll-target="#chuck-norris-karate-kommandos">Chuck Norris: Karate Kommandos</a></li>
+  <li><a href="#château-des-oliviers-le" id="toc-château-des-oliviers-le" class="nav-link" data-scroll-target="#château-des-oliviers-le">Château des oliviers, Le</a></li>
+  <li><a href="#chîsana-baikingu-uiki" id="toc-chîsana-baikingu-uiki" class="nav-link" data-scroll-target="#chîsana-baikingu-uiki">Chîsana Baikingu Uiki</a></li>
+  <li><a href="#chôjikû-kidan-southern-cross" id="toc-chôjikû-kidan-southern-cross" class="nav-link" data-scroll-target="#chôjikû-kidan-southern-cross">Chôjikû kidan Southern Cross</a></li>
+  <li><a href="#chôjikû-yôsai-macross" id="toc-chôjikû-yôsai-macross" class="nav-link" data-scroll-target="#chôjikû-yôsai-macross">Chôjikû yôsai Macross</a></li>
+  <li><a href="#chôjinki-metalder" id="toc-chôjinki-metalder" class="nav-link" data-scroll-target="#chôjinki-metalder">Chôjinki Metalder</a></li>
+  <li><a href="#chôjû-sentai-raibuman" id="toc-chôjû-sentai-raibuman" class="nav-link" data-scroll-target="#chôjû-sentai-raibuman">Chôjû sentai Raibuman</a></li>
+  <li><a href="#chôriki-sentai-ôrenjâ" id="toc-chôriki-sentai-ôrenjâ" class="nav-link" data-scroll-target="#chôriki-sentai-ôrenjâ">Chôriki sentai Ôrenjâ</a></li>
+  <li><a href="#ci5-the-new-professionals" id="toc-ci5-the-new-professionals" class="nav-link" data-scroll-target="#ci5-the-new-professionals">CI5: The New Professionals</a></li>
+  <li><a href="#cimarron-city" id="toc-cimarron-city" class="nav-link" data-scroll-target="#cimarron-city">Cimarron City</a></li>
+  <li><a href="#cimarron-strip" id="toc-cimarron-strip" class="nav-link" data-scroll-target="#cimarron-strip">Cimarron Strip</a></li>
+  <li><a href="#cinema-europe-the-other-hollywood" id="toc-cinema-europe-the-other-hollywood" class="nav-link" data-scroll-target="#cinema-europe-the-other-hollywood">Cinema Europe: The Other Hollywood</a></li>
+  <li><a href="#circus-boy" id="toc-circus-boy" class="nav-link" data-scroll-target="#circus-boy">Circus Boy</a></li>
+  <li><a href="#cisco-kid-the" id="toc-cisco-kid-the" class="nav-link" data-scroll-target="#cisco-kid-the">Cisco Kid, The</a></li>
+  <li><a href="#citizen-baines" id="toc-citizen-baines" class="nav-link" data-scroll-target="#citizen-baines">Citizen Baines</a></li>
+  <li><a href="#city-lights" id="toc-city-lights" class="nav-link" data-scroll-target="#city-lights">City Lights</a></li>
+  <li><a href="#city-of-angels" id="toc-city-of-angels" class="nav-link" data-scroll-target="#city-of-angels">City of Angels</a></li>
+  <li><a href="#city-the" id="toc-city-the" class="nav-link" data-scroll-target="#city-the">City, The</a></li>
+  <li><a href="#civil-war-the" id="toc-civil-war-the" class="nav-link" data-scroll-target="#civil-war-the">Civil War, The</a></li>
+  <li><a href="#clangers-the" id="toc-clangers-the" class="nav-link" data-scroll-target="#clangers-the">Clangers, The</a></li>
+  <li><a href="#clap-el-lugar-de-tus-sueños" id="toc-clap-el-lugar-de-tus-sueños" class="nav-link" data-scroll-target="#clap-el-lugar-de-tus-sueños">Clap!… El lugar de tus sueños</a></li>
+  <li><a href="#clase-406" id="toc-clase-406" class="nav-link" data-scroll-target="#clase-406">Clase 406</a></li>
+  <li><a href="#clase-aparte" id="toc-clase-aparte" class="nav-link" data-scroll-target="#clase-aparte">Clase aparte</a></li>
+  <li><a href="#class-act" id="toc-class-act" class="nav-link" data-scroll-target="#class-act">Class Act</a></li>
+  <li><a href="#class-of-96" id="toc-class-of-96" class="nav-link" data-scroll-target="#class-of-96">Class of ’96</a></li>
+  <li><a href="#classic-concentration" id="toc-classic-concentration" class="nav-link" data-scroll-target="#classic-concentration">Classic Concentration</a></li>
+  <li><a href="#clean-house" id="toc-clean-house" class="nav-link" data-scroll-target="#clean-house">Clean House</a></li>
+  <li><a href="#clear-horizon-the" id="toc-clear-horizon-the" class="nav-link" data-scroll-target="#clear-horizon-the">Clear Horizon, The</a></li>
+  <li><a href="#cleopatra-2525" id="toc-cleopatra-2525" class="nav-link" data-scroll-target="#cleopatra-2525">Cleopatra 2525</a></li>
+  <li><a href="#clerks" id="toc-clerks" class="nav-link" data-scroll-target="#clerks">Clerks</a></li>
+  <li><a href="#click-the" id="toc-click-the" class="nav-link" data-scroll-target="#click-the">Click, The</a></li>
+  <li><a href="#client-the" id="toc-client-the" class="nav-link" data-scroll-target="#client-the">Client, The</a></li>
+  <li><a href="#climax" id="toc-climax" class="nav-link" data-scroll-target="#climax">Climax!</a></li>
+  <li><a href="#clock-the" id="toc-clock-the" class="nav-link" data-scroll-target="#clock-the">Clock, The</a></li>
+  <li><a href="#clone-high" id="toc-clone-high" class="nav-link" data-scroll-target="#clone-high">Clone High</a></li>
+  <li><a href="#clone-o" id="toc-clone-o" class="nav-link" data-scroll-target="#clone-o">Clone, O</a></li>
+  <li><a href="#close-relations" id="toc-close-relations" class="nav-link" data-scroll-target="#close-relations">Close Relations</a></li>
+  <li><a href="#close-up" id="toc-close-up" class="nav-link" data-scroll-target="#close-up">Close Up</a></li>
+  <li><a href="#clouds-of-witness" id="toc-clouds-of-witness" class="nav-link" data-scroll-target="#clouds-of-witness">Clouds of Witness</a></li>
+  <li><a href="#clown-der" id="toc-clown-der" class="nav-link" data-scroll-target="#clown-der">Clown, Der</a></li>
+  <li><a href="#club-buggery" id="toc-club-buggery" class="nav-link" data-scroll-target="#club-buggery">Club Buggery</a></li>
+  <li><a href="#clue-club" id="toc-clue-club" class="nav-link" data-scroll-target="#clue-club">Clue Club</a></li>
+  <li><a href="#cluedo" id="toc-cluedo" class="nav-link" data-scroll-target="#cluedo">Cluedo</a></li>
+  <li><a href="#clueless" id="toc-clueless" class="nav-link" data-scroll-target="#clueless">Clueless</a></li>
+  <li><a href="#cnn-world-beat" id="toc-cnn-world-beat" class="nav-link" data-scroll-target="#cnn-world-beat">CNN World Beat</a></li>
+  <li><a href="#co-ed-fever" id="toc-co-ed-fever" class="nav-link" data-scroll-target="#co-ed-fever">Co-ed Fever</a></li>
+  <li><a href="#coach" id="toc-coach" class="nav-link" data-scroll-target="#coach">Coach</a></li>
+  <li><a href="#code-lyoko" id="toc-code-lyoko" class="nav-link" data-scroll-target="#code-lyoko">Code Lyoko</a></li>
+  <li><a href="#code-name-eternity" id="toc-code-name-eternity" class="nav-link" data-scroll-target="#code-name-eternity">Code Name: Eternity</a></li>
+  <li><a href="#code-r" id="toc-code-r" class="nav-link" data-scroll-target="#code-r">Code R</a></li>
+  <li><a href="#code-red" id="toc-code-red" class="nav-link" data-scroll-target="#code-red">Code Red</a></li>
+  <li><a href="#codename-kids-next-door" id="toc-codename-kids-next-door" class="nav-link" data-scroll-target="#codename-kids-next-door">Codename: Kids Next Door</a></li>
+  <li><a href="#colbys-the" id="toc-colbys-the" class="nav-link" data-scroll-target="#colbys-the">Colbys, The</a></li>
+  <li><a href="#cold-lazarus" id="toc-cold-lazarus" class="nav-link" data-scroll-target="#cold-lazarus">Cold Lazarus</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title">Sample Movie Catalog</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>*This notebook demonstrates how you can use Quarto Markdown to generate a report of records from a table. Specifically, we will create a catalog of 100 movies.</p>
+<section id="setup" class="level1">
+<h1>Setup</h1>
+<p>Load packages and import an Excel file with plot summaries of 1000 movies.</p>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>movies_tbl <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/movie-sampler.xlsx"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  readxl<span class="sc">::</span><span class="fu">read_xlsx</span>()</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co">#dim(movies_tbl)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="preview-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="preview-the-data">Preview the data:</h2>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(movies_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["MovieID"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["MovieTitle"],"name":[2],"type":["chr"],"align":["left"]},{"label":["PlotSummary"],"name":[3],"type":["chr"],"align":["left"]},{"label":["Year"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["LanguageID"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["GenreID"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["RunningTime"],"name":[7],"type":["dbl"],"align":["right"]},{"label":["MPAARating"],"name":[8],"type":["chr"],"align":["left"]}],"data":[{"1":"1001","2":"Charlie's Angels","3":"TV series about a wealthy mystery-man who runs a detective agency via a speaker-phone and his personal assistant, Bosley. His detectives are three beautiful women, who end up in a variety of difficult situations. The cast changed substantially over the life of this show, as actresses left for various movie, TV, and modeling deals.","4":"1976","5":"48","6":"4","7":"45","8":"NA"},{"1":"1002","2":"Charmed","3":"The three Halliwell sisters discover that they are descendents of a line of female witches. Each has a special ability (stopping time, moving objects, seeing the future), and they can also combine their abilities into the \"Power of Three\" to fight demons, warlocks, and other evils.","4":"1998","5":"48","6":"6","7":"60","8":"NA"},{"1":"1003","2":"Charmings, The","3":"Snow White, Prince Charming and their family are transported through time to the present day. They try to fit into normal society, despite their unfamiliarity with technology.","4":"1987","5":"48","6":"6","7":"30","8":"NA"},{"1":"1004","2":"Chase","3":"Captain Chase Reddick is the leader of an undercover investigative unit of the Los Angeles Police Department that uses unorthodox methods in solving crimes. Reddick's men are specialists: MacCray trains police dogs, Sing is an expert motorcycle rider, Hamilton flies choppers and Baker is an expert behind the wheel of a car. Chase's unit answers only to the top brass in the department.","4":"1973","5":"48","6":"7","7":"60","8":"NA"},{"1":"1005","2":"Cheap Show, The","3":"A 'how low can you go'-style game in the tradition of The Gong Show, this program pitted two contestants against each other in a test of wits. A question would be asked of a pair of celebrities, one of whom would give a correct answer, then other giving an incorrect one. The contestant (who had a loved one standing with him in the studio) would then have to choose which one was telling the truth. If correct, he would receive a point, while his opponent's love one would receive some form of punishment. If incorrect, however, his own loved one would be punished while his opponent would receive the point. The winner of this match would go on to the bonus round, where their bonus prize would be decided by which hole the program's pet rat would crawl down first.","4":"1978","5":"48","6":"24","7":"0","8":"NA"},{"1":"1006","2":"Checking In","3":"\"All in the Family\" (1971) had several spin-offs, but none as popular as \"Jeffersons, The\" (1975). One of the highlights of the show was the wise-cracking maid, Florence Johnson, who constantly engaged in battles of wits with George Jefferson. In this short-lived spin-off sitcom, we learn she has quit her job as a maid for a career as a housekeeper at a fancy hotel. The show was quickly cancelled due to lack of ratings, however, and Gibbs, Marla returned to the \"deluxe apartment in the sky\" and explained that the hotel had burned to the ground, and continued to star in \"Jeffersons, The\" (1975) for the rest of it's run.","4":"1981","5":"48","6":"6","7":"30","8":"NA"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+<p><br>
+</p>
+</section>
+</section>
+<section id="movie-summaries" class="level1">
+<h1>Movie Summaries</h1>
+<section id="charlies-angels" class="level2">
+<h2 class="anchored" data-anchor-id="charlies-angels">Charlie’s Angels</h2>
+<p><strong>Running time:</strong> 45</p>
+<p><strong>Year:</strong> 1976</p>
+<p><strong>Plot Summary:</strong> TV series about a wealthy mystery-man who runs a detective agency via a speaker-phone and his personal assistant, Bosley. His detectives are three beautiful women, who end up in a variety of difficult situations. The cast changed substantially over the life of this show, as actresses left for various movie, TV, and modeling deals.</p>
+</section>
+<section id="charmed" class="level2">
+<h2 class="anchored" data-anchor-id="charmed">Charmed</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1998</p>
+<p><strong>Plot Summary:</strong> The three Halliwell sisters discover that they are descendents of a line of female witches. Each has a special ability (stopping time, moving objects, seeing the future), and they can also combine their abilities into the “Power of Three” to fight demons, warlocks, and other evils.</p>
+</section>
+<section id="charmings-the" class="level2">
+<h2 class="anchored" data-anchor-id="charmings-the">Charmings, The</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1987</p>
+<p><strong>Plot Summary:</strong> Snow White, Prince Charming and their family are transported through time to the present day. They try to fit into normal society, despite their unfamiliarity with technology.</p>
+</section>
+<section id="chase" class="level2">
+<h2 class="anchored" data-anchor-id="chase">Chase</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1973</p>
+<p><strong>Plot Summary:</strong> Captain Chase Reddick is the leader of an undercover investigative unit of the Los Angeles Police Department that uses unorthodox methods in solving crimes. Reddick’s men are specialists: MacCray trains police dogs, Sing is an expert motorcycle rider, Hamilton flies choppers and Baker is an expert behind the wheel of a car. Chase’s unit answers only to the top brass in the department.</p>
+</section>
+<section id="cheap-show-the" class="level2">
+<h2 class="anchored" data-anchor-id="cheap-show-the">Cheap Show, The</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1978</p>
+<p><strong>Plot Summary:</strong> A ‘how low can you go’-style game in the tradition of The Gong Show, this program pitted two contestants against each other in a test of wits. A question would be asked of a pair of celebrities, one of whom would give a correct answer, then other giving an incorrect one. The contestant (who had a loved one standing with him in the studio) would then have to choose which one was telling the truth. If correct, he would receive a point, while his opponent’s love one would receive some form of punishment. If incorrect, however, his own loved one would be punished while his opponent would receive the point. The winner of this match would go on to the bonus round, where their bonus prize would be decided by which hole the program’s pet rat would crawl down first.</p>
+</section>
+<section id="checking-in" class="level2">
+<h2 class="anchored" data-anchor-id="checking-in">Checking In</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1981</p>
+<p><strong>Plot Summary:</strong> “All in the Family” (1971) had several spin-offs, but none as popular as “Jeffersons, The” (1975). One of the highlights of the show was the wise-cracking maid, Florence Johnson, who constantly engaged in battles of wits with George Jefferson. In this short-lived spin-off sitcom, we learn she has quit her job as a maid for a career as a housekeeper at a fancy hotel. The show was quickly cancelled due to lack of ratings, however, and Gibbs, Marla returned to the “deluxe apartment in the sky” and explained that the hotel had burned to the ground, and continued to star in “Jeffersons, The” (1975) for the rest of it’s run.</p>
+</section>
+<section id="checkmate" class="level2">
+<h2 class="anchored" data-anchor-id="checkmate">Checkmate</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1960</p>
+<p><strong>Plot Summary:</strong> Don Corey and Jed Sills operate Checkmate, Inc., a very high priced detective agency in San Francisco. Helping them protect the lives of their clients is British criminologist (once an Oxford professor) Carl Hyatt.</p>
+</section>
+<section id="cheers" class="level2">
+<h2 class="anchored" data-anchor-id="cheers">Cheers</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1982</p>
+<p><strong>Plot Summary:</strong> Sam Malone, a former baseball star, is the head of a nice little bar where Norm, Cliff, Dr.&nbsp;Frasier and all the other regular customers spend together a few hours every day, talking about their problems, laughing at each other’s flaws, trying to be there when someone else needs them. “Cheers” is the place where everybody knows your name…</p>
+</section>
+<section id="chef" class="level2">
+<h2 class="anchored" data-anchor-id="chef">Chef!</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1993</p>
+<p><strong>Plot Summary:</strong> A comedy, conceived by Lenny Henry, playing the <em>finest</em> chef in England, possibly the world. Chef! is set in the kitchen of <em>Le Chateau Anglais</em>, the finest French restaurant in England. Gareth Blackstock, the aforementioned chef, embodies all the worst qualities of someone at the top of their profession…</p>
+</section>
+<section id="chenji-gettâ-robo-sekai-saigo-no-hi" class="level2">
+<h2 class="anchored" data-anchor-id="chenji-gettâ-robo-sekai-saigo-no-hi">Chenji!! Gettâ robo: sekai saigo no hi</h2>
+<p><strong>Running time:</strong> 28</p>
+<p><strong>Year:</strong> 1998</p>
+<p><strong>Plot Summary:</strong> Sent to jail after being accused of murdering Getter Robo creator Dr.&nbsp;Saotome, Ryoma Nagare must once again team up with his former comrades and pilot Getter Robo when Saotome returns from the dead and threatens humanity by unleashing his greatest creation - the Shin Dragon. Their efforts, however, are in vain as they fail to stop a nuclear warhead from hitting Shin Dragon, resulting in a massive Getter Ray contamination that wipes out 99% of the planet’s population. Thirteen years after this great catastrophe, mankind continues to fight for survival against the Invaders. Out of the remains of the nuclear blast comes Shin Getter, piloted by the artificial human Go. With remnants of the Japanese military by his side, Go - along with co-pilots Kei and Gai - must use Shin Getter to exterminate the Invaders once and for all.</p>
+</section>
+<section id="chesterfield-sound-off-time" class="level2">
+<h2 class="anchored" data-anchor-id="chesterfield-sound-off-time">Chesterfield Sound Off Time</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1951</p>
+<p><strong>Plot Summary:</strong> “Sound-Off Time” was a live, half-hour variety series with Fred Allen and Bob Hope alternating at hosts, and not very successfully. However, on December 16, 1951, “Sound-Off Time” aired the pilot for “Dragnet.” The broadcast garnered “Sound-Off Time’s” best rating. It’s sponsor, Liggett &amp; Myers Tobacco, promptly dropped the comedians in favor of the cop.</p>
+</section>
+<section id="chevy-chase-show-the" class="level2">
+<h2 class="anchored" data-anchor-id="chevy-chase-show-the">Chevy Chase Show, The</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1993</p>
+<p><strong>Plot Summary:</strong> 1992 and 1993 saw great changes in late-night talk shows: Jay Leno took the place of Johnny Carson, David Letterman switched networks and time slots, and Chevy Chase and newcomer Conan O’Brien started their own shows. After the dust cleared from the greatly-hyped “talk-show wars”, Chase emerged as the undisputed loser. While the show’s format differed little from that of its competition, and a star of Chase’s caliber had no trouble finding well-known guests, the show simply failed to resonate with viewers, and ground to a humiliating halt as it was finally pulled off the air in mid-show.</p>
+</section>
+<section id="chevy-showroom-starring-andy-williams-the" class="level2">
+<h2 class="anchored" data-anchor-id="chevy-showroom-starring-andy-williams-the">Chevy Showroom Starring Andy Williams, The</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1958</p>
+<p><strong>Plot Summary:</strong> Singing by himself after having previously starred with female vocalist June Valli, Andy Williams hosted this new summer program along with Dick Van Dyke, which mainly featured Andy singing favorite songs. In addition to Andy, many other big-name musical performers also appeared on the show, with the acts tending to run toward adult music rather than the newfangled rock and roll.</p>
+</section>
+<section id="cheyenne" class="level2">
+<h2 class="anchored" data-anchor-id="cheyenne">Cheyenne</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1955</p>
+<p><strong>Plot Summary:</strong> After the Civil war adventurer Cheyenne Bodie roamed the west looking for fights, women and bad guys to beat up. His job changed from episode to episode (the show altered with other shows rather than appearing weekly).</p>
+</section>
+<section id="chez-hélène" class="level2">
+<h2 class="anchored" data-anchor-id="chez-hélène">Chez Hélène</h2>
+<p><strong>Running time:</strong> 15</p>
+<p><strong>Year:</strong> 1959</p>
+<p><strong>Plot Summary:</strong> An unusual attempt to promote Canadian unity by exposing English-speaking children to French language conversation. This show ran between the immensely popular children’s shows “The Friendly Giant” and “Mr.&nbsp;Dressup”. No one ever knew what the show was about since it was exclusively in French, a language unknown to the vast majority of its viewers who were anxious not to miss the start of “Mr.&nbsp;Dressup”.</p>
+</section>
+<section id="chibi-maruko-chan" class="level2">
+<h2 class="anchored" data-anchor-id="chibi-maruko-chan">Chibi Maruko-chan</h2>
+<p><strong>Running time:</strong> 24</p>
+<p><strong>Year:</strong> 1990</p>
+<p><strong>Plot Summary:</strong> Maruko Sakura is a young elementary school student growing up with her parents, grandparents and elder sister in this animated series based on the producer’s childhood in the 60’s. As Maruko grows up and learns the ways of the world, she and her friends get themselves into an assortment of predicaments, but with Maruko’s ingenuity (and the help of her grandfather) they usually finds her way through.</p>
+</section>
+<section id="chicago-hope" class="level2">
+<h2 class="anchored" data-anchor-id="chicago-hope">Chicago Hope</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1994</p>
+<p><strong>Plot Summary:</strong> Television medical drama in soap-opera style. Surgeons Jeffrey Geiger and Aaron Shutte battle valiantly for their patients, often coming into conflict with the hospital administration, run by Dr.&nbsp;Phillip Watters. Their cases are usually ethically complex, highly sensationalistic, and very melodramatic. Meanwhile, Jeffrey and Aaron, who are best friends, commiserate about the shambles their tumultuous personal lives have become….</p>
+</section>
+<section id="chicago-sons" class="level2">
+<h2 class="anchored" data-anchor-id="chicago-sons">Chicago Sons</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1997</p>
+<p><strong>Plot Summary:</strong> The life of Mike, newly divorced from his wife, Billy, always between get-rich-fast scams, and Harry, desperately in love with co-worker Lindsay, three brothers living together in a Chicago building surrounding Wriegley Field.</p>
+</section>
+<section id="chicago-teddy-bears-the" class="level2">
+<h2 class="anchored" data-anchor-id="chicago-teddy-bears-the">Chicago Teddy Bears, The</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1971</p>
+<p><strong>Plot Summary:</strong> Linc McCray was an honest man who, with his uncle Latzi, owned a Chicago speakeasy in the 1920s. Unfortunately for Linc, his mobster cousin Big Nick Marr would do anything to take over Linc’s place, and often resorted to unscrupulous means to do so.</p>
+</section>
+<section id="chico-and-the-man" class="level2">
+<h2 class="anchored" data-anchor-id="chico-and-the-man">Chico and the Man</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1974</p>
+<p><strong>Plot Summary:</strong> Energetic Chico wants to form a partnership with cynical Ed Brown in the old man’s garage. His efforts bring in customers and the crabby Ed softens toward Chico. After the actor who played him committed suicide, Chico was replaced by 12-year-old Raul.</p>
+</section>
+<section id="chief-halftown" class="level2">
+<h2 class="anchored" data-anchor-id="chief-halftown">Chief Halftown</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1951</p>
+<p><strong>Plot Summary:</strong> The CHIEF HALFTOWN SHOW was Philadelphia’s longest running show for kids. The show first aired on WFIL in 1951 and then WPVI where it ran until 1999. The Chief would appear in full Indian garb and discuss tribal customs and folklore, as well as feature entertainers of all diversities during his 1/2 hour show. His classic trademark catchphrase was (phonetically) “Eeees dah-sah-suss-a-way” which according to the Chief’s friend Sally Starr, a fellow children’s show host in Philadelphia, means “Let’s get started.”</p>
+</section>
+<section id="chiefs" class="level2">
+<h2 class="anchored" data-anchor-id="chiefs">Chiefs</h2>
+<p><strong>Running time:</strong> 229</p>
+<p><strong>Year:</strong> 1983</p>
+<p><strong>Plot Summary:</strong> This series tells the story of a southern town’s police chiefs and the serial murderer who confounds them. Will Henry Lee is the first chief, an easy going man who works to establish the position while the murderer begins his havoc. The second is a violent racist who stumbles about his job as the murderer continues his. Tyler Watts is the final chief, an african-american cop who must deal with the virulent racism of his community while he puts together the pieces to finally bring the murderer to justice.</p>
+</section>
+<section id="chiipu-rabu" class="level2">
+<h2 class="anchored" data-anchor-id="chiipu-rabu">Chiipu rabu</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1999</p>
+<p><strong>Plot Summary:</strong> Junichi is a scout, recruiting girls for work in hostess bars. He’s been at the job for seven years, but he’s too softhearted to be a real success. Nanami, who is a music teacher at a junior high school, wishes that something would happen to change the course of her ordinary life. Junichi and Nanami have a disastrous first meeting. By the fourth time they bump into each other, Nanami begins to see Junichi as the man who just might save her from a mediocre life. Although it goes against everything that her upbringing has taught her, Nanami decides to give him a chance.</p>
+</section>
+<section id="childs-play" class="level2">
+<h2 class="anchored" data-anchor-id="childs-play">Child’s Play</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1982</p>
+<p><strong>Plot Summary:</strong> A light but funny gameshow which enjoyed only a blip run during the early ’80s, “Child’s Play” pitted the wits of two contestants in a guessing game of deceptive simplicity. Young children were interviewed and asked to give their descriptions or definitions of everyday items, phrases, or events without using the actual word itself. Sometimes the responses were helpful; other times, inaccurate or misleading; but very often humorous and always insightful. Upon viewing such clips the contestants then had to guess at what the children were describing, with the player who had figured out the most correct answers winning the game.</p>
+</section>
+<section id="children-in-need" class="level2">
+<h2 class="anchored" data-anchor-id="children-in-need">Children in Need</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1979</p>
+<p><strong>Plot Summary:</strong> The annual BBC telethon, for its own charity for children. Every BBC local and national radio and TV station gets involved. Your only chance to see Auntie Beeb’s top newsreaders and political pundits in <em>The Rocky Horror Picture Show (1975)</em> revival, including ‘Jeremy Vine’ (qv) in “The Narrator’s” stockings and suspenders.</p>
+</section>
+<section id="children-of-the-stones" class="level2">
+<h2 class="anchored" data-anchor-id="children-of-the-stones">Children of the Stones</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1977</p>
+<p><strong>Plot Summary:</strong> Scientist Adam Brake and his son Matthew arrive in the sleepy English village of Milbury to find it under the grip of weird psychic powers unleashed by the sinister village squire, Hendrick, and whose power they struggle to break.</p>
+</section>
+<section id="chiller-cinema" class="level2">
+<h2 class="anchored" data-anchor-id="chiller-cinema">Chiller Cinema</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1999</p>
+<p><strong>Plot Summary:</strong> Chiller Cinema was a 30 minute program featuring a variety of features and items of interest to the horror community. Broadcast weekly for three years between 1999 and 2002, the show won several awards, including being named by Gear Magazine as the 11th best Public Access show in the United States. It eventually spun-off into a second show, the “Mad Movie of the Week”, featuring Dr.&nbsp;Gangrene (Larry Underwood) hosting entire old public domain horror movies.</p>
+</section>
+<section id="chiller" class="level2">
+<h2 class="anchored" data-anchor-id="chiller">Chiller</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1995</p>
+<p><strong>Plot Summary:</strong> Chiller is a 5-episode horror/fantasy anthology series originally shown erratically in the UK on ITV. The stories each involve, to some extent, the supernatural, and feature lead actors with familiar faces from UK television.</p>
+</section>
+<section id="chilly-beach" class="level2">
+<h2 class="anchored" data-anchor-id="chilly-beach">Chilly Beach</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 2003</p>
+<p><strong>Plot Summary:</strong> The town of Chilly Beach is a ridiculously unsuccessful Canadian resort community, somehow built on the shores of a drifting ice floe in the far, far north. Its two most adventurous residents are Dale and Frank, two hockey-playing, beer-drinking best friends who have spent their whole lives here largely oblivious to the outside world. Along with the rest of the quirky townsfolk, they confront the inhospitable climate, outrageous culture clashes with visiting foreigners, exaggerated Canadian customs both old and new, and whatever other surreal and perilous situations their unique home throws their way.</p>
+</section>
+<section id="china-beach" class="level2">
+<h2 class="anchored" data-anchor-id="china-beach">China Beach</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1988</p>
+<p><strong>Plot Summary:</strong> A drama series set at an American base during the Vietnam War. Rather than focusing on the battle scenes that made up most other portrayals of the war, this show looked at the everyday lives of the people sent to serve their country. The doctors, nurses, soldiers and even USO entertainers stationed at the base must try to come to terms with the horrors and stresses of the war around them. Not all of them succeed.</p>
+</section>
+<section id="china-smith" class="level2">
+<h2 class="anchored" data-anchor-id="china-smith">China Smith</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1952</p>
+<p><strong>Plot Summary:</strong> Con artist and private eye China Smith works out of a bar in Singapore, roaming Asia in search of beautiful women (who like his tough style) and quick money. His nemeses are the friendly British Inspector and the scheming “empress.”</p>
+</section>
+<section id="chinese-the" class="level2">
+<h2 class="anchored" data-anchor-id="chinese-the">Chinese, The</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1983</p>
+<p><strong>Plot Summary:</strong> Patrick Watson presents filmed examination of the People’s Republic of China. He examines the recent troubles of the Cultural Revolution which profoundly and violently disrupted the country. He also examines the nation in contemporary times after those troubles and how the nation has changed since then as it struggles to rejoin the world stage.</p>
+</section>
+<section id="chips" class="level2">
+<h2 class="anchored" data-anchor-id="chips">CHiPs</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1977</p>
+<p><strong>Plot Summary:</strong> “CHiPS,” which stood for California Highway Patrol, followed the daily beats of two state motorcycle patrolmen as they patrolled the freeway system in and around Los Angeles. Officer Jon Baker was the straight, serious officer while Frank “Ponch” Poncherello was the more free- wheeling member of the duo; both reported to Sgt.&nbsp;Joe Getraer, who gave out assignments and advice in handling the cases. Each episode saw a compilation of incidents, ranging from the humorous (e.g., a stranded motorist) to criminal investigations (such as hijackings) and tragic incidents (such as a fiery multi-car pile-up with multiple deaths. Other aspects of Ponch and Jon’s daily work were highlighted as well; the social lives of both officers (they were both single) often provided the lighter moments. On occassion, Ponch and Jon were assisted by a female “Chippie” at first, the very beautiful Sindy Cahill; and later, the more wholesome Bonnie Clark. In 1982, Ponch got a new partner, Bobby Nelson (series star Wilcox left the show that year), while Nelson’s younger brother, Bruce, was a trainee on the force. By now, the female “Chippie” was the attractive Kathy Lindahan.</p>
+</section>
+<section id="chisholms-the" class="level2">
+<h2 class="anchored" data-anchor-id="chisholms-the">Chisholms, The</h2>
+<p><strong>Running time:</strong> 720</p>
+<p><strong>Year:</strong> 1979</p>
+<p><strong>Plot Summary:</strong> After the Chisholm family were cheated out of their land in Virginia, they packed up everything and headed west to the Oregon Territory to set up a new life in the 1840s. It took two years for the Chisholms, led by patriarch Hadley and matriarch Minerva, to reach Oregon, along the way dealing with Indians, strife, family disagreements and rough travel.</p>
+</section>
+<section id="chobits" class="level2">
+<h2 class="anchored" data-anchor-id="chobits">Chobits</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 2002</p>
+<p><strong>Plot Summary:</strong> Hideki Motosuwa is a poor country guy who just moved to the city to further his study. One day on his way home from work, he discovers a ‘Persocon’, a maiden-shaped robot laying in the dumpster, discarded and wrapped up in bandages.</p>
+</section>
+<section id="chocolate-com-pimenta" class="level2">
+<h2 class="anchored" data-anchor-id="chocolate-com-pimenta">Chocolate com Pimenta</h2>
+<p><strong>Running time:</strong> 45</p>
+<p><strong>Year:</strong> 2003</p>
+<p><strong>Plot Summary:</strong> The story of Ana Francisca, who begins the soap opera as a young and poor teenager, unpopular at school in a small fictious city where everybody knows everything about everyone. Later, she gets married with the owner of the city’s chocolate factory (the major company in the city) and turns herself into a very rich woman, and she also is a very good person, later, her husband dies. The rest of the story happens between the population of the city of Ventura, where a group of 4 people try to take Ana Francisca out of the factory command and try to make all kinds of plans to take it off from her, with no success. Ana Francisca also has passion for one person, Danilo, who also loves her, but their love is repressed in sad feelings about each other’s past.</p>
+</section>
+<section id="choir-the" class="level2">
+<h2 class="anchored" data-anchor-id="choir-the">Choir, The</h2>
+<p><strong>Running time:</strong> 80</p>
+<p><strong>Year:</strong> 1995</p>
+<p><strong>Plot Summary:</strong> This mini-series, based on Joanna Trollope’s novel, explores the internal politics and scandals of a British cathedral choir school. It features the singing voice of first-time actor and boy treble soloist Anthony Way, a real-life student at the St.&nbsp;Paul’s Cathedral Choral School in London.</p>
+</section>
+<section id="chojin-sentai-jettoman" class="level2">
+<h2 class="anchored" data-anchor-id="chojin-sentai-jettoman">Chojin sentai Jettoman</h2>
+<p><strong>Running time:</strong> 25</p>
+<p><strong>Year:</strong> 1991</p>
+<p><strong>Plot Summary:</strong> The scientists discover an energy in the environment called Birdnc. They find a way to bio-engineer it and bond it to humans. The Commander of the Sky Forth Ayachokan Odagiri searches for five people to be part of this J-project. She finds Ryu Tendo and his fiancée Rie Aoi and asks them to volunteers. Ryu is half-conscious after receiving the Birdnic when the Vyram (the villain) starts attacking the Earth Ship. However, a force from a torn surface of the Earth Ship catches Rie. Ryu tries to rescue her but she is sucked. Aya knocks down the semi-hysterical Ryu then escape before the Earth ship totally explodes. The Earth Ship throws out the other four Birdnic Waves to the earth, hitting four civilians. Kaori Rokumeikan (a rich young lady), Raita Oishi (a young farmer), Ako Hayasaka (a highschool student) and Gai Yuuki (a lone wolf motor biker). Aya and Ryu try to gather the four to complete the team. They find a tough time in convincing the three (Gai most especially). But there is something with the Birdnic Wave that links him to the team. And this made him realizes to finally join the team. Jet Icarus cannot defeat the empress’ baby Sikada kid. Then, a group from Dimensia brings Jet Garuda and together with Jetman force, programs the two robots to merge them and Great Icarus is born. As warriors, they develop their powers and learn their weapons. Still, Birdnic Wave won’t take their hearts away. Becoming soldiers doesn’t mean they’ve forgotten how to love. Gai falls in love with Kaori. Her spirit and bravery wakes-up the lone-wolf’s cold-heart. And an honest glimpse springs out when Gai finds out that Kaori feels the same for Ryu. Raita, in some way, cares for Kaori. But he knows that he’s not the man of her caliber. Ryu, realizing the circumstances keeps his distant. He tells Kaori about Rie. But Kaori won’t give up and is still determined to win his heart. Gai, on the other hand, in his feelings. He is ready to protect the woman he loves. And so, Kaori learns to give back the love he’s been offering. But Gai broke-up with her after meeting her parents. A new challenge for Ryu has come when he discovers that Maria is his beloved Rie. He can’t fight her and in a meantime Ryu is on a state of delusion. But he is able to fight it and lead his teammate. Time has come, when finally they’ve learned to accept each other. But, Toran grows-up himself and becomes Vyram’s new emperor. Radigue won’t allow him to kill the Jetman. He and Jetman destroy him. He is rendered in asylum. Radigue makes Maria a vampire. Ryu, though, she has become Vyram (almost a monster) still loves her. Radigue doesn’t want Maria to become human again and so he kills her. Grey is killed in one on one challenge with Gai. Radigue becomes giant Raguem, merges himself with Vylock and fight the Jetman. Jetman manages to kill him and ended the Vyram threat. Three years later, the whole team gets back to their normail life. Raita marries his childhood sweetheart. Ako becomes a pop singer. Gai becomes a successful businessman. Ryu and Kaori are marrying each other. Gai is buying flowers for Ryu and Kaori’s wedding when a street thug stabs him. He is late for the wedding ceremony . Ryu finds him quite exhausted. They sit together and have a talk. Ryu leaves him as Gai lie down the bench then releases the cigarette he’s holding.</p>
+</section>
+<section id="chopper-one" class="level2">
+<h2 class="anchored" data-anchor-id="chopper-one">Chopper One</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1974</p>
+<p><strong>Plot Summary:</strong> Aided by their mechanic Mitch and on assignment from Captain McKeegan, “chopper cops” McMullan and Benedict fly around doing in snipers and muggers and badguys open to their type of surveillance.</p>
+</section>
+<section id="christi-sánchez-tiene-un-show" class="level2">
+<h2 class="anchored" data-anchor-id="christi-sánchez-tiene-un-show">Christi Sánchez tiene un show</h2>
+<p><strong>Running time:</strong> 48</p>
+<p><strong>Year:</strong> 2003</p>
+<p><strong>Plot Summary:</strong> When television legend “Lucha Santiesteban” turned 50, her husband of 25 years left her for a younger woman, menopause highjacked her hormones and she gained 100 pounds…Then things got really bad. Dropped by her long-time Manager and shunned by producers because of her weight, this pampered diva (once the toast of international audiences) suddenly finds herself broke and desperate for work. Only one person comes to her rescue: her most fervent admirer, the President of her now-defunct fan club…a young Cuban rafter named Osmyelys, who quickly takes over the reins of her non-existent career. He decides to produce a (VERY) low-budget “talk-show”, taped in Lucha’s own home utilizing whatever free resources they can access. So, he enlists family, friends and neighbors to pitch in as crew members and on-camera talent.</p>
+</section>
+<section id="christianity-the-first-two-thousand-years" class="level2">
+<h2 class="anchored" data-anchor-id="christianity-the-first-two-thousand-years">Christianity: The First Two Thousand Years</h2>
+<p><strong>Running time:</strong> 400</p>
+<p><strong>Year:</strong> 2001</p>
+<p><strong>Plot Summary:</strong> Part 2 of the eight hour special on A&amp;E which explores the history of Christianity and its impact on the world from the year 0 to 2000. Part 2 accounts the history of the western world’s most influential religion from the year 1000 to contemporary times.</p>
+</section>
+<section id="christopher-columbus" class="level2">
+<h2 class="anchored" data-anchor-id="christopher-columbus">Christopher Columbus</h2>
+<p><strong>Running time:</strong> 360</p>
+<p><strong>Year:</strong> 1985</p>
+<p><strong>Plot Summary:</strong> The epic mini-series tells the story of the legendary Italian-born explorer Diego de Geona Taino, later known as Christopher Columbus, from his birth in c.1450 Genoa, Italy, to his young adult years as an expert sailor and navigator who, with money funded from the monarchy of Spain, sailed to the unknown West to find Asia in 1492, and instead found a ‘New World’ of the modern day West Indies to South America, and then follows his later years in his 50’s as a tired, ailing man whose dreams of exploration and discovery to which he passed onto his son, and other followers, just before his death in 1506.</p>
+</section>
+<section id="christophers" class="level2">
+<h2 class="anchored" data-anchor-id="christophers">Christophers</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1952</p>
+<p><strong>Plot Summary:</strong> Professor Graham (James Cagney) reflects on his life and career and in particular about three students he taught. One was a handicapped artist, the second was a debutante and the third was a college hero. The three students learnt about kindness and dignity from him. Cagney’s performance is powerful and touching.</p>
+</section>
+<section id="christy" class="level2">
+<h2 class="anchored" data-anchor-id="christy">Christy</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1994</p>
+<p><strong>Plot Summary:</strong> Based on the bestseller by Catherine Marshall, Christy tells the story of an idealistic nineteen year old who leaves the comforts of her city home to teach school in the impoverished Appalachian community of Cutter Gap, Tennessee in 1912. Strength, determination, and faith guide young Christy Huddleston through unforeseen difficulties, help her to gain understanding of the proud mountain people, and win her mentorship, friendship, and the love of two men.</p>
+</section>
+<section id="chromiumblue.com" class="level2">
+<h2 class="anchored" data-anchor-id="chromiumblue.com">ChromiumBlue.com</h2>
+<p><strong>Running time:</strong> 92</p>
+<p><strong>Year:</strong> 2002</p>
+<p><strong>Plot Summary:</strong> Henry Brooke is a billionare playboy with an eye on the fearless style guru, Vivian Vadim. Catering to Vivian’s kinks with his bottomless wallet, Henry instructs his bride-to-be to bring any number of people she wants aboard his ship, the Chromium Blue. With the help of the flambouyant stylist Popo, she is to do whatever it takes to help these people live out their erotic fantasies, and then report them in detail to him. Along for the ride are: Maria, Vivian’s best friend and Henry’s limo driver; Anastasia, an electro-cyber vixen; Sasha, the unlucky gigolo; Sir George, Henry’s butler and surrogate father; and Owen, the ghost of George’s dead lover who appears to few.</p>
+</section>
+<section id="chronicle-the" class="level2">
+<h2 class="anchored" data-anchor-id="chronicle-the">Chronicle, The</h2>
+<p><strong>Running time:</strong> 48</p>
+<p><strong>Year:</strong> 2001</p>
+<p><strong>Plot Summary:</strong> Tucker Burns is a qualifier reporter who can’t get a job. He applies for a job at the World Chronicle, where they are delighted to have an over-qualified (by their standards!) reporter on staff. It turns out that all the stories the Chronicle reports are true, but written as tabloid articles so that the public can slowly get acclimated to such things. Aided by photographer Wes and alien abductee/reporter Grace, and backed by his mysterious boss Daniel Stern, Tucker investigates, ghosts, aliens, and other supernatural phenomena.</p>
+</section>
+<section id="chuck-norris-karate-kommandos" class="level2">
+<h2 class="anchored" data-anchor-id="chuck-norris-karate-kommandos">Chuck Norris: Karate Kommandos</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1986</p>
+<p><strong>Plot Summary:</strong> This was Chuck Norris attempt to star in his own animated series. He plays an operative for the United States government who has a team consisting of Pepper, a technological genius, Kimo, a Samurai warrior, Reed, his apprentice, Tabe, a Sumo warrior, and Too Much, the young ward. Together they foil the plans of The Claw and his right hand man, The Super Ninja.</p>
+</section>
+<section id="château-des-oliviers-le" class="level2">
+<h2 class="anchored" data-anchor-id="château-des-oliviers-le">Château des oliviers, Le</h2>
+<p><strong>Running time:</strong> 85</p>
+<p><strong>Year:</strong> 1993</p>
+<p><strong>Plot Summary:</strong> Estelle Laborie is trading antiques. When work becomes too hard for her she decides to retire on the estate of her parents in the Provence. But she does not know that Pierre Severin and the mayor are planning to build a leisure park on the estate. When Estelle finds out she fights to keep her home…</p>
+</section>
+<section id="chîsana-baikingu-uiki" class="level2">
+<h2 class="anchored" data-anchor-id="chîsana-baikingu-uiki">Chîsana Baikingu Uiki</h2>
+<p><strong>Running time:</strong> 20</p>
+<p><strong>Year:</strong> 1974</p>
+<p><strong>Plot Summary:</strong> Long ago, in a little Viking Village called Flake, young Wickie lives a happy life. His father, Halvar, is the chief of the Vikings, and would have liked a son a little more courageous. So, he and his team take Wicke along on their journeys to give him the experience he’ll need to be a real Viking. Yet, somehow Halvar and his men end up trapped or hopelessly stuck somewhere in most cases, and it’s up to Wickie alone to help them out with his flashes of wit.</p>
+</section>
+<section id="chôjikû-kidan-southern-cross" class="level2">
+<h2 class="anchored" data-anchor-id="chôjikû-kidan-southern-cross">Chôjikû kidan Southern Cross</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1984</p>
+<p><strong>Plot Summary:</strong> In the far future, a human colony planet called Glorie comes under attack by an alien race called the Zors. The focus characters of this series, Lt. Jeanne and the 15th Armoured Tactical Unit which she commands, quickly prove to be one of the most effective combat units in this war, despite their reputation as troublemakers. In the course of the war, they play a key role in the fighting as the entire Army of the Southern Cross fights a seemingly hopeless battle against an apparently near invincible enemy. Yet secrets and tensions are hidden in the enemy itself which could profoundly change the conflict on their own.</p>
+</section>
+<section id="chôjikû-yôsai-macross" class="level2">
+<h2 class="anchored" data-anchor-id="chôjikû-yôsai-macross">Chôjikû yôsai Macross</h2>
+<p><strong>Running time:</strong> 25</p>
+<p><strong>Year:</strong> 1982</p>
+<p><strong>Plot Summary:</strong> In the middle of World War III in 1999, an alien ship appears out of nowhere to crash on deserted Macross island. In response to this event, a cease fire is declared and the ship is explored by all the nations of the planet who learn of a potential extraterrestrial threat that could come to retrieve it. In response, the nations of the world unite to create the United Nations Space Navy or UN Spacy for short. For ten years, the ship is rebuilt as Super Dimensional Fortress One (SDF-1) and its technology is adopted for use. On the day of its formal launch, the alien foe arrives as the Zentrani who are determined to retrieve the ship intact for its technology. As Earth defends itself, we also see the personal lives of the crew and residents of the ship as the war profoundly changes them as they fight to stay alive. Meanwhile, the Zentrani learn that their enemy bears an uncomfortable resemble to their creators, the Protoculture, a fact which threatens to take this war down paths that no one can anticipate.</p>
+</section>
+<section id="chôjinki-metalder" class="level2">
+<h2 class="anchored" data-anchor-id="chôjinki-metalder">Chôjinki Metalder</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1987</p>
+<p><strong>Plot Summary:</strong> During World War II, robotics expert Professor Koga was assigned by the Japanese military to create robotic soldiers, which would be turned loose against the allies. That is, until he got word that his son, Tsurugi Ryuusei, had been killed in battle. He then washed his hands clean of the whole thing, locks away the prototype, and takes the plans with him. Four years later, Makoto Dolbara, A former colleague of Professor Koga, becomes leader of an organization called the Neross Empire. He then orders his robots to kill Professor Koga, who survives the attack. He then heads for the secret base, and activates the prototype, which eas designed to look like his son. however, despite the Professor’s pleas, the robot (Metalder) showed little reaction. The robot then tries to respond to the professor’s cries, in which it would be too late. Seeing his dead “father”, the robot then swears that it would be the Neross’ worst nightmare.</p>
+</section>
+<section id="chôjû-sentai-raibuman" class="level2">
+<h2 class="anchored" data-anchor-id="chôjû-sentai-raibuman">Chôjû sentai Raibuman</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1988</p>
+<p><strong>Plot Summary:</strong> Academia was a school for scientists located in Academia Island. One day, Academia’s Top Three students (Tsukikage, Senda, Omura) were kidnapped by Bias. In the process, Tsukikage kills Yano Takuji and Aikawa Mari. Two years later, Volt destroys Academia. Three surviving students (Yuusuke, Jou, Megumi) Find out that the three kidnapped students lived-as Kempu, Mazenda, and Obular. The trio become Liveman to fight their former friends. Later on, Takuji and Mari’s younger siblings (Tetsuya and Jun’ichi) join Liveman.</p>
+</section>
+<section id="chôriki-sentai-ôrenjâ" class="level2">
+<h2 class="anchored" data-anchor-id="chôriki-sentai-ôrenjâ">Chôriki sentai Ôrenjâ</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1995</p>
+<p><strong>Plot Summary:</strong> 600 million years ago, ancient mankind created a rebellious robot named Bacchus Wrath. Riki (Kingranger) banished Bacchus Wrath from earth. In year 1999, He returns to earth with the intention of wiping out all human life and bring about machine rule. Chief Counsellor Miura revived super energies that have been given birth by the lost civilization on Pangaea 600 million years ago. Assembling pieces of a stone plate uncovered three years ago, the secrets of “superpower” has been revealed. Miura builds a pyramid that generates Tetrahedron power-power that allows five U.A. officers to transform into Ohrangers.</p>
+</section>
+<section id="ci5-the-new-professionals" class="level2">
+<h2 class="anchored" data-anchor-id="ci5-the-new-professionals">CI5: The New Professionals</h2>
+<p><strong>Running time:</strong> 50</p>
+<p><strong>Year:</strong> 1998</p>
+<p><strong>Plot Summary:</strong> CI5, the British squad formed by George Cowley to combat ‘anarchy, acts of terror, crimes against the public’, has developed into an international force with operatives hired from around the world by the 1990s. With connections to the FBI, CIA and other law-enforcement agencies, CI5 operates outside borders with a group of specialists under a similar brief.</p>
+</section>
+<section id="cimarron-city" class="level2">
+<h2 class="anchored" data-anchor-id="cimarron-city">Cimarron City</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1958</p>
+<p><strong>Plot Summary:</strong> Cimmaron City is booming due to oil and gold and hopes to become capital of the future state of Oklahoma. Matthew Rockford is the son of the city’s founder; he’s now mayor and a major cattle rancher. Sheriff Temple must keep law and order.</p>
+</section>
+<section id="cimarron-strip" class="level2">
+<h2 class="anchored" data-anchor-id="cimarron-strip">Cimarron Strip</h2>
+<p><strong>Running time:</strong> 90</p>
+<p><strong>Year:</strong> 1967</p>
+<p><strong>Plot Summary:</strong> Marshal Jim Crown must enforce the law in the strip of land lying between Kansas Territory and the Indian territory in the late 19th century. He is aided by the Scot, Mac Gregor, and the photographer, Francis Wilde. Easterner Dulcey has inherited her late father’s inn.</p>
+</section>
+<section id="cinema-europe-the-other-hollywood" class="level2">
+<h2 class="anchored" data-anchor-id="cinema-europe-the-other-hollywood">Cinema Europe: The Other Hollywood</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1996</p>
+<p><strong>Plot Summary:</strong> Chronicles the birth of European cinema, from the Lumiere brothers to World War I, and then the first golden age of Swedish cinema, from the formation of Svenska Bio to the departure for Hollywood of Stiller and Sjöström. The French build the first studio, invent the traveling shot, and experiment in sound. Max Linder becomes the first comedic star. The Italians do spectacle and early realism. Germans invent film propaganda and have Lubitsch. The Danish cinema is rich before the war. An affectionate portrait of Swedish cinema appreciates its cinematography, led by Jaenzon, its conversion of novels into film, and the emergence of a production company that owned its own theaters.</p>
+</section>
+<section id="circus-boy" class="level2">
+<h2 class="anchored" data-anchor-id="circus-boy">Circus Boy</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1956</p>
+<p><strong>Plot Summary:</strong> 12-year-old Corky has been adopted by a traveling circus owned by Big Time Champion. He is water boy to baby elephant Bimbo and otherwise participates in the behind-the-scenes life of the circus.</p>
+</section>
+<section id="cisco-kid-the" class="level2">
+<h2 class="anchored" data-anchor-id="cisco-kid-the">Cisco Kid, The</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1950</p>
+<p><strong>Plot Summary:</strong> The Cisco Kid and his English-mangling sidekick Pancho travel the old west in the grand tradition of the Lone Ranger, righting wrongs and fighting injustice wherever they find it.</p>
+</section>
+<section id="citizen-baines" class="level2">
+<h2 class="anchored" data-anchor-id="citizen-baines">Citizen Baines</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 2001</p>
+<p><strong>Plot Summary:</strong> Elliot Baines has lost his senatorial seat for the state of Washington after numerous terms. He now must get used to being a normal civilian again. One of the things Elliot works on is he relationship with his three daughters. There is Ellen, a power driven lawyer who could be next in line for a senate seat; Reeva, who is tired of being a house wife and wants more than what her possibly cheating husband can give her; and Dori, who is the irresponsible of the three. She goes through guys like flavors of the month and struggles in the job world because of her famous family name.</p>
+</section>
+<section id="city-lights" class="level2">
+<h2 class="anchored" data-anchor-id="city-lights">City Lights</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1975</p>
+<p><strong>Plot Summary:</strong> A celebrity interview show. Each show was usually devoted to a single celebrity. Brian Linehan was the interviewer, and he was especially noted for the rare depth of his research. Celebrities were often startled, flattered, or dismayed by the questions he would ask about less frequently discussed or even obscure aspects of their lives and careers. His questioning was probing and revealing, but never adversarial. His most famous interview was one done with Burt Reynolds, where Reynolds exclaimed, “You just hit nerves.” Apparently, for some time, Linehan’s unprecedented interview approach made this show a popular fad among celebrities in Hollywood.</p>
+</section>
+<section id="city-of-angels" class="level2">
+<h2 class="anchored" data-anchor-id="city-of-angels">City of Angels</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1976</p>
+<p><strong>Plot Summary:</strong> Jake is a frequently broke private detective who trusts no one and pays little attention to the fine points of the law. His secretary Marsha also takes calls for call girls. Set in 1930s Los Angeles.</p>
+</section>
+<section id="city-the" class="level2">
+<h2 class="anchored" data-anchor-id="city-the">City, The</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1995</p>
+<p><strong>Plot Summary:</strong> “The City” picks up where “Loving” left off. After a rash of serial killings, several of Corinth, Pennsylvania’s residents move to an apartment building in SoHo. These people have come to start a brand new life. While doing so, they encounter several difficult situations, including another psychopath killer, bombings, and organized crime.</p>
+</section>
+<section id="civil-war-the" class="level2">
+<h2 class="anchored" data-anchor-id="civil-war-the">Civil War, The</h2>
+<p><strong>Running time:</strong> 680</p>
+<p><strong>Year:</strong> 1990</p>
+<p><strong>Plot Summary:</strong> This highly acclaimed mini series traces the course of the U.S. Civil War from the abolitionist movement through all the major battles to the death of President Lincoln and the beginnings of Reconstruction. The story is mostly told in the words of the participants themselves, through their diaries, letters, and Visuals are usually still photographs and illustrations of the time, and the soundtrack is likewise made up of war-era tunes played on period instruments. Several modern-day historians offer periodic comment and insight on the war’s causes and events.</p>
+</section>
+<section id="clangers-the" class="level2">
+<h2 class="anchored" data-anchor-id="clangers-the">Clangers, The</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1970</p>
+<p><strong>Plot Summary:</strong> Legendary British children’s animation of the early 70s made by the ‘Smallfilms’ team of Oliver Postgate and Peter Firmin, this series chronicled the melancholically funny lives of the Clangers, a flutey-voiced family of woolen, knitted aliens living below the surface of a knobbly little planet far out in space. Their misadventures brought them into contact with such unlikely creatures as the Soup Dragon, the Froglets, the Iron Chicken and the Glow Buzzers. The series remains a marvelously still point in a hectic world!</p>
+</section>
+<section id="clap-el-lugar-de-tus-sueños" class="level2">
+<h2 class="anchored" data-anchor-id="clap-el-lugar-de-tus-sueños">Clap!… El lugar de tus sueños</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 2003</p>
+<p><strong>Plot Summary:</strong> CLAP stands for “el Comité de la Escuela de Artes”, the Art School. This school was founded by Ofelia, a retired actress. She founded this school because long time ago she didn’t support her own daughter when she wanted to follow her steps, and now she is trying to correct this mistake by supporting young talents. CLAP is the school where three childhood friends, Valentina, Montserrat and Helena, go to study. Helena’s mother is against it, but Helena still goes with her friends. Tomas, the Montserrat’s brother, who is in love with Helena, goes with girls too. In Mexico city they meet Fabricio, who lives in the same hotel. He never talks about his past or parents, and he also wants to study in CLAP. There is also Juan Pablo, who lives with Padre Constantino since he was abandoned in the church and he directs the church choir. He will fall in love with Valentina… There are also many other personages and students of CLAP. This is basically another teen novela about their problems, love and friendship.</p>
+</section>
+<section id="clase-406" class="level2">
+<h2 class="anchored" data-anchor-id="clase-406">Clase 406</h2>
+<p><strong>Running time:</strong> 45</p>
+<p><strong>Year:</strong> 2002</p>
+<p><strong>Plot Summary:</strong> The main character in this story is Francisco Romero (excellently played by Jorge Poza), a small-town teacher who decides to try his luck in Mexico City. He joins the faculty of Prep school number 10 “Rosario Castellanos” and soon realizes that his work is more demanding than he expected; in addition to having to prove himself as a teacher, he must prove himself as a human being. He will find that, in order to make a difference with his students, he will also have to assume the roles of counselor, psychologist, doctor, and even detective. The themes this story deals with are: dropping out of school, teen pregnancy, street gangs, men who abuse their stepdaughters, teenagers forced to work to support their families, and alcoholic parents who lead their children down the same path - that is, problems of a very real nature, experienced by high school students the world over. This is also a love story. Both students and faculty fall victim to Cupid’s random arrows, beginning with Francisco and Adriana (the school counselor) who, nonetheless, must put their hormones on hold long enough to become respected role models in the eyes of their students. But their love story is not destined for a happy ending, since Adriana will have to choose between Francisco and her love for her son. Fortunately, Francisco will have a second chance at love with Ana Maria (Alexa Damian), the new English teacher who will become his right arm when dealing with his students and their problems in and out of school. Ultimately, however, he will find true love in the arms of Angela (Alejandra Barros), the woman in charge of the school cafeteria. She is a working mother whose teenage children Juan David (Alfonso Herrera) and Sandra (Karla Cossio) attend this same school, and who has managed to keep a fine balance between being a housewife, a working woman, a mother and a lover. The school itself occupies center stage in this story, and will become the forum where the main conflicts of the plot will be exposed and resolved, and where Francisco Romero, in his role as teacher, will not only show his students how entertaining learning can be, but will make them understand the importance of respect for authority, of friendship, camaraderie, love, and the values that will guide their conduct as they close the cycle of adolescence and move on to become adults. One of the recurring themes in this telenovela is friendship, which is best exemplified by the story of Gabriela (Sherlyn) and Marcela (Dulce Maria), two high school students who struggle to get ahead and maintain their friendship alive in spite of the painful experiences they go through and the many obstacles that threaten to drive them apart. Their friendship will be put to the test when one of them realizes that everyone will give you advice, but no one will stand with you to face the consequences. Alcohol abuse among teenagers, sexual responsibility, domestic violence and prostitution are also topics addressed in this production. More problems are Magdalena (Iran Castillo), a strikingly beautiful young woman with a rebellious nature. She faces domestic abuse, while another student Hugo (Pablo Magallanes), gets involved with gangs leading to his death. Carlos (Francisco Rubio) get swindled into drug dealing, while Tatiana (Sara Maldonado) comes as the teen who feels out of place as a rich kid whose family has gone poor and must adapt to face the gang 406. She ultimately leads to drugs much later on. More students are Kike (Aaron Diaz) who becomes an alcoholic, Alfredo (Frantz Cossio) who deals with being gay, and Daniela (Grettell Valdez) whose dreams of becoming a model almost lead her to the end of her life. The toughest struggle is when Francisco, their professor who has stuck through thick and thin with them must leave with his new wife. A new professor Santiago (Francisco Gattorno) takes his place. Can the students accept him? Will he be able to fill the void that was left by his predocessor? His troubled past including a young girl who was sexually harassing him in an old school he taught and when he does not agree to have a relationship with her she accuses him of rape. The girl with the troubled mind is known as Jessica (Anahi). Her story is one of the classics, a poor rich girl who wishes to act like a villian due to a father who doesnt pay attention to her, and a dead mother who she strives for. Clase 406 shows the hardships of being a teen with modern day problems that have been ignored because they have been too taboo. In the clase 406, nothing is taboo and anything can happen…</p>
+</section>
+<section id="clase-aparte" class="level2">
+<h2 class="anchored" data-anchor-id="clase-aparte">Clase aparte</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1995</p>
+<p><strong>Plot Summary:</strong> In a very exclusive school of Bogotá, senior year students are facing the realities of Colombia at the end of the century, in an environment surrounded by comfort and opportunity of a high class position. Characters that dream, laugh and live their everyday life at school, at home, with friends and in their inner world that makes them One Of A Kind.</p>
+</section>
+<section id="class-act" class="level2">
+<h2 class="anchored" data-anchor-id="class-act">Class Act</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1994</p>
+<p><strong>Plot Summary:</strong> Kate Swift has always know her place in the world. “I was a rich bitch! I was good at it! I liked it!” Imagine her horror when both her husband and all her ill-gotten cash vanish, leaving her to fend for herself for the first time ever. Add in her mad old dad, Sir Horrace Mainwaring (Richard Vernon), boozy journalist Jack (John Bowe), Australian ex-criminal Gloria (Nadine Garner) and Detective Inspector Latham, a sarcastic policeman (James Gaddas) and it’s a recipe for trouble!</p>
+</section>
+<section id="class-of-96" class="level2">
+<h2 class="anchored" data-anchor-id="class-of-96">Class of ’96</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1993</p>
+<p><strong>Plot Summary:</strong> “Class of ’96” is the FOX series directed by Peter Horton (of “thirtysomething” fame). The show deals with the story of 7 friends who attend Havenhurst College, a fictitious Ivy League school located in New England. The show was first introduced in January of 1993 and was canceled in May at the end of the show’s first season.</p>
+</section>
+<section id="classic-concentration" class="level2">
+<h2 class="anchored" data-anchor-id="classic-concentration">Classic Concentration</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1987</p>
+<p><strong>Plot Summary:</strong> Revival of the classic NBC game show where two contestants, one a returning champion, faced a computer-generated board of 25 squares. Game play was the same as before: Each contestant called out a pair of numbers on the board, which contained the names of prizes and WILD and TAKE cards (the latter two explained later). No match passed control to the opponent, but a match gave whatever prize was named or a TAKE marker, revealed two pieces of the rebus (identifying a person, phrase, place, thing, etc.) and allowed him/her a chance to solve the rebus. WILD cards provided an automatic match; revealing two WILD cards in the same turn earned a $500 bonus, while uncovering the third take meant a $1,000 bonus and the opportunity to reveal up to five pieces of the rebus at once. Contestants uncovering a TAKE card (red and green cards, with a color match required) could, upon a correct match, elect to hold onto the marker to wait for their opponent to collect a better prize or to take back a desired prize their opponent had already taken. Only upon correctly solving the rebus does a player actually win what he/she claimed from the board; the loser forfeits all his gifts. The winner played a bonus game that used a 15-square board, with a car used as a grand prize. The model names of eight cars (e.g., FIREBIRD, JUSTY, 323, etc.) appeared on the board, with one of them not having a match. Contestants successfully matching the seven car names within 35 seconds won the last car named and retired the player undefeated; otherwise, an extra 5 seconds was added to the clock each for each subsequent trip to the bonus game (later in the show’s run, uncovering a “FIVE BONUS SECONDS” card and winning the game added 5 more seconds to the clock). The rules affecting a champion’s reign, aside from winning a car and leaving undefeated, changed throughout the run at first, it was one loss and done (early on, contestants could also win more than one car); later, players cold lose twice before their defeat; still later, a best-of-three format was used, while the rules reverted back to the second format even later. An annual tournament of champions (with participants determined by cash winnings) offered a trip-around-the-world as a grand prize during the first year; during the second through fourth years, a luxury car was the top prize. Production of “Classic Concentration” ceased during the summer of 1991; the network aired reruns through January 1994.</p>
+</section>
+<section id="clean-house" class="level2">
+<h2 class="anchored" data-anchor-id="clean-house">Clean House</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 2003</p>
+<p><strong>Plot Summary:</strong> Each week, one cluttered house is made over by host Niecy Nash (Reno 911!) and her crew of interior designers and organizers. They decide what stays and, more importantly, what goes–by way of a giant yard sale. Then they turn around and use the proceeds to do a much-needed home makeover.</p>
+</section>
+<section id="clear-horizon-the" class="level2">
+<h2 class="anchored" data-anchor-id="clear-horizon-the">Clear Horizon, The</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1960</p>
+<p><strong>Plot Summary:</strong> Space opera would be a more accurate description of this daytime serial, which focused on astronaut Roy Selby, his family, and his co-workers at Cape Canaveral.</p>
+</section>
+<section id="cleopatra-2525" class="level2">
+<h2 class="anchored" data-anchor-id="cleopatra-2525">Cleopatra 2525</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 2000</p>
+<p><strong>Plot Summary:</strong> An exotic dancer, cryogenically frozen in the year 2001, is accidentaly thawed out in 2525 by two female warriors who are fighting against evil robots which have taken over the world. The three join forces and try to escape the underground caverns to which humanity has been banished, meeting up with all sorts of strange creatures along the way.</p>
+</section>
+<section id="clerks" class="level2">
+<h2 class="anchored" data-anchor-id="clerks">Clerks</h2>
+<p><strong>Running time:</strong> 22</p>
+<p><strong>Year:</strong> 2000</p>
+<p><strong>Plot Summary:</strong> Following the events of the movie ‘Clerks’, Dante Hicks still works at the Quick Stop, and his best friend Randall Graves still ‘works’ at the video store (even though he spends most of his time figuring out ways to get Dante into trouble). However, with the arrival into town of diabolical billionaire megalomaniac Leonardo Leonardo, their lives are about to get more unusual, even if their jobs remain as unsatisfying and tedious as before. Soon, Dante and Randall find themselves thrown headlong into crazy adventures involving, in no particular order, a monkey, Little League Baseball, Korean animators, Canadian exports, lesbian ex-girlfriends of Randall, Judge Reinhold, the Matrix, refridgerator door locks and numerous unwarranted ‘Star Wars’ references. And as always, they receive very little in the way of constructive help from slackers Jay and Silent Bob.</p>
+</section>
+<section id="click-the" class="level2">
+<h2 class="anchored" data-anchor-id="click-the">Click, The</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1997</p>
+<p><strong>Plot Summary:</strong> Three teams of two members competed in this interactive website race game. In Round 1, each of the 3 teams were given 60 seconds (independently) to earn as much money as they possibly could by using a computer and mouse to randomly select the category with their dollar value (which was either $25 or $50 in Round 1), and then racing to the appropriate places while answering each question. Several questions asked you to go to either the “Web Site,” where you could receive e-mails (by naming who wrote this e-mail letter), Click Pix (questions regarding a photo) or Sound Bytes (Q’s with audio). There was also the “Word Wizard,” whose questions ranged from Spellcheck (identify the misspelled word in each of the phrases), Dictionary (e.g., What is the right spelling of the word)?, or Thesaurus (e.g., What word has a certain definition)? Also, there was “Double Click,” in which one question could double the team’s score. They kept at it until time runs out. In Round 2, a team stood at their podium until their partner comes up with the wrong answer or they click on the “Virus,” which in their situation, host Seacrest asked a question to the opposing two teams, the team who buzzed in with the right answer got control of the mouse or the team at the computer remained there. Dollar values were $50-$75. In the third and final round, Host Seacrest would be in control of the mouse, while each team is separated. One player from each team went to either the Motherboard, Web Site or Word Wizard while the other teammate stayed at their podiums. Each correct answer on a question was worth $100. After the teammates switched from their podiums to the stations, 3x, etc., whoever has the most money wins the game. In the bonus round, the team had to answer 3 questions correctly to win 2 laptop computers. Very often, the team clicked a question, and went to the proper area, thus the teammate would answer the question. The teammate has 45 seconds to get all 3 questions right before winning the computers. During its two-season run, there was no Motherboard; players had to run to the “Hard Drive” for general knowledge questions, but the Word Wizard and Web Site remained (although the Web Site had never been mentioned). The other change in the first round was that only one player remained at the mouse while his/her partner did all the racing. If the racer gets the question wrong or passes, then the clicker could answer it. Limited changed were made in the second round and everything was completed that the “Virus” was renamed the “Crash”. In the third round, in order to promote appropriate behavior, Host Seacrest turned his back to the screen when he clicked. Also in the second season, the bonus round was tweaked so that each correct answer would win the team $100 in 60 seconds (instead of 45), and all 3 correct answers won that team the jackpot and those computers.</p>
+</section>
+<section id="client-the" class="level2">
+<h2 class="anchored" data-anchor-id="client-the">Client, The</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1995</p>
+<p><strong>Plot Summary:</strong> This series was based on the book by John Grisham about Reggie Love, a lawyer, who just started her practice and is also a recovering alcoholic which was made into a movie starring Susan Sarandon. Now Jobeth Williams is playing the part of Reggie. Her adversary in the movie, Roy Foltrig is also there. Only their relationship is not as adversarial as it was in the movie. Reggie occasionally calls on Roy for help, and at other times drives him crazy with high standards of ethics. Also Reggie is trying to convince her ex-husband to allow her access to her children.</p>
+</section>
+<section id="climax" class="level2">
+<h2 class="anchored" data-anchor-id="climax">Climax!</h2>
+<p><strong>Running time:</strong> 48</p>
+<p><strong>Year:</strong> 1954</p>
+<p><strong>Plot Summary:</strong> Told through the Journal left by Dr.&nbsp;Jekyll after Mr.&nbsp;Hyde is killed in the opening scene. This is a bare bones production, but is very stylish never the less. The classic search of man’s Duality. More subtle and sublime then the more famous versions.</p>
+</section>
+<section id="clock-the" class="level2">
+<h2 class="anchored" data-anchor-id="clock-the">Clock, The</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1949</p>
+<p><strong>Plot Summary:</strong> Suspense/Anthology series based on a ABC radio series which ran from 1946-48. The half-hour series mostly consisted of original dramas concerning murder, mayhem or insanity. Series narrator Larry Semon was the only regular; each week a new set of guest stars were featured. The title of the series was derived from a clock which was major plot element in each story. The show’s musical theme was “The Sands of Time.”</p>
+</section>
+<section id="clone-high" class="level2">
+<h2 class="anchored" data-anchor-id="clone-high">Clone High</h2>
+<p><strong>Running time:</strong> 22</p>
+<p><strong>Year:</strong> 2002</p>
+<p><strong>Plot Summary:</strong> A secret government plan to dig up historical figures and clone them has work. It is 16 years later, and the clones are now in high school. The five main characters are Abe Lincoln, an all around nice but naive guy who lusts after the school sexpot Cleopatra, who is dating the macho JFK. Also, Abe two best friends are Joan of Arc, an angst ridden goth girl who is in love with him, and Gandhi, a none-stop party animal. Clone High bravely tackles challenging teen issues, such as sleep deprivation, catching ADD from toilet seats, the evils of litter, and having the guy you like not like you back the same way you like him. Will Abe get together with Cleo, or be thwarted by the handsome JFK? Will Joan finally get Abe to notice her? Who’s to say?</p>
+</section>
+<section id="clone-o" class="level2">
+<h2 class="anchored" data-anchor-id="clone-o">Clone, O</h2>
+<p><strong>Running time:</strong> 45</p>
+<p><strong>Year:</strong> 2001</p>
+<p><strong>Plot Summary:</strong> The meeting of a man with his image 20 years younger. This is the plot of O Clone. In the beggining of the story Lucas is a happy adolescent, romantic, full of projects, and he’s in love with a young arabic girl: Jade. But life didn’t run well for him: he separates with Jade and, during the twenty years that have passed during the novel, he’s not the same thing physically, his projects are lost by the way, he has no more the tenderness, the romantic atmosphere, and the poetry of before. He’s now dry by inside. Jade, in the other side, lived all this time imagining that her life would be much happier if she had married him. Twenty years later they meet again. Jade gets upset, trying to find, in the forty years old Lucas, what is left from the person she once fell in love with. That’s when the clone appears, made by Lucas’ godfather without his knowledge, the geneticist Albieri. The clone is not Lucas, but it is the image that Jade loved during her whole life. We have then, an uncommon love triangle: Lucas becoming the rival of himself. The appearing of the clone changes completely the lifes of the other characters of the plot.</p>
+</section>
+<section id="close-relations" class="level2">
+<h2 class="anchored" data-anchor-id="close-relations">Close Relations</h2>
+<p><strong>Running time:</strong> 50</p>
+<p><strong>Year:</strong> 1998</p>
+<p><strong>Plot Summary:</strong> The stable, seemingly happy lives of the Hammond family and their three very different grown-up daughters Prudence (‘Amanda Redman’ (qv)), Louise (‘Alice Krige’ (qv)) and Maddy (‘Kelly Hunter’ (qv)) are suddenly shattered when Gordon (‘Keith Barron’ (qv)) has a heart attack. Whilst recovering Gordon falls in love with his nurse April (‘Adjoa Andoh’ (qv)) and decides to leave Dorothy (‘Sheila Hancock’ (qv)), his wife of many years, and move in with her. Initially, the shock causes great consternation in the family but forces the exposure of many hidden secrets as Dorothy stays with each daughter in turn whilst trying to rebuild her life. Gradually, all the Hammond’s, young and old, must come to terms with their new lives and circumstances, and face a future very different from anything they could have imagined.</p>
+</section>
+<section id="close-up" class="level2">
+<h2 class="anchored" data-anchor-id="close-up">Close Up</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1997</p>
+<p><strong>Plot Summary:</strong> A very popular TV interview talk-show series about prominent personalities of Maltese nationality who have created successfull careers for themselves in Malta or abroad. Guests included Canadian TV director Mario Azzopardi, Lateral-thinker Dr.&nbsp;Edward de Bono, popular criminal defense lawyer Gianella Caruana Carrun, entrepeneur Albert Mizzi, architect Richard England and politician Alex Cachia Zammit.</p>
+</section>
+<section id="clouds-of-witness" class="level2">
+<h2 class="anchored" data-anchor-id="clouds-of-witness">Clouds of Witness</h2>
+<p><strong>Running time:</strong> 45</p>
+<p><strong>Year:</strong> 1972</p>
+<p><strong>Plot Summary:</strong> Lord Peter’s brother, the Duke of Denver is accused of murdering their sister Mary’s fiancé. It’s up to Lord Peter and his faithful man Bunter to untangle all the clues and the contradicting testimony of a cloud of witnesses to save Denver.</p>
+</section>
+<section id="clown-der" class="level2">
+<h2 class="anchored" data-anchor-id="clown-der">Clown, Der</h2>
+<p><strong>Running time:</strong> 45</p>
+<p><strong>Year:</strong> 1998</p>
+<p><strong>Plot Summary:</strong> Max Zander, top agent for the international police agency WIPA, deos battle with the forces of crime and stands up for the rights of the little people. To strike fear into the hearts of his enemies, he fights crime with his face hidden by a plastic mask, leaving crime bosses to speculate on just who “The Clown” really is.</p>
+</section>
+<section id="club-buggery" class="level2">
+<h2 class="anchored" data-anchor-id="club-buggery">Club Buggery</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1995</p>
+<p><strong>Plot Summary:</strong> Roy and HG hosted a relaxed chat show in the confines of the Sydney RSL club, Club Buggary, complete with glittering Pokies in the background. Easy flowing chat on the subjects of sport, entertainment and politics resulted, as well as interviews with interesting people from these fields.</p>
+</section>
+<section id="clue-club" class="level2">
+<h2 class="anchored" data-anchor-id="clue-club">Clue Club</h2>
+<p><strong>Running time:</strong> 25</p>
+<p><strong>Year:</strong> 1976</p>
+<p><strong>Plot Summary:</strong> The animated adventures of teenagers Larry, Dotty, D.D. &amp; Pepper–the Clue Club–and their talking bloodhounds Woofer and Whimper, as they travel around the country ferreting out mysteries and solving strange crimes. Any resemblance to the Scooby-Doo series is, of course, completely coincidental…</p>
+</section>
+<section id="cluedo" class="level2">
+<h2 class="anchored" data-anchor-id="cluedo">Cluedo</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1990</p>
+<p><strong>Plot Summary:</strong> One of the most interesting game shows ever, which was based on intelligent, attention, and improvisation, as well as Anthony E. Pratt’s classic board game. Mrs.&nbsp;Elizabeth Peacock is a wealthy widow living in Arlington Grange with her step-daughter, the seductive Miss Vivienne Scarlet, and her faithful maid, Mrs.&nbsp;Blanche White. Every weekend, she invites her best friends over. They are Professor Peter Plum, Reverend Johnathan Green, and Colonel Michael Mustard. There will usually be someone new thrown into the mix, whom everyone will have a motive of sorts to kill. This will be a short film showed to two teams of celebrities, who will than question the suspects and try to fit together whodunit, where, and how. Than, they would make an accusation, and eventually the killer would come clean and a film showing the murder being committed would be shown. There was no actual prize for the winner save the satisfaction that they were better sleuths than the other team. Every season (and the Christmas episode) had a completely new cast.</p>
+</section>
+<section id="clueless" class="level2">
+<h2 class="anchored" data-anchor-id="clueless">Clueless</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1996</p>
+<p><strong>Plot Summary:</strong> A television series, based on the popular movie of the same name. Many of the actors from the movie appear in the television series, including Dion, Mr.&nbsp;Hall, Miss Giest, Amber, and Murray.</p>
+</section>
+<section id="cnn-world-beat" class="level2">
+<h2 class="anchored" data-anchor-id="cnn-world-beat">CNN World Beat</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1998</p>
+<p><strong>Plot Summary:</strong> CNN’s groundbreaking international music news program, World Beat offers in-depth profiles and interviews with artists from around the world. World Beat airs on all feeds of CNN International (CNNI), on CNN Domestic, and on CNN Airport Network to over one billion viewers worldwide in 210 countries.</p>
+</section>
+<section id="co-ed-fever" class="level2">
+<h2 class="anchored" data-anchor-id="co-ed-fever">Co-ed Fever</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1979</p>
+<p><strong>Plot Summary:</strong> This “series” died the night it debuted. A steal from the very popular movie “Animal House”, this was set in Brewster House, a co-ed dorm at Baxter College.</p>
+</section>
+<section id="coach" class="level2">
+<h2 class="anchored" data-anchor-id="coach">Coach</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 1989</p>
+<p><strong>Plot Summary:</strong> Hayden Fox is the head coach of a university football team, and eats, sleeps and lives football. His partner, however, does not share his passion for the sport, which frequently causes friction in their relationship. While Hayden often fits the stereotype of dumb jock (as do his co-workers Luther and Dauber), he sincerely cares about his friends and family, and tries his best to make things work out.</p>
+</section>
+<section id="code-lyoko" class="level2">
+<h2 class="anchored" data-anchor-id="code-lyoko">Code Lyoko</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 2003</p>
+<p><strong>Plot Summary:</strong> Code Lyoko tells the story of a group of students who uncover a parallel universe called Lyoko inside a super-computer that is threatened by a virus that could destroy the Universe. It’s up to four boarding school students named Jeremy, Yumi, Ulrich, and Odd to help a computer program named “Aelita” to stop the rogue computer X.A.N.A and his plans to attack their world.</p>
+</section>
+<section id="code-name-eternity" class="level2">
+<h2 class="anchored" data-anchor-id="code-name-eternity">Code Name: Eternity</h2>
+<p><strong>Running time:</strong> 0</p>
+<p><strong>Year:</strong> 1999</p>
+<p><strong>Plot Summary:</strong> Ethaniel (Cameron Bancroft), an alien creature from a distant galaxy, takes on human form in order to capture the rogue alien David Banning (Andrew Gillies). Now Ethaniel must learn about our world: how we think and how we relate to each other. Dr.&nbsp;Laura Keating (Ingrid Kavelaars) assists Ethaniel in his understanding of the “human” way while he pursues Banning. Ethaniel knows Banning’s secret goal lies in the brain of Thorber (Hannes Jaenicke), Ethaniel’s missing brother. A brilliant scientist, Thorber originally worked with Banning but fled after discovering Banning’s real scheme: the ultimate destruction of all human life on earth. Joined by Byder (Joseph Baldwin), a rebel hooked on conspiracy theories, Ethaniel and Dr.&nbsp;Laura Keating set out on their mission. Forging a powerful interspecies alliance, Laura and Ethaniel risk their lives and their emotions, including their growing love for each other. Danger, romance and suspense abound in the unique action-adventure series CODE NAME: ETERNITY.</p>
+</section>
+<section id="code-r" class="level2">
+<h2 class="anchored" data-anchor-id="code-r">Code R</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1977</p>
+<p><strong>Plot Summary:</strong> This CBS adventure series managed to combine elements of “Adam-12”, “Emergency” &amp; “Baywatch” at the same time by chronicling the adventures of the fire, police &amp; ocean rescue services of Channel Island, located just off the coast of Southern California. Baker was the head lifeguard, Robinson the police chief &amp; Wilson the fire chief; all three and their subordinates battled arsonists, muggers, car crashes, bootleggers, danglers, etc. on a weekly basis.</p>
+</section>
+<section id="code-red" class="level2">
+<h2 class="anchored" data-anchor-id="code-red">Code Red</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1981</p>
+<p><strong>Plot Summary:</strong> Joe Rorchek is a 30 year veteran of the LA Fire Department. His sons follow in his footsteps, as does 13-year-old adopted Danny who wants to be a fireman. Heavy on teaching us all about fire safety.</p>
+</section>
+<section id="codename-kids-next-door" class="level2">
+<h2 class="anchored" data-anchor-id="codename-kids-next-door">Codename: Kids Next Door</h2>
+<p><strong>Running time:</strong> 30</p>
+<p><strong>Year:</strong> 2002</p>
+<p><strong>Plot Summary:</strong> Codename: Kids Next Door follows the escapades of five eager, yet bumbling, ten-year-olds as they join forces against adulthood to fight for the right to enjoy all the fun things in life. These principled kids tackle the really important issues facing their peers, like the right to stay up late or to eat whatever they want. But when taking a stand is just not enough, this crew embarks on top secret missions on behalf of children everywhere, utilizing fantastic homemade technology like flying machines and catapults, to accomplish their goals. Like any good team, the agents in Codename: Kids Next Door each have their own distinct identities, skills and personalities. Numbuh One is Nigel Uno, the British-accented leader of the group. Hoagie P. Gilliam, a mechanical genius and expert pilot, is known as Numbuh Two. Diversionary tactics are the specialty of Kiki Sanban, also known as Numbuh Three. Brash and impulsive Numbuh Four (Wallabee Beatles) is a master of hand to hand combat. And Numbuh Five, alias Abigail “Abby” Lincoln, is the quiet one with the most common sense. Whether it’s the possibility of getting shipped off to summer camp, battling the imposition of adult swim time at the local swimming pool, or clashing with adult enemies such as Gramma Stuffum, Knightbrace, Mr.&nbsp;Wink and Mr.&nbsp;Fibb, these kids have their work cut out for them.</p>
+</section>
+<section id="colbys-the" class="level2">
+<h2 class="anchored" data-anchor-id="colbys-the">Colbys, The</h2>
+<p><strong>Running time:</strong> 60</p>
+<p><strong>Year:</strong> 1985</p>
+<p><strong>Plot Summary:</strong> This night time spin-off from the then top-rated series “Dynasty” featured the adventures of Jeff and Fallon Colby (John James and Emma Samms) in California.</p>
+</section>
+<section id="cold-lazarus" class="level2">
+<h2 class="anchored" data-anchor-id="cold-lazarus">Cold Lazarus</h2>
+<p><strong>Running time:</strong> 300</p>
+<p><strong>Year:</strong> 1996</p>
+<p><strong>Plot Summary:</strong> Dr.&nbsp;Emma Porlock and her colleagues, attempting to unlock the secrets of human memory for the Masdon drug empire, get a cryogenically stored 400-year-old human head to project its memories through virtual reality displays. But Porlock and her team are chronically under-funded, and she may have to go around Masdon to a media sleaze merchant to get the money she needs to maintain the project. But an even more complex world of secret police, RON (Reality-Or-Nothing) riots, and murder is going on outside the lab. And the deeper Porlock goes into the frozen memories of the writer Daniel Feeld, the more twisted the labyrinth of intrigue becomes.</p>
+<!-- -->
+
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb3" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Sample Movie Catalog"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: cosmo</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">    df-print: paged</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-depth: 2</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-expand: 3</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> source</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>*This notebook demonstrates how you can use Quarto Markdown to generate a report of records from a table. Specifically, we will create a catalog of 100 movies.</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu"># Setup</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>Load packages and import an Excel file with plot summaries of 1000 movies.</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>movies_tbl <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data/movie-sampler.xlsx"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  readxl<span class="sc">::</span><span class="fu">read_xlsx</span>()</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">#dim(movies_tbl)</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="fu">## Preview the data:</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(movies_tbl)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="fu"># Movie Summaries</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="in">```{r echo=FALSE, results='asis'}</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="in">for (i in 1:100) {</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("## ", movies_tbl[i,"MovieTitle", drop=TRUE], "\n\n")</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("**Running time:** ", movies_tbl[i,"RunningTime", drop=TRUE], "\n\n")</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("**Year:** ", movies_tbl[i,"Year", drop=TRUE], "\n\n")</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="in">  cat("**Plot Summary:** ", movies_tbl[i,"PlotSummary", drop=TRUE], "\n\n")</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="in">}</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

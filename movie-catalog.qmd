@@ -1,0 +1,50 @@
+---
+title: "Sample Movie Catalog"
+format:
+  html:
+    theme: cosmo
+    code-tools: true
+    code-fold: true
+    df-print: paged
+    toc: true
+    toc-depth: 2
+    toc-expand: 3
+editor: source
+---
+
+*This notebook demonstrates how you can use Quarto Markdown to generate a report of records from a table. Specifically, we will create a catalog of 100 movies.
+
+# Setup
+
+Load packages and import an Excel file with plot summaries of 1000 movies.
+
+```{r}
+library(readxl)
+
+movies_tbl <- here::here("data/movie-sampler.xlsx") |> 
+  readxl::read_xlsx()
+
+#dim(movies_tbl)
+```
+
+## Preview the data:
+
+```{r}
+head(movies_tbl)
+```
+
+\
+
+# Movie Summaries
+
+```{r echo=FALSE, results='asis'}
+for (i in 1:100) {
+  cat("## ", movies_tbl[i,"MovieTitle", drop=TRUE], "\n\n")
+  cat("**Running time:** ", movies_tbl[i,"RunningTime", drop=TRUE], "\n\n")
+  cat("**Year:** ", movies_tbl[i,"Year", drop=TRUE], "\n\n")
+  cat("**Plot Summary:** ", movies_tbl[i,"PlotSummary", drop=TRUE], "\n\n")
+}
+```
+
+
+
