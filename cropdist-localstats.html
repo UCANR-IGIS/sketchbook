@@ -114,8 +114,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#import-points" id="toc-import-points" class="nav-link" data-scroll-target="#import-points">Import points</a></li>
   <li><a href="#convert-points-to-spatial-object" id="toc-convert-points-to-spatial-object" class="nav-link" data-scroll-target="#convert-points-to-spatial-object">Convert points to spatial object</a></li>
   <li><a href="#open-a-connection-to-the-2021-statewide-crop-mapping-data" id="toc-open-a-connection-to-the-2021-statewide-crop-mapping-data" class="nav-link" data-scroll-target="#open-a-connection-to-the-2021-statewide-crop-mapping-data">Open a Connection to the 2021 Statewide Crop Mapping data</a></li>
+  <li><a href="#exploring-the-statewide-crop-distribution-layer" id="toc-exploring-the-statewide-crop-distribution-layer" class="nav-link" data-scroll-target="#exploring-the-statewide-crop-distribution-layer">Exploring the Statewide Crop Distribution Layer</a></li>
+  <li><a href="#which-attribute-field-contains-the-crop" id="toc-which-attribute-field-contains-the-crop" class="nav-link" data-scroll-target="#which-attribute-field-contains-the-crop">Which attribute field contains ‘the crop’?</a></li>
   <li><a href="#figuring-out-the-codes" id="toc-figuring-out-the-codes" class="nav-link" data-scroll-target="#figuring-out-the-codes">Figuring out the codes</a></li>
-  <li><a href="#import-the-codes-for-crop-type" id="toc-import-the-codes-for-crop-type" class="nav-link" data-scroll-target="#import-the-codes-for-crop-type">Import the codes for crop type</a></li>
+  <li><a href="#import-the-crop-type-codes" id="toc-import-the-crop-type-codes" class="nav-link" data-scroll-target="#import-the-crop-type-codes">Import the Crop Type codes</a></li>
   <li><a href="#create-a-buffer" id="toc-create-a-buffer" class="nav-link" data-scroll-target="#create-a-buffer">Create a buffer</a></li>
   <li><a href="#import-the-crop-distribution-data" id="toc-import-the-crop-distribution-data" class="nav-link" data-scroll-target="#import-the-crop-distribution-data">Import the Crop Distribution Data</a></li>
   <li><a href="#intersect-the-crop-polygons-with-the-buffer" id="toc-intersect-the-crop-polygons-with-the-buffer" class="nav-link" data-scroll-target="#intersect-the-crop-polygons-with-the-buffer">Intersect the crop polygons with the buffer</a></li>
@@ -253,8 +255,8 @@ Importing Points
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">fillOpacity =</span> <span class="fl">0.8</span>,</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                            <span class="at">popup =</span> <span class="sc">~</span>id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="leaflet html-widget html-fill-item" id="htmlwidget-33d91844536b25dcabda" style="width:100%;height:464px;"></div>
-<script type="application/json" data-for="htmlwidget-33d91844536b25dcabda">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["Esri.WorldImagery",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircleMarkers","args":[[35.74400000000001,35.69199999999999,35.656,35.61,35.556],[-119.432,-119.364,-119.3659,-119.428,-119.461],10,null,null,{"interactive":true,"className":"","stroke":false,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#f00","fillOpacity":0.8},null,null,["function (.variables, drop = FALSE) ","{","    lifecycle::deprecate_stop(\"0.5.0\", \"id()\", \"vctrs::vec_group_id()\")","}"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[35.556,35.74400000000001],"lng":[-119.461,-119.364]}},"evals":[],"jsHooks":[]}</script>
+<div class="leaflet html-widget html-fill-item" id="htmlwidget-785566a5f1396e237cbe" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-785566a5f1396e237cbe">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["Esri.WorldImagery",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircleMarkers","args":[[35.74400000000001,35.69199999999999,35.656,35.61,35.556],[-119.432,-119.364,-119.3659,-119.428,-119.461],10,null,null,{"interactive":true,"className":"","stroke":false,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#f00","fillOpacity":0.8},null,null,["function (.variables, drop = FALSE) ","{","    lifecycle::deprecate_stop(\"0.5.0\", \"id()\", \"vctrs::vec_group_id()\")","}"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[35.556,35.74400000000001],"lng":[-119.461,-119.364]}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p><br>
@@ -286,20 +288,35 @@ Available layers:
 </div>
 <p><br>
 </p>
-<div class="callout callout-style-default callout-tip callout-titled" title="Exploring the Statewide Crop Distribution Layer">
+</section>
+<section id="exploring-the-statewide-crop-distribution-layer" class="level2">
+<h2 class="anchored" data-anchor-id="exploring-the-statewide-crop-distribution-layer">Exploring the Statewide Crop Distribution Layer</h2>
+<p>The best way to explore the Statewide Crop Distribution Layer is to open it up in ArcGIS Pro. The zip file from DWR contains both a file geodatabase as well as an ArcGIS Pro layer file (<code>CropMapping2021_Legend.lyrx</code>). Double-click the layer file to open it up in ArcGIS Pro. You will probably need to reestablish the link to the data (layer properties &gt; source), but then you’re good to go.</p>
+<p>The file geodatabase appears to be the only source for ‘metadata’. In other words, DWR has not published the metadata anywhere else, however copy of the metadata for the 2021 crop distribution data can also be found <a href="https://ucanr-igis.github.io/sketchbook/i15_Crop_Mapping_2021_metdata.htm">here</a>. However even the ‘metadata’ does not provide a field-by-field description, but you can make educated guesses by looking at the field properties and domains (see below).</p>
+<p><br>
+</p>
+<div class="callout callout-style-default callout-tip callout-titled" title="Exploring the Data in ArcGIS Pro">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Exploring the Statewide Crop Distribution Layer
+Exploring the Data in ArcGIS Pro
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>The best way to explore the Statewide Crop Distribution Layer is to open it up in ArcGIS Pro. The zip file from DWR contains both a file geodatabase as well as an ArcGIS Pro layer file (<code>CropMapping2021_Legend.lyrx</code>). Double-click the layer to open it up in ArcGIS Pro. You will need to reestablish the link to the data (layer properties &gt; source), but then you’re good to go.</p>
-<p>The file geodatabase appears to be the only source for ‘metadata’. In other words, DWR has not published the metadata anywhere else. This includes a description of the fields in the attribute table. A copy of the metadata for the 2021 crop distribution data can also be found <a href="https://ucanr-igis.github.io/sketchbook/i15_Crop_Mapping_2021_metdata.htm">here</a>.</p>
-<p>Reading the metadata and exploring the data more thoroughly in ArcGIS Pro is a good idea if you’ll be using these data for research. In addition to the “MAIN_CROP” field (which is all we’re using in this notebook), there are 56 other fields that contain useful information including multi-cropping characteristics, crop category (as opposed to crop type), year the crop was established (i.e., for perennial crops), whether the classification was updated / revised by DWR, notes from the analyst, etc.</p>
+<p>Reading the metadata and exploring the data more thoroughly in ArcGIS Pro is an extremely good idea if you’ll be using these data for research. In addition to the <code>MAIN_CROP</code> field (which is all we’re using in this notebook), there are 56 other fields that contain useful information including multi-cropping characteristics, crop category (as opposed to crop type), year the crop was established (i.e., for perennial crops), whether the classification was updated / revised by DWR, notes from the analyst, etc.</p>
 </div>
+</div>
+<p><br>
+</p>
+</section>
+<section id="which-attribute-field-contains-the-crop" class="level2">
+<h2 class="anchored" data-anchor-id="which-attribute-field-contains-the-crop">Which attribute field contains ‘the crop’?</h2>
+<p>The attribute table for the Statewide Crop Mapping layer has <strong>57 fields</strong>. Determining which field has the “crop” name requires some sleuthing, as there are several candidates whose name suggest it might be the crop name. DWR unfortunately does not publish a data dictionary for the data, but if you open the file geodatabase in ArcGIS Pro you can see i) the ‘domains’ (list of codes and their descriptions used in several fields), and ii) <a href="https://ucanr-igis.github.io/sketchbook/i15_Crop_Mapping_2021_metdata.htm">descriptive metadata</a> that contains clues about the methodology.</p>
+<p>The code in this notebook only imports <strong>5</strong> of the 57 fields. The field we will use below as “the crop” is <strong><code>MAIN_CROP</code></strong>, which the metadata describes as:</p>
+<div style="margin-left; padding-left:1em; font-style:italic;">
+<p>A new column for the 2019, 2020, and 2021 datasets is called ‘MAIN_CROP’. This column indicates which field Land IQ identified as the main season crop for the WY representing the crop grown during the dominant growing season for each county.</p>
 </div>
 <p><br>
 </p>
@@ -331,12 +348,12 @@ Available layers:
 </div>
 <p><br>
 </p>
-<p>All of these ‘domains’ are a code list used in the attribute table.</p>
+<p>All 9 of these ‘domains’ are code lists used in one or more of the 57 fields in the attribute table.</p>
 <p><br>
 </p>
 </section>
-<section id="import-the-codes-for-crop-type" class="level2">
-<h2 class="anchored" data-anchor-id="import-the-codes-for-crop-type">Import the codes for crop type</h2>
+<section id="import-the-crop-type-codes" class="level2">
+<h2 class="anchored" data-anchor-id="import-the-crop-type-codes">Import the Crop Type codes</h2>
 <p>Let’s import the “crop types” domain:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>croptypes_tbl <span class="ot">&lt;-</span> <span class="fu">st_read</span>(domains_gdb, </span>
@@ -345,13 +362,256 @@ Available layers:
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                         <span class="at">quiet =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">code =</span> Code, <span class="at">description =</span> Description)</span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>croptypes_tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(croptypes_tbl, <span class="at">format =</span> <span class="st">"html"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div data-pagedtable="false">
-  <script data-pagedtable-source="" type="application/json">
-{"columns":[{"label":["code"],"name":[1],"type":["chr"],"align":["left"]},{"label":["description"],"name":[2],"type":["chr"],"align":["left"]}],"data":[{"1":"****","2":"****"},{"1":"C","2":"Citrus and Subtropical - No Subclass"},{"1":"C4","2":"Dates"},{"1":"C5","2":"Avocados"},{"1":"C6","2":"Olives"},{"1":"C7","2":"Subtropical Fruits Misc."},{"1":"C8","2":"Kiwis"},{"1":"C10","2":"Eucalyptus"},{"1":"D1","2":"Apples"},{"1":"D2","2":"Apricots"},{"1":"D3","2":"Cherries\\nCherries"},{"1":"D5","2":"Peaches and Nectarines"},{"1":"D6","2":"Pears"},{"1":"D7","2":"Plums"},{"1":"D8","2":"Prunes"},{"1":"D10","2":"Deciduous - Misc."},{"1":"D12","2":"Almonds"},{"1":"D13","2":"Walnuts"},{"1":"D14","2":"Pistachios"},{"1":"D15","2":"Pomegranates"},{"1":"D17","2":"Pecans"},{"1":"F1","2":"Cotton"},{"1":"F2","2":"Safflower"},{"1":"F5","2":"Sugar beets"},{"1":"F10","2":"Beans (dry)"},{"1":"F11","2":"Field Misc."},{"1":"F12","2":"Sunflowers"},{"1":"F16","2":"Corn, Sorghum or Sudan (grouped for remote sensing classification only)"},{"1":"G2","2":"Wheat"},{"1":"G6","2":"Grain and Hay - Misc."},{"1":"I1","2":"Idle - Land not cropped in current or prior year, but within last 3 yrs."},{"1":"I4","2":"Idle - Long Term - land consistently idle for four or more years"},{"1":"P1","2":"Alfalfa and alfalfa mixtures"},{"1":"P3","2":"Pasture - Mixed"},{"1":"P4","2":"Pasture - Native Improved"},{"1":"P5","2":"Pasture - Induced High Water"},{"1":"P6","2":"Pasture - Miscellaneous Grasses"},{"1":"P7","2":"Pasture - Turf Farms"},{"1":"R1","2":"Rice"},{"1":"R2","2":"Rice - Wild"},{"1":"T4","2":"Cole crops (mixture of T22-T25)"},{"1":"T6","2":"Carrots"},{"1":"T9","2":"Melons, Squash, and Cucumbers"},{"1":"T10","2":"Onions and Garlic"},{"1":"T12","2":"Potatoes"},{"1":"T13","2":"Sweet Potatoes"},{"1":"T16","2":"Flowers, nursery and Christmas Tree Farms"},{"1":"T18","2":"Truck Crops - Misc."},{"1":"T19","2":"Bushberries"},{"1":"T20","2":"Strawberries"},{"1":"T21","2":"Peppers (Chili, Bell, etc.)"},{"1":"T27","2":"Greenhouse"},{"1":"T30","2":"Lettuce or Leafy Greens (grouped for remote sensing classification only)"},{"1":"T32","2":"Tomatoes (all)"},{"1":"U","2":"Urban - Unspecified Residential, Commercial, Industrial"},{"1":"UL2","2":"Urban Landscape - Golf Course Irrigated"},{"1":"V","2":"Vineyards - No Subclass"},{"1":"X","2":"Not cropped, or unclassified at the time of remote-sensing analysis. Idle status not determined"},{"1":"YP","2":"Young Perennial (grouped for remote sensing or when CLASS C, D or V is not determined)"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
-  </script>
-</div>
+<table class="caption-top table table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">code</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">****</td>
+<td style="text-align: left;">****</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;">Citrus and Subtropical - No Subclass</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C4</td>
+<td style="text-align: left;">Dates</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C5</td>
+<td style="text-align: left;">Avocados</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C6</td>
+<td style="text-align: left;">Olives</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C7</td>
+<td style="text-align: left;">Subtropical Fruits Misc.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C8</td>
+<td style="text-align: left;">Kiwis</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C10</td>
+<td style="text-align: left;">Eucalyptus</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D1</td>
+<td style="text-align: left;">Apples</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D2</td>
+<td style="text-align: left;">Apricots</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D3</td>
+<td style="text-align: left;">Cherries Cherries</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D5</td>
+<td style="text-align: left;">Peaches and Nectarines</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D6</td>
+<td style="text-align: left;">Pears</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D7</td>
+<td style="text-align: left;">Plums</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D8</td>
+<td style="text-align: left;">Prunes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D10</td>
+<td style="text-align: left;">Deciduous - Misc.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D12</td>
+<td style="text-align: left;">Almonds</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D13</td>
+<td style="text-align: left;">Walnuts</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D14</td>
+<td style="text-align: left;">Pistachios</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">D15</td>
+<td style="text-align: left;">Pomegranates</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">D17</td>
+<td style="text-align: left;">Pecans</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F1</td>
+<td style="text-align: left;">Cotton</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">F2</td>
+<td style="text-align: left;">Safflower</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F5</td>
+<td style="text-align: left;">Sugar beets</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">F10</td>
+<td style="text-align: left;">Beans (dry)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F11</td>
+<td style="text-align: left;">Field Misc.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">F12</td>
+<td style="text-align: left;">Sunflowers</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">F16</td>
+<td style="text-align: left;">Corn, Sorghum or Sudan (grouped for remote sensing classification only)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">G2</td>
+<td style="text-align: left;">Wheat</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">G6</td>
+<td style="text-align: left;">Grain and Hay - Misc.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">I1</td>
+<td style="text-align: left;">Idle - Land not cropped in current or prior year, but within last 3 yrs.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">I4</td>
+<td style="text-align: left;">Idle - Long Term - land consistently idle for four or more years</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">P1</td>
+<td style="text-align: left;">Alfalfa and alfalfa mixtures</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P3</td>
+<td style="text-align: left;">Pasture - Mixed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">P4</td>
+<td style="text-align: left;">Pasture - Native Improved</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P5</td>
+<td style="text-align: left;">Pasture - Induced High Water</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">P6</td>
+<td style="text-align: left;">Pasture - Miscellaneous Grasses</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">P7</td>
+<td style="text-align: left;">Pasture - Turf Farms</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">R1</td>
+<td style="text-align: left;">Rice</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">R2</td>
+<td style="text-align: left;">Rice - Wild</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">T4</td>
+<td style="text-align: left;">Cole crops (mixture of T22-T25)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">T6</td>
+<td style="text-align: left;">Carrots</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">T9</td>
+<td style="text-align: left;">Melons, Squash, and Cucumbers</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">T10</td>
+<td style="text-align: left;">Onions and Garlic</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">T12</td>
+<td style="text-align: left;">Potatoes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">T13</td>
+<td style="text-align: left;">Sweet Potatoes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">T16</td>
+<td style="text-align: left;">Flowers, nursery and Christmas Tree Farms</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">T18</td>
+<td style="text-align: left;">Truck Crops - Misc.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">T19</td>
+<td style="text-align: left;">Bushberries</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">T20</td>
+<td style="text-align: left;">Strawberries</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">T21</td>
+<td style="text-align: left;">Peppers (Chili, Bell, etc.)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">T27</td>
+<td style="text-align: left;">Greenhouse</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">T30</td>
+<td style="text-align: left;">Lettuce or Leafy Greens (grouped for remote sensing classification only)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">T32</td>
+<td style="text-align: left;">Tomatoes (all)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">U</td>
+<td style="text-align: left;">Urban - Unspecified Residential, Commercial, Industrial</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">UL2</td>
+<td style="text-align: left;">Urban Landscape - Golf Course Irrigated</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">V</td>
+<td style="text-align: left;">Vineyards - No Subclass</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X</td>
+<td style="text-align: left;">Not cropped, or unclassified at the time of remote-sensing analysis. Idle status not determined</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">YP</td>
+<td style="text-align: left;">Young Perennial (grouped for remote sensing or when CLASS C, D or V is not determined)</td>
+</tr>
+</tbody>
+</table>
+
+
 </div>
 </div>
 <p><br>
@@ -449,25 +709,6 @@ Geodetic CRS:  NAD83</code></pre>
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["main_crop"],"name":[1],"type":["chr"],"align":["left"]},{"label":["class2"],"name":[2],"type":["chr"],"align":["left"]},{"label":["yr_planted"],"name":[3],"type":["int"],"align":["right"]},{"label":["data_status"],"name":[4],"type":["chr"],"align":["left"]},{"label":["multiuse"],"name":[5],"type":["chr"],"align":["left"]},{"label":["description"],"name":[6],"type":["chr"],"align":["left"]},{"label":["Shape"],"name":[7],"type":["s_MULTIP"],"align":["right"]}],"data":[{"1":"F16","2":"F","3":"NA","4":"Final","5":"D","6":"Corn, Sorghum or Sudan (grouped for remote sensing classification only)","7":"<s_MULTIP>","_rn_":"1"},{"1":"F16","2":"F","3":"NA","4":"Final","5":"D","6":"Corn, Sorghum or Sudan (grouped for remote sensing classification only)","7":"<s_MULTIP>","_rn_":"2"},{"1":"P1","2":"P","3":"NA","4":"Final","5":"S","6":"Alfalfa and alfalfa mixtures","7":"<s_MULTIP>","_rn_":"3"},{"1":"F16","2":"F","3":"NA","4":"Final","5":"D","6":"Corn, Sorghum or Sudan (grouped for remote sensing classification only)","7":"<s_MULTIP>","_rn_":"4"},{"1":"F16","2":"F","3":"NA","4":"Final","5":"D","6":"Corn, Sorghum or Sudan (grouped for remote sensing classification only)","7":"<s_MULTIP>","_rn_":"5"},{"1":"F16","2":"F","3":"NA","4":"Final","5":"D","6":"Corn, Sorghum or Sudan (grouped for remote sensing classification only)","7":"<s_MULTIP>","_rn_":"6"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
-</div>
-</div>
-</div>
-<p><br>
-</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Which Attribute Field Contains 'The Crop'?">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Which Attribute Field Contains ‘The Crop’?
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The attribute table for the Statewide Crop Mapping layer actually has <strong>57 fields</strong>. Determining which field has the “crop” name requires some sleuthing. DWR unfortunately does not publish a data dictionary for the data, but if you open the file geodatabase in ArcGIS Pro you can see i) the ‘domains’ (list of codes and their descriptions used in several fields), and ii) <a href="https://ucanr-igis.github.io/sketchbook/i15_Crop_Mapping_2021_metdata.htm">descriptive metadata</a> that contains clues about the methodology.</p>
-<p>The code above selects only <strong>5</strong> of the 57 fields to import. The field we will use below as “the crop” is <code>main_crop</code>, which the metadata describes as:</p>
-<div style="margin-left; padding-left:1em; font-style:italic;">
-<p>A new column for the 2019, 2020, and 2021 datasets is called ‘MAIN_CROP’. This column indicates which field Land IQ identified as the main season crop for the WY representing the crop grown during the dominant growing season for each county.</p>
 </div>
 </div>
 </div>
@@ -1236,273 +1477,278 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb38-122"><a href="#cb38-122" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-123"><a href="#cb38-123" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb38-124"><a href="#cb38-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-125"><a href="#cb38-125" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="Exploring the Statewide Crop Distribution Layer"}</span>
-<span id="cb38-126"><a href="#cb38-126" aria-hidden="true" tabindex="-1"></a>The best way to explore the Statewide Crop Distribution Layer is to open it up in ArcGIS Pro. The zip file from DWR contains both a file geodatabase as well as an ArcGIS Pro layer file (<span class="in">`CropMapping2021_Legend.lyrx`</span>). Double-click the layer to open it up in ArcGIS Pro. You will need to reestablish the link to the data (layer properties &gt; source), but then you're good to go.</span>
-<span id="cb38-127"><a href="#cb38-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-128"><a href="#cb38-128" aria-hidden="true" tabindex="-1"></a>The file geodatabase appears to be the only source for 'metadata'. In other words, DWR has not published the metadata anywhere else. This includes a description of the fields in the attribute table. A copy of the metadata for the 2021 crop distribution data can also be found <span class="co">[</span><span class="ot">here</span><span class="co">](https://ucanr-igis.github.io/sketchbook/i15_Crop_Mapping_2021_metdata.htm)</span>. </span>
-<span id="cb38-129"><a href="#cb38-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-130"><a href="#cb38-130" aria-hidden="true" tabindex="-1"></a>Reading the metadata and exploring the data more thoroughly in ArcGIS Pro is a good idea if you'll be using these data for research. In addition to the "MAIN_CROP" field (which is all we're using in this notebook), there are 56 other fields that contain useful information including multi-cropping characteristics, crop category (as opposed to crop type), year the crop was established (i.e., for perennial crops), whether the classification was updated / revised by DWR, notes from the analyst, etc. </span>
-<span id="cb38-131"><a href="#cb38-131" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb38-125"><a href="#cb38-125" aria-hidden="true" tabindex="-1"></a><span class="fu">## Exploring the Statewide Crop Distribution Layer</span></span>
+<span id="cb38-126"><a href="#cb38-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-127"><a href="#cb38-127" aria-hidden="true" tabindex="-1"></a>The best way to explore the Statewide Crop Distribution Layer is to open it up in ArcGIS Pro. The zip file from DWR contains both a file geodatabase as well as an ArcGIS Pro layer file (<span class="in">`CropMapping2021_Legend.lyrx`</span>). Double-click the layer file to open it up in ArcGIS Pro. You will probably need to reestablish the link to the data (layer properties &gt; source), but then you're good to go.</span>
+<span id="cb38-128"><a href="#cb38-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-129"><a href="#cb38-129" aria-hidden="true" tabindex="-1"></a>The file geodatabase appears to be the only source for 'metadata'. In other words, DWR has not published the metadata anywhere else, however  copy of the metadata for the 2021 crop distribution data can also be found <span class="co">[</span><span class="ot">here</span><span class="co">](https://ucanr-igis.github.io/sketchbook/i15_Crop_Mapping_2021_metdata.htm)</span>. However even the 'metadata' does not provide a field-by-field description, but you can make educated guesses by looking at the field properties and domains (see below). </span>
+<span id="cb38-130"><a href="#cb38-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-131"><a href="#cb38-131" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb38-132"><a href="#cb38-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-133"><a href="#cb38-133" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb38-134"><a href="#cb38-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-135"><a href="#cb38-135" aria-hidden="true" tabindex="-1"></a><span class="fu">## Figuring out the codes</span></span>
+<span id="cb38-133"><a href="#cb38-133" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip title="Exploring the Data in ArcGIS Pro"}</span>
+<span id="cb38-134"><a href="#cb38-134" aria-hidden="true" tabindex="-1"></a>Reading the metadata and exploring the data more thoroughly in ArcGIS Pro is an extremely good idea if you'll be using these data for research. In addition to the <span class="in">`MAIN_CROP`</span> field (which is all we're using in this notebook), there are 56 other fields that contain useful information including multi-cropping characteristics, crop category (as opposed to crop type), year the crop was established (i.e., for perennial crops), whether the classification was updated / revised by DWR, notes from the analyst, etc. </span>
+<span id="cb38-135"><a href="#cb38-135" aria-hidden="true" tabindex="-1"></a>:::</span>
 <span id="cb38-136"><a href="#cb38-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-137"><a href="#cb38-137" aria-hidden="true" tabindex="-1"></a>Many of the attribute fields in the crop distribution layer contain codes or abbreviations. The descriptions that go with these codes are not documented anywhere online, unfortunately. However if you open the File Geodatabase in ArcGIS Pro, you view the 'domains' (which is what ESRI calls code lists used in attribute tables). For convenience, the domains have been also exported as tables saved in another file geodatabase: <span class="in">`Crop_Mapping_2021_domains.gdb`</span>.</span>
+<span id="cb38-137"><a href="#cb38-137" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb38-138"><a href="#cb38-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-141"><a href="#cb38-141" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-142"><a href="#cb38-142" aria-hidden="true" tabindex="-1"></a>domains_gdb <span class="ot">&lt;-</span> <span class="st">"Crop_Mapping_2021_domains.gdb"</span></span>
-<span id="cb38-143"><a href="#cb38-143" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.exists</span>(domains_gdb)</span>
-<span id="cb38-144"><a href="#cb38-144" aria-hidden="true" tabindex="-1"></a><span class="fu">st_layers</span>(domains_gdb)</span>
-<span id="cb38-145"><a href="#cb38-145" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-146"><a href="#cb38-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-147"><a href="#cb38-147" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-139"><a href="#cb38-139" aria-hidden="true" tabindex="-1"></a><span class="fu">## Which attribute field contains 'the crop'?</span></span>
+<span id="cb38-140"><a href="#cb38-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-141"><a href="#cb38-141" aria-hidden="true" tabindex="-1"></a>The attribute table for the Statewide Crop Mapping layer has **57 fields**. Determining which field has the "crop" name requires some sleuthing, as there are several candidates whose name suggest it might be the crop name. DWR unfortunately does not publish a data dictionary for the data, but if you open the file geodatabase in ArcGIS Pro you can see i) the 'domains' (list of codes and their descriptions used in several fields), and ii) <span class="co">[</span><span class="ot">descriptive metadata</span><span class="co">](https://ucanr-igis.github.io/sketchbook/i15_Crop_Mapping_2021_metdata.htm)</span> that contains clues about the methodology.</span>
+<span id="cb38-142"><a href="#cb38-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-143"><a href="#cb38-143" aria-hidden="true" tabindex="-1"></a>The code in this notebook only imports **5** of the 57 fields. The field we will use below as "the crop" is **`MAIN_CROP`**, which the metadata describes as:</span>
+<span id="cb38-144"><a href="#cb38-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-145"><a href="#cb38-145" aria-hidden="true" tabindex="-1"></a>:::::{style="margin-left; padding-left:1em; font-style:italic;"}</span>
+<span id="cb38-146"><a href="#cb38-146" aria-hidden="true" tabindex="-1"></a>A new column for the 2019, 2020, and 2021 datasets is called ‘MAIN_CROP’. This column indicates which field Land IQ identified as the main season crop for the WY representing the crop grown during the dominant growing season for each county. </span>
+<span id="cb38-147"><a href="#cb38-147" aria-hidden="true" tabindex="-1"></a>:::::</span>
 <span id="cb38-148"><a href="#cb38-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-149"><a href="#cb38-149" aria-hidden="true" tabindex="-1"></a>All of these 'domains' are a code list used in the attribute table. </span>
-<span id="cb38-150"><a href="#cb38-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-151"><a href="#cb38-151" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-149"><a href="#cb38-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-150"><a href="#cb38-150" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-151"><a href="#cb38-151" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-152"><a href="#cb38-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-153"><a href="#cb38-153" aria-hidden="true" tabindex="-1"></a><span class="fu">## Import the codes for crop type</span></span>
+<span id="cb38-153"><a href="#cb38-153" aria-hidden="true" tabindex="-1"></a><span class="fu">## Figuring out the codes</span></span>
 <span id="cb38-154"><a href="#cb38-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-155"><a href="#cb38-155" aria-hidden="true" tabindex="-1"></a>Let's import the "crop types" domain:</span>
+<span id="cb38-155"><a href="#cb38-155" aria-hidden="true" tabindex="-1"></a>Many of the attribute fields in the crop distribution layer contain codes or abbreviations. The descriptions that go with these codes are not documented anywhere online, unfortunately. However if you open the File Geodatabase in ArcGIS Pro, you view the 'domains' (which is what ESRI calls code lists used in attribute tables). For convenience, the domains have been also exported as tables saved in another file geodatabase: <span class="in">`Crop_Mapping_2021_domains.gdb`</span>.</span>
 <span id="cb38-156"><a href="#cb38-156" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-159"><a href="#cb38-159" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-160"><a href="#cb38-160" aria-hidden="true" tabindex="-1"></a>croptypes_tbl <span class="ot">&lt;-</span> <span class="fu">st_read</span>(domains_gdb, </span>
-<span id="cb38-161"><a href="#cb38-161" aria-hidden="true" tabindex="-1"></a>                         <span class="at">layer =</span> <span class="st">"allCropType_dom_3"</span>, </span>
-<span id="cb38-162"><a href="#cb38-162" aria-hidden="true" tabindex="-1"></a>                         <span class="at">as_tibble =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb38-163"><a href="#cb38-163" aria-hidden="true" tabindex="-1"></a>                         <span class="at">quiet =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb38-164"><a href="#cb38-164" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">code =</span> Code, <span class="at">description =</span> Description)</span>
-<span id="cb38-165"><a href="#cb38-165" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-166"><a href="#cb38-166" aria-hidden="true" tabindex="-1"></a>croptypes_tbl</span>
-<span id="cb38-167"><a href="#cb38-167" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-160"><a href="#cb38-160" aria-hidden="true" tabindex="-1"></a>domains_gdb <span class="ot">&lt;-</span> <span class="st">"Crop_Mapping_2021_domains.gdb"</span></span>
+<span id="cb38-161"><a href="#cb38-161" aria-hidden="true" tabindex="-1"></a><span class="fu">dir.exists</span>(domains_gdb)</span>
+<span id="cb38-162"><a href="#cb38-162" aria-hidden="true" tabindex="-1"></a><span class="fu">st_layers</span>(domains_gdb)</span>
+<span id="cb38-163"><a href="#cb38-163" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-164"><a href="#cb38-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-165"><a href="#cb38-165" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-166"><a href="#cb38-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-167"><a href="#cb38-167" aria-hidden="true" tabindex="-1"></a>All 9 of these 'domains' are code lists used in one or more of the 57 fields in the attribute table. </span>
 <span id="cb38-168"><a href="#cb38-168" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-169"><a href="#cb38-169" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb38-170"><a href="#cb38-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-171"><a href="#cb38-171" aria-hidden="true" tabindex="-1"></a><span class="fu">## Create a buffer </span></span>
+<span id="cb38-171"><a href="#cb38-171" aria-hidden="true" tabindex="-1"></a><span class="fu">## Import the Crop Type codes</span></span>
 <span id="cb38-172"><a href="#cb38-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-173"><a href="#cb38-173" aria-hidden="true" tabindex="-1"></a>Next, we'll create a buffer around one of the points to use as the 'cookie cutter' for the crop distribution layer. For the rest of this notebook, we'll be working with just one of the points (but this can be easily adapted by creating a loop).</span>
+<span id="cb38-173"><a href="#cb38-173" aria-hidden="true" tabindex="-1"></a>Let's import the "crop types" domain:</span>
 <span id="cb38-174"><a href="#cb38-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-175"><a href="#cb38-175" aria-hidden="true" tabindex="-1"></a>Set a variable for the selected point:</span>
-<span id="cb38-176"><a href="#cb38-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-179"><a href="#cb38-179" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-180"><a href="#cb38-180" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb38-181"><a href="#cb38-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-182"><a href="#cb38-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-183"><a href="#cb38-183" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb38-184"><a href="#cb38-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-185"><a href="#cb38-185" aria-hidden="true" tabindex="-1"></a>Make a 1km buffer around the ith point:</span>
+<span id="cb38-177"><a href="#cb38-177" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-178"><a href="#cb38-178" aria-hidden="true" tabindex="-1"></a>croptypes_tbl <span class="ot">&lt;-</span> <span class="fu">st_read</span>(domains_gdb, </span>
+<span id="cb38-179"><a href="#cb38-179" aria-hidden="true" tabindex="-1"></a>                         <span class="at">layer =</span> <span class="st">"allCropType_dom_3"</span>, </span>
+<span id="cb38-180"><a href="#cb38-180" aria-hidden="true" tabindex="-1"></a>                         <span class="at">as_tibble =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb38-181"><a href="#cb38-181" aria-hidden="true" tabindex="-1"></a>                         <span class="at">quiet =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-182"><a href="#cb38-182" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">code =</span> Code, <span class="at">description =</span> Description)</span>
+<span id="cb38-183"><a href="#cb38-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-184"><a href="#cb38-184" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(croptypes_tbl, <span class="at">format =</span> <span class="st">"html"</span>)</span>
+<span id="cb38-185"><a href="#cb38-185" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb38-186"><a href="#cb38-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-189"><a href="#cb38-189" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-190"><a href="#cb38-190" aria-hidden="true" tabindex="-1"></a>onefarm_buf1k <span class="ot">&lt;-</span> farms_sf <span class="sc">|&gt;</span> </span>
-<span id="cb38-191"><a href="#cb38-191" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(i) <span class="sc">|&gt;</span> </span>
-<span id="cb38-192"><a href="#cb38-192" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_buffer</span>(<span class="at">dist =</span> <span class="dv">1000</span>) </span>
-<span id="cb38-193"><a href="#cb38-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-194"><a href="#cb38-194" aria-hidden="true" tabindex="-1"></a>onefarm_buf1k</span>
-<span id="cb38-195"><a href="#cb38-195" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-196"><a href="#cb38-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-197"><a href="#cb38-197" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb38-198"><a href="#cb38-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-199"><a href="#cb38-199" aria-hidden="true" tabindex="-1"></a>See what that looks like:</span>
+<span id="cb38-187"><a href="#cb38-187" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-188"><a href="#cb38-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-189"><a href="#cb38-189" aria-hidden="true" tabindex="-1"></a><span class="fu">## Create a buffer </span></span>
+<span id="cb38-190"><a href="#cb38-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-191"><a href="#cb38-191" aria-hidden="true" tabindex="-1"></a>Next, we'll create a buffer around one of the points to use as the 'cookie cutter' for the crop distribution layer. For the rest of this notebook, we'll be working with just one of the points (but this can be easily adapted by creating a loop).</span>
+<span id="cb38-192"><a href="#cb38-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-193"><a href="#cb38-193" aria-hidden="true" tabindex="-1"></a>Set a variable for the selected point:</span>
+<span id="cb38-194"><a href="#cb38-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-197"><a href="#cb38-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-198"><a href="#cb38-198" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb38-199"><a href="#cb38-199" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb38-200"><a href="#cb38-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-203"><a href="#cb38-203" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-204"><a href="#cb38-204" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(onefarm_buf1k<span class="sc">$</span>geometry, <span class="at">axes =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb38-205"><a href="#cb38-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-206"><a href="#cb38-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-207"><a href="#cb38-207" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb38-208"><a href="#cb38-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-209"><a href="#cb38-209" aria-hidden="true" tabindex="-1"></a>Compute the area of the buffer (we'll need this further down when we compute the percent area of each crop):</span>
-<span id="cb38-210"><a href="#cb38-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-213"><a href="#cb38-213" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-214"><a href="#cb38-214" aria-hidden="true" tabindex="-1"></a>(buff_area_m2 <span class="ot">&lt;-</span> <span class="fu">st_area</span>(onefarm_buf1k))</span>
-<span id="cb38-215"><a href="#cb38-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-201"><a href="#cb38-201" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-202"><a href="#cb38-202" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-203"><a href="#cb38-203" aria-hidden="true" tabindex="-1"></a>Make a 1km buffer around the ith point:</span>
+<span id="cb38-204"><a href="#cb38-204" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-207"><a href="#cb38-207" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-208"><a href="#cb38-208" aria-hidden="true" tabindex="-1"></a>onefarm_buf1k <span class="ot">&lt;-</span> farms_sf <span class="sc">|&gt;</span> </span>
+<span id="cb38-209"><a href="#cb38-209" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(i) <span class="sc">|&gt;</span> </span>
+<span id="cb38-210"><a href="#cb38-210" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_buffer</span>(<span class="at">dist =</span> <span class="dv">1000</span>) </span>
+<span id="cb38-211"><a href="#cb38-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-212"><a href="#cb38-212" aria-hidden="true" tabindex="-1"></a>onefarm_buf1k</span>
+<span id="cb38-213"><a href="#cb38-213" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-214"><a href="#cb38-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-215"><a href="#cb38-215" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb38-216"><a href="#cb38-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-217"><a href="#cb38-217" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-217"><a href="#cb38-217" aria-hidden="true" tabindex="-1"></a>See what that looks like:</span>
 <span id="cb38-218"><a href="#cb38-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-219"><a href="#cb38-219" aria-hidden="true" tabindex="-1"></a><span class="fu">## Import the Crop Distribution Data</span></span>
-<span id="cb38-220"><a href="#cb38-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-221"><a href="#cb38-221" aria-hidden="true" tabindex="-1"></a>Next, we'll import the crop distribution layer (which is a polygon layer). To save time and memory, we'll only import polygons that intersect the buffer area by specifying a spatial filter when we call <span class="in">`st_read()`</span>.</span>
-<span id="cb38-222"><a href="#cb38-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-223"><a href="#cb38-223" aria-hidden="true" tabindex="-1"></a>To include a spatial filter when we import the data, we need to define the bounding box and express it as WKT^<span class="co">[</span><span class="ot">Well Known Text</span><span class="co">]</span> (i.e., a character object). Note that we also have to transform the bounding box to geographic coordinates NAD83, because that's the CRS of the crop distribution layer.</span>
+<span id="cb38-221"><a href="#cb38-221" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-222"><a href="#cb38-222" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(onefarm_buf1k<span class="sc">$</span>geometry, <span class="at">axes =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb38-223"><a href="#cb38-223" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb38-224"><a href="#cb38-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-227"><a href="#cb38-227" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-228"><a href="#cb38-228" aria-hidden="true" tabindex="-1"></a>bbox_wkt <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(onefarm_buf1k) <span class="sc">|&gt;</span> </span>
-<span id="cb38-229"><a href="#cb38-229" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sfc</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb38-230"><a href="#cb38-230" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(epsg_geo_nad83) <span class="sc">|&gt;</span> </span>
-<span id="cb38-231"><a href="#cb38-231" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_text</span>()</span>
-<span id="cb38-232"><a href="#cb38-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-233"><a href="#cb38-233" aria-hidden="true" tabindex="-1"></a>bbox_wkt</span>
-<span id="cb38-234"><a href="#cb38-234" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-235"><a href="#cb38-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-236"><a href="#cb38-236" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb38-237"><a href="#cb38-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-238"><a href="#cb38-238" aria-hidden="true" tabindex="-1"></a>Now we can import the crop distribution layer for the bounding box:</span>
-<span id="cb38-239"><a href="#cb38-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-242"><a href="#cb38-242" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-243"><a href="#cb38-243" aria-hidden="true" tabindex="-1"></a>crpdst_bbox_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> dwr_cropmapping_gdb,</span>
-<span id="cb38-244"><a href="#cb38-244" aria-hidden="true" tabindex="-1"></a>                        <span class="at">layer =</span> <span class="st">"i15_Crop_Mapping_2021"</span>,</span>
-<span id="cb38-245"><a href="#cb38-245" aria-hidden="true" tabindex="-1"></a>                        <span class="at">wkt_filter =</span> bbox_wkt) <span class="sc">|&gt;</span> </span>
-<span id="cb38-246"><a href="#cb38-246" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(epsg_utm11n_wgs84) <span class="sc">|&gt;</span> </span>
-<span id="cb38-247"><a href="#cb38-247" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">main_crop =</span> MAIN_CROP, <span class="at">class2 =</span> CLASS2, <span class="at">yr_planted =</span> YR_PLANTED, </span>
-<span id="cb38-248"><a href="#cb38-248" aria-hidden="true" tabindex="-1"></a>         <span class="at">data_status =</span> DataStatus, <span class="at">multiuse =</span> MULTIUSE) <span class="sc">|&gt;</span> </span>
-<span id="cb38-249"><a href="#cb38-249" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(croptypes_tbl, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"main_crop"</span> <span class="ot">=</span> <span class="st">"code"</span>))</span>
+<span id="cb38-225"><a href="#cb38-225" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-226"><a href="#cb38-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-227"><a href="#cb38-227" aria-hidden="true" tabindex="-1"></a>Compute the area of the buffer (we'll need this further down when we compute the percent area of each crop):</span>
+<span id="cb38-228"><a href="#cb38-228" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-231"><a href="#cb38-231" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-232"><a href="#cb38-232" aria-hidden="true" tabindex="-1"></a>(buff_area_m2 <span class="ot">&lt;-</span> <span class="fu">st_area</span>(onefarm_buf1k))</span>
+<span id="cb38-233"><a href="#cb38-233" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-234"><a href="#cb38-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-235"><a href="#cb38-235" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-236"><a href="#cb38-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-237"><a href="#cb38-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## Import the Crop Distribution Data</span></span>
+<span id="cb38-238"><a href="#cb38-238" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-239"><a href="#cb38-239" aria-hidden="true" tabindex="-1"></a>Next, we'll import the crop distribution layer (which is a polygon layer). To save time and memory, we'll only import polygons that intersect the buffer area by specifying a spatial filter when we call <span class="in">`st_read()`</span>.</span>
+<span id="cb38-240"><a href="#cb38-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-241"><a href="#cb38-241" aria-hidden="true" tabindex="-1"></a>To include a spatial filter when we import the data, we need to define the bounding box and express it as WKT^<span class="co">[</span><span class="ot">Well Known Text</span><span class="co">]</span> (i.e., a character object). Note that we also have to transform the bounding box to geographic coordinates NAD83, because that's the CRS of the crop distribution layer.</span>
+<span id="cb38-242"><a href="#cb38-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-245"><a href="#cb38-245" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-246"><a href="#cb38-246" aria-hidden="true" tabindex="-1"></a>bbox_wkt <span class="ot">&lt;-</span> <span class="fu">st_bbox</span>(onefarm_buf1k) <span class="sc">|&gt;</span> </span>
+<span id="cb38-247"><a href="#cb38-247" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_sfc</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb38-248"><a href="#cb38-248" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(epsg_geo_nad83) <span class="sc">|&gt;</span> </span>
+<span id="cb38-249"><a href="#cb38-249" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_as_text</span>()</span>
 <span id="cb38-250"><a href="#cb38-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-251"><a href="#cb38-251" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(crpdst_bbox_sf)</span>
+<span id="cb38-251"><a href="#cb38-251" aria-hidden="true" tabindex="-1"></a>bbox_wkt</span>
 <span id="cb38-252"><a href="#cb38-252" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb38-253"><a href="#cb38-253" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-254"><a href="#cb38-254" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb38-255"><a href="#cb38-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-256"><a href="#cb38-256" aria-hidden="true" tabindex="-1"></a>::: {.callout-note title="Which Attribute Field Contains 'The Crop'?"}</span>
-<span id="cb38-257"><a href="#cb38-257" aria-hidden="true" tabindex="-1"></a>The attribute table for the Statewide Crop Mapping layer actually has **57 fields**. Determining which field has the "crop" name requires some sleuthing. DWR unfortunately does not publish a data dictionary for the data, but if you open the file geodatabase in ArcGIS Pro you can see i) the 'domains' (list of codes and their descriptions used in several fields), and ii) <span class="co">[</span><span class="ot">descriptive metadata</span><span class="co">](https://ucanr-igis.github.io/sketchbook/i15_Crop_Mapping_2021_metdata.htm)</span> that contains clues about the methodology.</span>
-<span id="cb38-258"><a href="#cb38-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-259"><a href="#cb38-259" aria-hidden="true" tabindex="-1"></a>The code above selects only **5** of the 57 fields to import. The field we will use below as "the crop" is <span class="in">`main_crop`</span>, which the metadata describes as:</span>
-<span id="cb38-260"><a href="#cb38-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-261"><a href="#cb38-261" aria-hidden="true" tabindex="-1"></a>:::::{style="margin-left; padding-left:1em; font-style:italic;"}</span>
-<span id="cb38-262"><a href="#cb38-262" aria-hidden="true" tabindex="-1"></a>A new column for the 2019, 2020, and 2021 datasets is called ‘MAIN_CROP’. This column indicates which field Land IQ identified as the main season crop for the WY representing the crop grown during the dominant growing season for each county. </span>
-<span id="cb38-263"><a href="#cb38-263" aria-hidden="true" tabindex="-1"></a>:::::</span>
-<span id="cb38-264"><a href="#cb38-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-265"><a href="#cb38-265" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb38-266"><a href="#cb38-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-267"><a href="#cb38-267" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-256"><a href="#cb38-256" aria-hidden="true" tabindex="-1"></a>Now we can import the crop distribution layer for the bounding box:</span>
+<span id="cb38-257"><a href="#cb38-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-260"><a href="#cb38-260" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-261"><a href="#cb38-261" aria-hidden="true" tabindex="-1"></a>crpdst_bbox_sf <span class="ot">&lt;-</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> dwr_cropmapping_gdb,</span>
+<span id="cb38-262"><a href="#cb38-262" aria-hidden="true" tabindex="-1"></a>                        <span class="at">layer =</span> <span class="st">"i15_Crop_Mapping_2021"</span>,</span>
+<span id="cb38-263"><a href="#cb38-263" aria-hidden="true" tabindex="-1"></a>                        <span class="at">wkt_filter =</span> bbox_wkt) <span class="sc">|&gt;</span> </span>
+<span id="cb38-264"><a href="#cb38-264" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_transform</span>(epsg_utm11n_wgs84) <span class="sc">|&gt;</span> </span>
+<span id="cb38-265"><a href="#cb38-265" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">main_crop =</span> MAIN_CROP, <span class="at">class2 =</span> CLASS2, <span class="at">yr_planted =</span> YR_PLANTED, </span>
+<span id="cb38-266"><a href="#cb38-266" aria-hidden="true" tabindex="-1"></a>         <span class="at">data_status =</span> DataStatus, <span class="at">multiuse =</span> MULTIUSE) <span class="sc">|&gt;</span> </span>
+<span id="cb38-267"><a href="#cb38-267" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(croptypes_tbl, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"main_crop"</span> <span class="ot">=</span> <span class="st">"code"</span>))</span>
 <span id="cb38-268"><a href="#cb38-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-269"><a href="#cb38-269" aria-hidden="true" tabindex="-1"></a>Next, we can overlay the buffer and the cropped crop layer:</span>
-<span id="cb38-270"><a href="#cb38-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-273"><a href="#cb38-273" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-274"><a href="#cb38-274" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crpdst_bbox_sf, <span class="fu">aes</span>(<span class="at">fill =</span> main_crop)) <span class="sc">+</span> </span>
-<span id="cb38-275"><a href="#cb38-275" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
-<span id="cb38-276"><a href="#cb38-276" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> onefarm_buf1k,</span>
-<span id="cb38-277"><a href="#cb38-277" aria-hidden="true" tabindex="-1"></a>          <span class="at">colour =</span> <span class="st">"red"</span>, </span>
-<span id="cb38-278"><a href="#cb38-278" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="cn">NA</span>,</span>
-<span id="cb38-279"><a href="#cb38-279" aria-hidden="true" tabindex="-1"></a>          <span class="at">lwd =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb38-280"><a href="#cb38-280" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">datum =</span> <span class="fu">st_crs</span>(epsg_utm11n_wgs84)) <span class="sc">+</span></span>
-<span id="cb38-281"><a href="#cb38-281" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"1km buffer around Point "</span>, farms_sf<span class="sc">$</span>ptid[i]))</span>
-<span id="cb38-282"><a href="#cb38-282" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-283"><a href="#cb38-283" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-284"><a href="#cb38-284" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb38-285"><a href="#cb38-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-286"><a href="#cb38-286" aria-hidden="true" tabindex="-1"></a>Display a "legend":</span>
-<span id="cb38-287"><a href="#cb38-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-290"><a href="#cb38-290" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-291"><a href="#cb38-291" aria-hidden="true" tabindex="-1"></a>crops_in_this_area <span class="ot">&lt;-</span> <span class="fu">unique</span>(crpdst_bbox_sf<span class="sc">$</span>main_crop)</span>
-<span id="cb38-292"><a href="#cb38-292" aria-hidden="true" tabindex="-1"></a>croptypes_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(code <span class="sc">%in%</span> crops_in_this_area)</span>
-<span id="cb38-293"><a href="#cb38-293" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-294"><a href="#cb38-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-295"><a href="#cb38-295" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb38-296"><a href="#cb38-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-297"><a href="#cb38-297" aria-hidden="true" tabindex="-1"></a><span class="fu">## Intersect the crop polygons with the buffer</span></span>
-<span id="cb38-298"><a href="#cb38-298" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-299"><a href="#cb38-299" aria-hidden="true" tabindex="-1"></a>Now we can take the intersection:</span>
-<span id="cb38-300"><a href="#cb38-300" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-303"><a href="#cb38-303" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-304"><a href="#cb38-304" aria-hidden="true" tabindex="-1"></a>crops_buf_sf <span class="ot">&lt;-</span> crpdst_bbox_sf <span class="sc">|&gt;</span> </span>
-<span id="cb38-305"><a href="#cb38-305" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_intersection</span>(onefarm_buf1k) <span class="sc">|&gt;</span> </span>
-<span id="cb38-306"><a href="#cb38-306" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area_m2 =</span> <span class="fu">st_area</span>(Shape)) <span class="sc">|&gt;</span> </span>
-<span id="cb38-307"><a href="#cb38-307" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>description) <span class="sc">|&gt;</span> </span>
-<span id="cb38-308"><a href="#cb38-308" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(area_m2, <span class="at">.before =</span> Shape) <span class="sc">|&gt;</span> </span>
-<span id="cb38-309"><a href="#cb38-309" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(ptid, <span class="at">.before =</span> <span class="dv">1</span>)</span>
-<span id="cb38-310"><a href="#cb38-310" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-311"><a href="#cb38-311" aria-hidden="true" tabindex="-1"></a>crops_buf_sf <span class="sc">|&gt;</span> <span class="fu">head</span>()</span>
-<span id="cb38-312"><a href="#cb38-312" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-313"><a href="#cb38-313" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-314"><a href="#cb38-314" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-269"><a href="#cb38-269" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(crpdst_bbox_sf)</span>
+<span id="cb38-270"><a href="#cb38-270" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-271"><a href="#cb38-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-272"><a href="#cb38-272" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-273"><a href="#cb38-273" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-274"><a href="#cb38-274" aria-hidden="true" tabindex="-1"></a>Next, we can overlay the buffer and the cropped crop layer:</span>
+<span id="cb38-275"><a href="#cb38-275" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-278"><a href="#cb38-278" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-279"><a href="#cb38-279" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crpdst_bbox_sf, <span class="fu">aes</span>(<span class="at">fill =</span> main_crop)) <span class="sc">+</span> </span>
+<span id="cb38-280"><a href="#cb38-280" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
+<span id="cb38-281"><a href="#cb38-281" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> onefarm_buf1k,</span>
+<span id="cb38-282"><a href="#cb38-282" aria-hidden="true" tabindex="-1"></a>          <span class="at">colour =</span> <span class="st">"red"</span>, </span>
+<span id="cb38-283"><a href="#cb38-283" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="cn">NA</span>,</span>
+<span id="cb38-284"><a href="#cb38-284" aria-hidden="true" tabindex="-1"></a>          <span class="at">lwd =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb38-285"><a href="#cb38-285" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">datum =</span> <span class="fu">st_crs</span>(epsg_utm11n_wgs84)) <span class="sc">+</span></span>
+<span id="cb38-286"><a href="#cb38-286" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"1km buffer around Point "</span>, farms_sf<span class="sc">$</span>ptid[i]))</span>
+<span id="cb38-287"><a href="#cb38-287" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-288"><a href="#cb38-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-289"><a href="#cb38-289" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-290"><a href="#cb38-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-291"><a href="#cb38-291" aria-hidden="true" tabindex="-1"></a>Display a "legend":</span>
+<span id="cb38-292"><a href="#cb38-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-295"><a href="#cb38-295" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-296"><a href="#cb38-296" aria-hidden="true" tabindex="-1"></a>crops_in_this_area <span class="ot">&lt;-</span> <span class="fu">unique</span>(crpdst_bbox_sf<span class="sc">$</span>main_crop)</span>
+<span id="cb38-297"><a href="#cb38-297" aria-hidden="true" tabindex="-1"></a>croptypes_tbl <span class="sc">|&gt;</span> <span class="fu">filter</span>(code <span class="sc">%in%</span> crops_in_this_area)</span>
+<span id="cb38-298"><a href="#cb38-298" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-299"><a href="#cb38-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-300"><a href="#cb38-300" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-301"><a href="#cb38-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-302"><a href="#cb38-302" aria-hidden="true" tabindex="-1"></a><span class="fu">## Intersect the crop polygons with the buffer</span></span>
+<span id="cb38-303"><a href="#cb38-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-304"><a href="#cb38-304" aria-hidden="true" tabindex="-1"></a>Now we can take the intersection:</span>
+<span id="cb38-305"><a href="#cb38-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-308"><a href="#cb38-308" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-309"><a href="#cb38-309" aria-hidden="true" tabindex="-1"></a>crops_buf_sf <span class="ot">&lt;-</span> crpdst_bbox_sf <span class="sc">|&gt;</span> </span>
+<span id="cb38-310"><a href="#cb38-310" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_intersection</span>(onefarm_buf1k) <span class="sc">|&gt;</span> </span>
+<span id="cb38-311"><a href="#cb38-311" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">area_m2 =</span> <span class="fu">st_area</span>(Shape)) <span class="sc">|&gt;</span> </span>
+<span id="cb38-312"><a href="#cb38-312" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>description) <span class="sc">|&gt;</span> </span>
+<span id="cb38-313"><a href="#cb38-313" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(area_m2, <span class="at">.before =</span> Shape) <span class="sc">|&gt;</span> </span>
+<span id="cb38-314"><a href="#cb38-314" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(ptid, <span class="at">.before =</span> <span class="dv">1</span>)</span>
 <span id="cb38-315"><a href="#cb38-315" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-316"><a href="#cb38-316" aria-hidden="true" tabindex="-1"></a>Plot these together:</span>
-<span id="cb38-317"><a href="#cb38-317" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-320"><a href="#cb38-320" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-321"><a href="#cb38-321" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crops_buf_sf, <span class="fu">aes</span>(<span class="at">fill =</span> main_crop)) <span class="sc">+</span> </span>
-<span id="cb38-322"><a href="#cb38-322" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
-<span id="cb38-323"><a href="#cb38-323" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> onefarm_buf1k,</span>
-<span id="cb38-324"><a href="#cb38-324" aria-hidden="true" tabindex="-1"></a>          <span class="at">colour =</span> <span class="st">"red"</span>, </span>
-<span id="cb38-325"><a href="#cb38-325" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="cn">NA</span>,</span>
-<span id="cb38-326"><a href="#cb38-326" aria-hidden="true" tabindex="-1"></a>          <span class="at">lwd =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
-<span id="cb38-327"><a href="#cb38-327" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">datum =</span> <span class="fu">st_crs</span>(epsg_utm11n_wgs84)) <span class="sc">+</span></span>
-<span id="cb38-328"><a href="#cb38-328" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"1km buffer around Point #"</span>, i))</span>
-<span id="cb38-329"><a href="#cb38-329" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-330"><a href="#cb38-330" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-331"><a href="#cb38-331" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-332"><a href="#cb38-332" aria-hidden="true" tabindex="-1"></a>This looks good!</span>
-<span id="cb38-333"><a href="#cb38-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-334"><a href="#cb38-334" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb38-335"><a href="#cb38-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-336"><a href="#cb38-336" aria-hidden="true" tabindex="-1"></a><span class="fu">## Compute the percent area of each crop</span></span>
-<span id="cb38-337"><a href="#cb38-337" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-338"><a href="#cb38-338" aria-hidden="true" tabindex="-1"></a>We can now compute the percent of the buffer zone area for each crop:</span>
-<span id="cb38-339"><a href="#cb38-339" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-342"><a href="#cb38-342" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-343"><a href="#cb38-343" aria-hidden="true" tabindex="-1"></a>crop_prcntbuf_tbl <span class="ot">&lt;-</span> crops_buf_sf <span class="sc">|&gt;</span> </span>
-<span id="cb38-344"><a href="#cb38-344" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb38-345"><a href="#cb38-345" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(main_crop) <span class="sc">|&gt;</span> </span>
-<span id="cb38-346"><a href="#cb38-346" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_area =</span> <span class="fu">round</span>(<span class="fu">sum</span>(area_m2)), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb38-347"><a href="#cb38-347" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prcnt_buf =</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(total_area <span class="sc">/</span> buff_area_m2), <span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb38-348"><a href="#cb38-348" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(croptypes_tbl, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"main_crop"</span> <span class="ot">=</span> <span class="st">"code"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb38-349"><a href="#cb38-349" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">crop =</span> main_crop, <span class="at">description =</span> description, total_area, prcnt_buf) <span class="sc">|&gt;</span> </span>
-<span id="cb38-350"><a href="#cb38-350" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(prcnt_buf))</span>
-<span id="cb38-351"><a href="#cb38-351" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb38-352"><a href="#cb38-352" aria-hidden="true" tabindex="-1"></a>crop_prcntbuf_tbl</span>
-<span id="cb38-353"><a href="#cb38-353" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-354"><a href="#cb38-354" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-355"><a href="#cb38-355" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb38-356"><a href="#cb38-356" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-357"><a href="#cb38-357" aria-hidden="true" tabindex="-1"></a>View the total percent area (should be close to 1.0):</span>
-<span id="cb38-358"><a href="#cb38-358" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-361"><a href="#cb38-361" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-362"><a href="#cb38-362" aria-hidden="true" tabindex="-1"></a>crop_prcntbuf_tbl<span class="sc">$</span>prcnt_buf <span class="sc">|&gt;</span> <span class="fu">sum</span>()</span>
-<span id="cb38-363"><a href="#cb38-363" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-364"><a href="#cb38-364" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-365"><a href="#cb38-365" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb38-366"><a href="#cb38-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-367"><a href="#cb38-367" aria-hidden="true" tabindex="-1"></a><span class="fu">## Add the 'non-crop' category:</span></span>
-<span id="cb38-368"><a href="#cb38-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-371"><a href="#cb38-371" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-372"><a href="#cb38-372" aria-hidden="true" tabindex="-1"></a>noncrop_area <span class="ot">&lt;-</span> crop_prcntbuf_tbl<span class="sc">$</span>prcnt_buf <span class="sc">|&gt;</span> <span class="fu">sum</span>()</span>
-<span id="cb38-373"><a href="#cb38-373" aria-hidden="true" tabindex="-1"></a>nnocrop_prct <span class="ot">&lt;-</span> </span>
-<span id="cb38-374"><a href="#cb38-374" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-375"><a href="#cb38-375" aria-hidden="true" tabindex="-1"></a>crop_prcntbuf_nocrop_tbl <span class="ot">&lt;-</span> crop_prcntbuf_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb38-376"><a href="#cb38-376" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">tibble</span>(<span class="at">crop =</span> <span class="st">"NA"</span>, </span>
-<span id="cb38-377"><a href="#cb38-377" aria-hidden="true" tabindex="-1"></a>                   <span class="at">description =</span> <span class="st">"Non-Crop"</span>, </span>
-<span id="cb38-378"><a href="#cb38-378" aria-hidden="true" tabindex="-1"></a>                   <span class="at">total_area =</span> <span class="fu">round</span>(buff_area_m2 <span class="sc">-</span> <span class="fu">sum</span>(crop_prcntbuf_tbl<span class="sc">$</span>total_area)),</span>
-<span id="cb38-379"><a href="#cb38-379" aria-hidden="true" tabindex="-1"></a>                   <span class="at">prcnt_buf =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">sum</span>(crop_prcntbuf_tbl<span class="sc">$</span>prcnt_buf)))</span>
-<span id="cb38-380"><a href="#cb38-380" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-381"><a href="#cb38-381" aria-hidden="true" tabindex="-1"></a>crop_prcntbuf_nocrop_tbl</span>
-<span id="cb38-382"><a href="#cb38-382" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-383"><a href="#cb38-383" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-384"><a href="#cb38-384" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-316"><a href="#cb38-316" aria-hidden="true" tabindex="-1"></a>crops_buf_sf <span class="sc">|&gt;</span> <span class="fu">head</span>()</span>
+<span id="cb38-317"><a href="#cb38-317" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-318"><a href="#cb38-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-319"><a href="#cb38-319" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-320"><a href="#cb38-320" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-321"><a href="#cb38-321" aria-hidden="true" tabindex="-1"></a>Plot these together:</span>
+<span id="cb38-322"><a href="#cb38-322" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-325"><a href="#cb38-325" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-326"><a href="#cb38-326" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crops_buf_sf, <span class="fu">aes</span>(<span class="at">fill =</span> main_crop)) <span class="sc">+</span> </span>
+<span id="cb38-327"><a href="#cb38-327" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>() <span class="sc">+</span></span>
+<span id="cb38-328"><a href="#cb38-328" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> onefarm_buf1k,</span>
+<span id="cb38-329"><a href="#cb38-329" aria-hidden="true" tabindex="-1"></a>          <span class="at">colour =</span> <span class="st">"red"</span>, </span>
+<span id="cb38-330"><a href="#cb38-330" aria-hidden="true" tabindex="-1"></a>          <span class="at">fill =</span> <span class="cn">NA</span>,</span>
+<span id="cb38-331"><a href="#cb38-331" aria-hidden="true" tabindex="-1"></a>          <span class="at">lwd =</span> <span class="dv">2</span>) <span class="sc">+</span> </span>
+<span id="cb38-332"><a href="#cb38-332" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_sf</span>(<span class="at">datum =</span> <span class="fu">st_crs</span>(epsg_utm11n_wgs84)) <span class="sc">+</span></span>
+<span id="cb38-333"><a href="#cb38-333" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"1km buffer around Point #"</span>, i))</span>
+<span id="cb38-334"><a href="#cb38-334" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-335"><a href="#cb38-335" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-336"><a href="#cb38-336" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-337"><a href="#cb38-337" aria-hidden="true" tabindex="-1"></a>This looks good!</span>
+<span id="cb38-338"><a href="#cb38-338" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-339"><a href="#cb38-339" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-340"><a href="#cb38-340" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-341"><a href="#cb38-341" aria-hidden="true" tabindex="-1"></a><span class="fu">## Compute the percent area of each crop</span></span>
+<span id="cb38-342"><a href="#cb38-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-343"><a href="#cb38-343" aria-hidden="true" tabindex="-1"></a>We can now compute the percent of the buffer zone area for each crop:</span>
+<span id="cb38-344"><a href="#cb38-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-347"><a href="#cb38-347" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-348"><a href="#cb38-348" aria-hidden="true" tabindex="-1"></a>crop_prcntbuf_tbl <span class="ot">&lt;-</span> crops_buf_sf <span class="sc">|&gt;</span> </span>
+<span id="cb38-349"><a href="#cb38-349" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb38-350"><a href="#cb38-350" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(main_crop) <span class="sc">|&gt;</span> </span>
+<span id="cb38-351"><a href="#cb38-351" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_area =</span> <span class="fu">round</span>(<span class="fu">sum</span>(area_m2)), <span class="at">.groups =</span> <span class="st">"drop"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-352"><a href="#cb38-352" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">prcnt_buf =</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(total_area <span class="sc">/</span> buff_area_m2), <span class="dv">2</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb38-353"><a href="#cb38-353" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(croptypes_tbl, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"main_crop"</span> <span class="ot">=</span> <span class="st">"code"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb38-354"><a href="#cb38-354" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">crop =</span> main_crop, <span class="at">description =</span> description, total_area, prcnt_buf) <span class="sc">|&gt;</span> </span>
+<span id="cb38-355"><a href="#cb38-355" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(prcnt_buf))</span>
+<span id="cb38-356"><a href="#cb38-356" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb38-357"><a href="#cb38-357" aria-hidden="true" tabindex="-1"></a>crop_prcntbuf_tbl</span>
+<span id="cb38-358"><a href="#cb38-358" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-359"><a href="#cb38-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-360"><a href="#cb38-360" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-361"><a href="#cb38-361" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-362"><a href="#cb38-362" aria-hidden="true" tabindex="-1"></a>View the total percent area (should be close to 1.0):</span>
+<span id="cb38-363"><a href="#cb38-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-366"><a href="#cb38-366" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-367"><a href="#cb38-367" aria-hidden="true" tabindex="-1"></a>crop_prcntbuf_tbl<span class="sc">$</span>prcnt_buf <span class="sc">|&gt;</span> <span class="fu">sum</span>()</span>
+<span id="cb38-368"><a href="#cb38-368" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-369"><a href="#cb38-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-370"><a href="#cb38-370" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-371"><a href="#cb38-371" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-372"><a href="#cb38-372" aria-hidden="true" tabindex="-1"></a><span class="fu">## Add the 'non-crop' category:</span></span>
+<span id="cb38-373"><a href="#cb38-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-376"><a href="#cb38-376" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-377"><a href="#cb38-377" aria-hidden="true" tabindex="-1"></a>noncrop_area <span class="ot">&lt;-</span> crop_prcntbuf_tbl<span class="sc">$</span>prcnt_buf <span class="sc">|&gt;</span> <span class="fu">sum</span>()</span>
+<span id="cb38-378"><a href="#cb38-378" aria-hidden="true" tabindex="-1"></a>nnocrop_prct <span class="ot">&lt;-</span> </span>
+<span id="cb38-379"><a href="#cb38-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-380"><a href="#cb38-380" aria-hidden="true" tabindex="-1"></a>crop_prcntbuf_nocrop_tbl <span class="ot">&lt;-</span> crop_prcntbuf_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb38-381"><a href="#cb38-381" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">tibble</span>(<span class="at">crop =</span> <span class="st">"NA"</span>, </span>
+<span id="cb38-382"><a href="#cb38-382" aria-hidden="true" tabindex="-1"></a>                   <span class="at">description =</span> <span class="st">"Non-Crop"</span>, </span>
+<span id="cb38-383"><a href="#cb38-383" aria-hidden="true" tabindex="-1"></a>                   <span class="at">total_area =</span> <span class="fu">round</span>(buff_area_m2 <span class="sc">-</span> <span class="fu">sum</span>(crop_prcntbuf_tbl<span class="sc">$</span>total_area)),</span>
+<span id="cb38-384"><a href="#cb38-384" aria-hidden="true" tabindex="-1"></a>                   <span class="at">prcnt_buf =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">sum</span>(crop_prcntbuf_tbl<span class="sc">$</span>prcnt_buf)))</span>
 <span id="cb38-385"><a href="#cb38-385" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-386"><a href="#cb38-386" aria-hidden="true" tabindex="-1"></a>Make a pie chart:</span>
-<span id="cb38-387"><a href="#cb38-387" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-390"><a href="#cb38-390" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb38-391"><a href="#cb38-391" aria-hidden="true" tabindex="-1"></a>caption_chr <span class="ot">&lt;-</span> crop_prcntbuf_nocrop_tbl <span class="sc">|&gt;</span> </span>
-<span id="cb38-392"><a href="#cb38-392" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(crop) <span class="sc">|&gt;</span> </span>
-<span id="cb38-393"><a href="#cb38-393" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">crop_description_chr =</span> <span class="fu">paste</span>(crop, description, <span class="at">sep =</span> <span class="st">": "</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb38-394"><a href="#cb38-394" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(crop_description_chr) <span class="sc">|&gt;</span> </span>
-<span id="cb38-395"><a href="#cb38-395" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"; "</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb38-396"><a href="#cb38-396" aria-hidden="true" tabindex="-1"></a>  <span class="fu">strwrap</span>(<span class="at">width =</span> <span class="dv">80</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb38-397"><a href="#cb38-397" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
-<span id="cb38-398"><a href="#cb38-398" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-399"><a href="#cb38-399" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crop_prcntbuf_nocrop_tbl, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> prcnt_buf, <span class="at">fill =</span> crop)) <span class="sc">+</span></span>
-<span id="cb38-400"><a href="#cb38-400" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb38-401"><a href="#cb38-401" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="st">"y"</span>, <span class="at">start =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
-<span id="cb38-402"><a href="#cb38-402" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
-<span id="cb38-403"><a href="#cb38-403" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Percent area of each crop type"</span>,</span>
-<span id="cb38-404"><a href="#cb38-404" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"1km buffer around Point "</span>, farms_sf<span class="sc">$</span>ptid[i]), </span>
-<span id="cb38-405"><a href="#cb38-405" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> caption_chr) <span class="sc">+</span> </span>
-<span id="cb38-406"><a href="#cb38-406" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>))</span>
-<span id="cb38-407"><a href="#cb38-407" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb38-408"><a href="#cb38-408" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-409"><a href="#cb38-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-410"><a href="#cb38-410" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-411"><a href="#cb38-411" aria-hidden="true" tabindex="-1"></a><span class="fu">## Next Steps</span></span>
-<span id="cb38-412"><a href="#cb38-412" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-413"><a href="#cb38-413" aria-hidden="true" tabindex="-1"></a>The next step could be to wrap this in a 'production script' that:</span>
+<span id="cb38-386"><a href="#cb38-386" aria-hidden="true" tabindex="-1"></a>crop_prcntbuf_nocrop_tbl</span>
+<span id="cb38-387"><a href="#cb38-387" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-388"><a href="#cb38-388" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-389"><a href="#cb38-389" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb38-390"><a href="#cb38-390" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-391"><a href="#cb38-391" aria-hidden="true" tabindex="-1"></a>Make a pie chart:</span>
+<span id="cb38-392"><a href="#cb38-392" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-395"><a href="#cb38-395" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb38-396"><a href="#cb38-396" aria-hidden="true" tabindex="-1"></a>caption_chr <span class="ot">&lt;-</span> crop_prcntbuf_nocrop_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb38-397"><a href="#cb38-397" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(crop) <span class="sc">|&gt;</span> </span>
+<span id="cb38-398"><a href="#cb38-398" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">crop_description_chr =</span> <span class="fu">paste</span>(crop, description, <span class="at">sep =</span> <span class="st">": "</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb38-399"><a href="#cb38-399" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(crop_description_chr) <span class="sc">|&gt;</span> </span>
+<span id="cb38-400"><a href="#cb38-400" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"; "</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-401"><a href="#cb38-401" aria-hidden="true" tabindex="-1"></a>  <span class="fu">strwrap</span>(<span class="at">width =</span> <span class="dv">80</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb38-402"><a href="#cb38-402" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(<span class="at">collapse =</span> <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)</span>
+<span id="cb38-403"><a href="#cb38-403" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-404"><a href="#cb38-404" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(crop_prcntbuf_nocrop_tbl, <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> prcnt_buf, <span class="at">fill =</span> crop)) <span class="sc">+</span></span>
+<span id="cb38-405"><a href="#cb38-405" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">width =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb38-406"><a href="#cb38-406" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="st">"y"</span>, <span class="at">start =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb38-407"><a href="#cb38-407" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_void</span>() <span class="sc">+</span></span>
+<span id="cb38-408"><a href="#cb38-408" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Percent area of each crop type"</span>,</span>
+<span id="cb38-409"><a href="#cb38-409" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"1km buffer around Point "</span>, farms_sf<span class="sc">$</span>ptid[i]), </span>
+<span id="cb38-410"><a href="#cb38-410" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> caption_chr) <span class="sc">+</span> </span>
+<span id="cb38-411"><a href="#cb38-411" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.caption =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="dv">0</span>))</span>
+<span id="cb38-412"><a href="#cb38-412" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-413"><a href="#cb38-413" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb38-414"><a href="#cb38-414" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-415"><a href="#cb38-415" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>loops through multiple points  </span>
-<span id="cb38-416"><a href="#cb38-416" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>loops through multiple buffer distances</span>
-<span id="cb38-417"><a href="#cb38-417" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>spits out a table that has the combined percent areas for all points and buffers (and can be easily reshaped or filtered for further analyses)</span>
-<span id="cb38-418"><a href="#cb38-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-415"><a href="#cb38-415" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-416"><a href="#cb38-416" aria-hidden="true" tabindex="-1"></a><span class="fu">## Next Steps</span></span>
+<span id="cb38-417"><a href="#cb38-417" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-418"><a href="#cb38-418" aria-hidden="true" tabindex="-1"></a>The next step could be to wrap this in a 'production script' that:</span>
 <span id="cb38-419"><a href="#cb38-419" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-420"><a href="#cb38-420" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-421"><a href="#cb38-421" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-422"><a href="#cb38-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-420"><a href="#cb38-420" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>loops through multiple points  </span>
+<span id="cb38-421"><a href="#cb38-421" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>loops through multiple buffer distances</span>
+<span id="cb38-422"><a href="#cb38-422" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>spits out a table that has the combined percent areas for all points and buffers (and can be easily reshaped or filtered for further analyses)</span>
 <span id="cb38-423"><a href="#cb38-423" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-424"><a href="#cb38-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-425"><a href="#cb38-425" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-426"><a href="#cb38-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-427"><a href="#cb38-427" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-428"><a href="#cb38-428" aria-hidden="true" tabindex="-1"></a></span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
