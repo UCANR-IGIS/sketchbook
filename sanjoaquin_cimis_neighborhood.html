@@ -131,12 +131,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dieghernan.github.io/tidyterra/">tidyterra</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/mkoohafkan/cimir">cimir</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Define the CRS for the study area:</p>
+<p><br></p>
+</section><section id="import-layers" class="level2"><h2 class="anchored" data-anchor-id="import-layers">Import Layers</h2>
+<p>Define the ESPG code for a real-world projection system for the study area. (We do this because later on we’ll be finding nearest neighbors, and it’s generally a good practice to use real-world coordinates whenever an analyses uses distance or area.)</p>
 <div class="cell">
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">utm10n_wgs84_epsg</span> <span class="op">&lt;-</span> <span class="fl">32610</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><br></p>
-</section><section id="import-layers" class="level2"><h2 class="anchored" data-anchor-id="import-layers">Import Layers</h2>
 <p>Import the county boundary (from US Census):</p>
 <div class="cell">
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sj_bnd_sf</span> <span class="op">&lt;-</span> <span class="fu">tigris</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/tigris/man/counties.html">counties</a></span><span class="op">(</span>state <span class="op">=</span> <span class="st">"CA"</span>, cb <span class="op">=</span> <span class="cn">TRUE</span>, resolution <span class="op">=</span> <span class="st">"5m"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -191,7 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section><section id="create-a-blank-raster-to-store-the-neighborhoods" class="level2"><h2 class="anchored" data-anchor-id="create-a-blank-raster-to-store-the-neighborhoods">Create a blank raster to store the neighborhoods</h2>
 <p>We’ll use a raster to delineate the neighborhoods (mostly for convenience and because it’s easier to visualize the zones):</p>
 <div class="cell">
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">## Create a blank raster with 500m pixels</span></span>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">## Create a blank raster with 250m pixels</span></span>
 <span><span class="va">sj_ext_rst</span> <span class="op">&lt;-</span> <span class="fu">terra</span><span class="fu">::</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/rast.html">rast</a></span><span class="op">(</span><span class="va">sj_bnd_sf</span>, res <span class="op">=</span> <span class="fl">250</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Assign the pixels a value (will be overwritten)</span></span>
@@ -210,7 +211,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p><br></p>
 </section><section id="extract-the-raster-centroids-as-points" class="level2"><h2 class="anchored" data-anchor-id="extract-the-raster-centroids-as-points">Extract the raster centroids as points</h2>
-<p>Next, we’ll extract the coordinates of the centroids of the raster cells (because it’s easier to find N nearest neighbors between two sets of points than cells &amp; points):</p>
+<p>Next, we’ll extract the coordinates of the centroids of the raster cells (because it’s easier to find N nearest neighbors between two sets of points than raster cells &amp; points):</p>
 <div class="cell">
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">sj_pts_sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_as_sf.html">st_as_sf</a></span><span class="op">(</span><span class="fu"><a href="https://rspatial.github.io/terra/reference/as.points.html">as.points</a></span><span class="op">(</span><span class="va">sj_bnd_rst</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html">plot</a></span><span class="op">(</span><span class="va">sj_pts_sf</span><span class="op">$</span><span class="va">geometry</span>, axes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -933,211 +934,213 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a><span class="in">library(cimir)</span></span>
 <span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>Define the CRS for the study area:</span>
+<span id="cb27-39"><a href="#cb27-39" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-40"><a href="#cb27-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a>utm10n_wgs84_epsg <span class="ot">&lt;-</span> <span class="dv">32610</span></span>
-<span id="cb27-45"><a href="#cb27-45" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-46"><a href="#cb27-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a><span class="fu">## Import Layers</span></span>
+<span id="cb27-41"><a href="#cb27-41" aria-hidden="true" tabindex="-1"></a><span class="fu">## Import Layers</span></span>
+<span id="cb27-42"><a href="#cb27-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-43"><a href="#cb27-43" aria-hidden="true" tabindex="-1"></a>Define the ESPG code for a real-world projection system for the study area. (We do this because later on we'll be finding nearest neighbors, and it's generally a good practice to use real-world coordinates whenever an analyses uses distance or area.)</span>
+<span id="cb27-44"><a href="#cb27-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-47"><a href="#cb27-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-48"><a href="#cb27-48" aria-hidden="true" tabindex="-1"></a>utm10n_wgs84_epsg <span class="ot">&lt;-</span> <span class="dv">32610</span></span>
+<span id="cb27-49"><a href="#cb27-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-50"><a href="#cb27-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>Import the county boundary (from US Census):</span>
+<span id="cb27-51"><a href="#cb27-51" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-52"><a href="#cb27-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a><span class="in">```{r message = FALSE}</span></span>
-<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a><span class="in">sj_bnd_sf &lt;- tigris::counties(state = "CA", cb = TRUE, resolution = "5m") |&gt; </span></span>
-<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a><span class="in">  filter(COUNTYFP == "077") |&gt; </span></span>
-<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a><span class="in">  st_transform(utm10n_wgs84_epsg)</span></span>
-<span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-59"><a href="#cb27-59" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb27-53"><a href="#cb27-53" aria-hidden="true" tabindex="-1"></a>Import the county boundary (from US Census):</span>
+<span id="cb27-54"><a href="#cb27-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-55"><a href="#cb27-55" aria-hidden="true" tabindex="-1"></a><span class="in">```{r message = FALSE}</span></span>
+<span id="cb27-56"><a href="#cb27-56" aria-hidden="true" tabindex="-1"></a><span class="in">sj_bnd_sf &lt;- tigris::counties(state = "CA", cb = TRUE, resolution = "5m") |&gt; </span></span>
+<span id="cb27-57"><a href="#cb27-57" aria-hidden="true" tabindex="-1"></a><span class="in">  filter(COUNTYFP == "077") |&gt; </span></span>
+<span id="cb27-58"><a href="#cb27-58" aria-hidden="true" tabindex="-1"></a><span class="in">  st_transform(utm10n_wgs84_epsg)</span></span>
+<span id="cb27-59"><a href="#cb27-59" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-60"><a href="#cb27-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a>Import the active CIMIS stations:</span>
+<span id="cb27-61"><a href="#cb27-61" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-62"><a href="#cb27-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-65"><a href="#cb27-65" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-66"><a href="#cb27-66" aria-hidden="true" tabindex="-1"></a>cimis_stn_rds_fn <span class="ot">&lt;-</span> <span class="st">"cimis_stn.Rds"</span></span>
-<span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(cimis_stn_rds_fn)) {</span>
-<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a>  cimis_stn_sf <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(cimis_stn_rds_fn)</span>
-<span id="cb27-70"><a href="#cb27-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-71"><a href="#cb27-71" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb27-72"><a href="#cb27-72" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-73"><a href="#cb27-73" aria-hidden="true" tabindex="-1"></a>  cimis_stn_sf <span class="ot">&lt;-</span> cimir<span class="sc">::</span><span class="fu">cimis_station</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb27-74"><a href="#cb27-74" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(IsActive <span class="sc">==</span> <span class="st">"True"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb27-75"><a href="#cb27-75" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="at">stid =</span> StationNbr, <span class="at">name =</span> Name, HmsLatitude, HmsLongitude) <span class="sc">|&gt;</span> </span>
-<span id="cb27-76"><a href="#cb27-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb27-77"><a href="#cb27-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">stid =</span> <span class="fu">as.numeric</span>(stid),</span>
-<span id="cb27-78"><a href="#cb27-78" aria-hidden="true" tabindex="-1"></a>           <span class="at">lon =</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"^.*/ "</span>, <span class="st">""</span>, HmsLongitude)),</span>
-<span id="cb27-79"><a href="#cb27-79" aria-hidden="true" tabindex="-1"></a>           <span class="at">lat =</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"^.*/ "</span>, <span class="st">""</span>, HmsLatitude))) <span class="sc">|&gt;</span> </span>
-<span id="cb27-80"><a href="#cb27-80" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(stid, name, lon, lat) <span class="sc">|&gt;</span> </span>
-<span id="cb27-81"><a href="#cb27-81" aria-hidden="true" tabindex="-1"></a>    sf<span class="sc">::</span><span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"lon"</span>, <span class="st">"lat"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb27-82"><a href="#cb27-82" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_transform</span>(utm10n_wgs84_epsg)</span>
-<span id="cb27-83"><a href="#cb27-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-84"><a href="#cb27-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(cimis_stn_sf, <span class="at">file =</span> cimis_stn_rds_fn)</span>
-<span id="cb27-85"><a href="#cb27-85" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-86"><a href="#cb27-86" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-87"><a href="#cb27-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-88"><a href="#cb27-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-89"><a href="#cb27-89" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb27-63"><a href="#cb27-63" aria-hidden="true" tabindex="-1"></a>Import the active CIMIS stations:</span>
+<span id="cb27-64"><a href="#cb27-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-67"><a href="#cb27-67" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-68"><a href="#cb27-68" aria-hidden="true" tabindex="-1"></a>cimis_stn_rds_fn <span class="ot">&lt;-</span> <span class="st">"cimis_stn.Rds"</span></span>
+<span id="cb27-69"><a href="#cb27-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-70"><a href="#cb27-70" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(cimis_stn_rds_fn)) {</span>
+<span id="cb27-71"><a href="#cb27-71" aria-hidden="true" tabindex="-1"></a>  cimis_stn_sf <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(cimis_stn_rds_fn)</span>
+<span id="cb27-72"><a href="#cb27-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-73"><a href="#cb27-73" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb27-74"><a href="#cb27-74" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-75"><a href="#cb27-75" aria-hidden="true" tabindex="-1"></a>  cimis_stn_sf <span class="ot">&lt;-</span> cimir<span class="sc">::</span><span class="fu">cimis_station</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb27-76"><a href="#cb27-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(IsActive <span class="sc">==</span> <span class="st">"True"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb27-77"><a href="#cb27-77" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="at">stid =</span> StationNbr, <span class="at">name =</span> Name, HmsLatitude, HmsLongitude) <span class="sc">|&gt;</span> </span>
+<span id="cb27-78"><a href="#cb27-78" aria-hidden="true" tabindex="-1"></a>    <span class="fu">distinct</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb27-79"><a href="#cb27-79" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">stid =</span> <span class="fu">as.numeric</span>(stid),</span>
+<span id="cb27-80"><a href="#cb27-80" aria-hidden="true" tabindex="-1"></a>           <span class="at">lon =</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"^.*/ "</span>, <span class="st">""</span>, HmsLongitude)),</span>
+<span id="cb27-81"><a href="#cb27-81" aria-hidden="true" tabindex="-1"></a>           <span class="at">lat =</span> <span class="fu">as.numeric</span>(<span class="fu">gsub</span>(<span class="st">"^.*/ "</span>, <span class="st">""</span>, HmsLatitude))) <span class="sc">|&gt;</span> </span>
+<span id="cb27-82"><a href="#cb27-82" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(stid, name, lon, lat) <span class="sc">|&gt;</span> </span>
+<span id="cb27-83"><a href="#cb27-83" aria-hidden="true" tabindex="-1"></a>    sf<span class="sc">::</span><span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"lon"</span>, <span class="st">"lat"</span>), <span class="at">crs =</span> <span class="dv">4326</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb27-84"><a href="#cb27-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_transform</span>(utm10n_wgs84_epsg)</span>
+<span id="cb27-85"><a href="#cb27-85" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-86"><a href="#cb27-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">saveRDS</span>(cimis_stn_sf, <span class="at">file =</span> cimis_stn_rds_fn)</span>
+<span id="cb27-87"><a href="#cb27-87" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-88"><a href="#cb27-88" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-89"><a href="#cb27-89" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-90"><a href="#cb27-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-91"><a href="#cb27-91" aria-hidden="true" tabindex="-1"></a>Plot the CIMIS Stations around the county:</span>
+<span id="cb27-91"><a href="#cb27-91" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-92"><a href="#cb27-92" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-95"><a href="#cb27-95" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-96"><a href="#cb27-96" aria-hidden="true" tabindex="-1"></a>ext_buff <span class="ot">&lt;-</span> <span class="dv">40000</span></span>
-<span id="cb27-97"><a href="#cb27-97" aria-hidden="true" tabindex="-1"></a>map_extent <span class="ot">=</span> <span class="fu">st_bbox</span>(sj_bnd_sf) <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span>ext_buff, <span class="sc">-</span>ext_buff, ext_buff, ext_buff)</span>
-<span id="cb27-98"><a href="#cb27-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-99"><a href="#cb27-99" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sj_bnd_sf) <span class="sc">+</span> </span>
-<span id="cb27-100"><a href="#cb27-100" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">lwd=</span><span class="fl">1.5</span>) <span class="sc">+</span></span>
-<span id="cb27-101"><a href="#cb27-101" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> cimis_stn_sf, <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">shape =</span><span class="dv">20</span>, <span class="at">cex=</span><span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb27-102"><a href="#cb27-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(map_extent[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)]) <span class="sc">+</span> </span>
-<span id="cb27-103"><a href="#cb27-103" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(map_extent[<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>)]) <span class="sc">+</span></span>
-<span id="cb27-104"><a href="#cb27-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"CIMIS Stations in and around San Joaquin County"</span>)</span>
-<span id="cb27-105"><a href="#cb27-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-106"><a href="#cb27-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-107"><a href="#cb27-107" aria-hidden="true" tabindex="-1"></a>  \</span>
-<span id="cb27-108"><a href="#cb27-108" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-109"><a href="#cb27-109" aria-hidden="true" tabindex="-1"></a><span class="fu">## Create a blank raster to store the neighborhoods</span></span>
-<span id="cb27-110"><a href="#cb27-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-111"><a href="#cb27-111" aria-hidden="true" tabindex="-1"></a>We'll use a raster to delineate the neighborhoods (mostly for convenience and because it's easier to visualize the zones):</span>
-<span id="cb27-112"><a href="#cb27-112" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-115"><a href="#cb27-115" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-116"><a href="#cb27-116" aria-hidden="true" tabindex="-1"></a><span class="do">## Create a blank raster with 500m pixels</span></span>
-<span id="cb27-117"><a href="#cb27-117" aria-hidden="true" tabindex="-1"></a>sj_ext_rst <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(sj_bnd_sf, <span class="at">res =</span> <span class="dv">250</span>)</span>
-<span id="cb27-118"><a href="#cb27-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-119"><a href="#cb27-119" aria-hidden="true" tabindex="-1"></a><span class="do">## Assign the pixels a value (will be overwritten)</span></span>
-<span id="cb27-120"><a href="#cb27-120" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(sj_ext_rst) <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb27-121"><a href="#cb27-121" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-122"><a href="#cb27-122" aria-hidden="true" tabindex="-1"></a><span class="do">## Mask it to the county boundary</span></span>
-<span id="cb27-123"><a href="#cb27-123" aria-hidden="true" tabindex="-1"></a>sj_bnd_rst <span class="ot">&lt;-</span> <span class="fu">mask</span>(sj_ext_rst, sj_bnd_sf)</span>
-<span id="cb27-124"><a href="#cb27-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-125"><a href="#cb27-125" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sj_bnd_rst)</span>
-<span id="cb27-126"><a href="#cb27-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-127"><a href="#cb27-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-128"><a href="#cb27-128" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb27-93"><a href="#cb27-93" aria-hidden="true" tabindex="-1"></a>Plot the CIMIS Stations around the county:</span>
+<span id="cb27-94"><a href="#cb27-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-97"><a href="#cb27-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-98"><a href="#cb27-98" aria-hidden="true" tabindex="-1"></a>ext_buff <span class="ot">&lt;-</span> <span class="dv">40000</span></span>
+<span id="cb27-99"><a href="#cb27-99" aria-hidden="true" tabindex="-1"></a>map_extent <span class="ot">=</span> <span class="fu">st_bbox</span>(sj_bnd_sf) <span class="sc">+</span> <span class="fu">c</span>(<span class="sc">-</span>ext_buff, <span class="sc">-</span>ext_buff, ext_buff, ext_buff)</span>
+<span id="cb27-100"><a href="#cb27-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-101"><a href="#cb27-101" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sj_bnd_sf) <span class="sc">+</span> </span>
+<span id="cb27-102"><a href="#cb27-102" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">fill =</span> <span class="cn">NA</span>, <span class="at">lwd=</span><span class="fl">1.5</span>) <span class="sc">+</span></span>
+<span id="cb27-103"><a href="#cb27-103" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">data =</span> cimis_stn_sf, <span class="at">col =</span> <span class="st">"blue"</span>, <span class="at">shape =</span><span class="dv">20</span>, <span class="at">cex=</span><span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb27-104"><a href="#cb27-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(map_extent[<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)]) <span class="sc">+</span> </span>
+<span id="cb27-105"><a href="#cb27-105" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(map_extent[<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">4</span>)]) <span class="sc">+</span></span>
+<span id="cb27-106"><a href="#cb27-106" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"CIMIS Stations in and around San Joaquin County"</span>)</span>
+<span id="cb27-107"><a href="#cb27-107" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-108"><a href="#cb27-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-109"><a href="#cb27-109" aria-hidden="true" tabindex="-1"></a>  \</span>
+<span id="cb27-110"><a href="#cb27-110" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-111"><a href="#cb27-111" aria-hidden="true" tabindex="-1"></a><span class="fu">## Create a blank raster to store the neighborhoods</span></span>
+<span id="cb27-112"><a href="#cb27-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-113"><a href="#cb27-113" aria-hidden="true" tabindex="-1"></a>We'll use a raster to delineate the neighborhoods (mostly for convenience and because it's easier to visualize the zones):</span>
+<span id="cb27-114"><a href="#cb27-114" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-117"><a href="#cb27-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-118"><a href="#cb27-118" aria-hidden="true" tabindex="-1"></a><span class="do">## Create a blank raster with 250m pixels</span></span>
+<span id="cb27-119"><a href="#cb27-119" aria-hidden="true" tabindex="-1"></a>sj_ext_rst <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(sj_bnd_sf, <span class="at">res =</span> <span class="dv">250</span>)</span>
+<span id="cb27-120"><a href="#cb27-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-121"><a href="#cb27-121" aria-hidden="true" tabindex="-1"></a><span class="do">## Assign the pixels a value (will be overwritten)</span></span>
+<span id="cb27-122"><a href="#cb27-122" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(sj_ext_rst) <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb27-123"><a href="#cb27-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-124"><a href="#cb27-124" aria-hidden="true" tabindex="-1"></a><span class="do">## Mask it to the county boundary</span></span>
+<span id="cb27-125"><a href="#cb27-125" aria-hidden="true" tabindex="-1"></a>sj_bnd_rst <span class="ot">&lt;-</span> <span class="fu">mask</span>(sj_ext_rst, sj_bnd_sf)</span>
+<span id="cb27-126"><a href="#cb27-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-127"><a href="#cb27-127" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sj_bnd_rst)</span>
+<span id="cb27-128"><a href="#cb27-128" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-129"><a href="#cb27-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-130"><a href="#cb27-130" aria-hidden="true" tabindex="-1"></a><span class="fu">## Extract the raster centroids as points</span></span>
+<span id="cb27-130"><a href="#cb27-130" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-131"><a href="#cb27-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-132"><a href="#cb27-132" aria-hidden="true" tabindex="-1"></a>Next, we'll extract the coordinates of the centroids of the raster cells (because it's easier to find N nearest neighbors between two sets of points than cells &amp; points):</span>
+<span id="cb27-132"><a href="#cb27-132" aria-hidden="true" tabindex="-1"></a><span class="fu">## Extract the raster centroids as points</span></span>
 <span id="cb27-133"><a href="#cb27-133" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-136"><a href="#cb27-136" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-137"><a href="#cb27-137" aria-hidden="true" tabindex="-1"></a>sj_pts_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(<span class="fu">as.points</span>(sj_bnd_rst))</span>
-<span id="cb27-138"><a href="#cb27-138" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sj_pts_sf<span class="sc">$</span>geometry, <span class="at">axes =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb27-139"><a href="#cb27-139" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-140"><a href="#cb27-140" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb27-141"><a href="#cb27-141" aria-hidden="true" tabindex="-1"></a>\</span>
-<span id="cb27-142"><a href="#cb27-142" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-143"><a href="#cb27-143" aria-hidden="true" tabindex="-1"></a><span class="fu">## Find Nearest Neighbors</span></span>
+<span id="cb27-134"><a href="#cb27-134" aria-hidden="true" tabindex="-1"></a>Next, we'll extract the coordinates of the centroids of the raster cells (because it's easier to find N nearest neighbors between two sets of points than raster cells &amp; points):</span>
+<span id="cb27-135"><a href="#cb27-135" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-138"><a href="#cb27-138" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-139"><a href="#cb27-139" aria-hidden="true" tabindex="-1"></a>sj_pts_sf <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(<span class="fu">as.points</span>(sj_bnd_rst))</span>
+<span id="cb27-140"><a href="#cb27-140" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sj_pts_sf<span class="sc">$</span>geometry, <span class="at">axes =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb27-141"><a href="#cb27-141" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-142"><a href="#cb27-142" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb27-143"><a href="#cb27-143" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-144"><a href="#cb27-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-145"><a href="#cb27-145" aria-hidden="true" tabindex="-1"></a>For each point, we want to find the 4 nearest CIMIS stations, using the <span class="co">[</span><span class="ot">FNN</span><span class="co">](https://cran.r-project.org/package=FNN)</span> package. </span>
+<span id="cb27-145"><a href="#cb27-145" aria-hidden="true" tabindex="-1"></a><span class="fu">## Find Nearest Neighbors</span></span>
 <span id="cb27-146"><a href="#cb27-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-147"><a href="#cb27-147" aria-hidden="true" tabindex="-1"></a>This package works with matrices, not spatial objects, so step #1 is to create two matrices:</span>
+<span id="cb27-147"><a href="#cb27-147" aria-hidden="true" tabindex="-1"></a>For each point, we want to find the 4 nearest CIMIS stations, using the <span class="co">[</span><span class="ot">FNN</span><span class="co">](https://cran.r-project.org/package=FNN)</span> package. </span>
 <span id="cb27-148"><a href="#cb27-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-151"><a href="#cb27-151" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-152"><a href="#cb27-152" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FNN)</span>
-<span id="cb27-153"><a href="#cb27-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-154"><a href="#cb27-154" aria-hidden="true" tabindex="-1"></a>cimis_stn_mat <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(cimis_stn_sf)</span>
-<span id="cb27-155"><a href="#cb27-155" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cimis_stn_mat)</span>
-<span id="cb27-156"><a href="#cb27-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-157"><a href="#cb27-157" aria-hidden="true" tabindex="-1"></a>sj_pts_mat <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(sj_pts_sf)</span>
-<span id="cb27-158"><a href="#cb27-158" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(sj_pts_mat)</span>
-<span id="cb27-159"><a href="#cb27-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-160"><a href="#cb27-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-161"><a href="#cb27-161" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb27-149"><a href="#cb27-149" aria-hidden="true" tabindex="-1"></a>This package works with matrices, not spatial objects, so step #1 is to create two matrices:</span>
+<span id="cb27-150"><a href="#cb27-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-153"><a href="#cb27-153" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-154"><a href="#cb27-154" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(FNN)</span>
+<span id="cb27-155"><a href="#cb27-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-156"><a href="#cb27-156" aria-hidden="true" tabindex="-1"></a>cimis_stn_mat <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(cimis_stn_sf)</span>
+<span id="cb27-157"><a href="#cb27-157" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cimis_stn_mat)</span>
+<span id="cb27-158"><a href="#cb27-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-159"><a href="#cb27-159" aria-hidden="true" tabindex="-1"></a>sj_pts_mat <span class="ot">&lt;-</span> <span class="fu">st_coordinates</span>(sj_pts_sf)</span>
+<span id="cb27-160"><a href="#cb27-160" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(sj_pts_mat)</span>
+<span id="cb27-161"><a href="#cb27-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-162"><a href="#cb27-162" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-163"><a href="#cb27-163" aria-hidden="true" tabindex="-1"></a>Now for each point, we can find the nearest 4 CIMIS stations:</span>
+<span id="cb27-163"><a href="#cb27-163" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-164"><a href="#cb27-164" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-167"><a href="#cb27-167" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-168"><a href="#cb27-168" aria-hidden="true" tabindex="-1"></a>sj_pts_knn <span class="ot">&lt;-</span> <span class="fu">get.knnx</span>(<span class="at">data =</span> cimis_stn_mat, <span class="at">query =</span> sj_pts_mat, <span class="at">k =</span> <span class="dv">4</span>)</span>
-<span id="cb27-169"><a href="#cb27-169" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sj_pts_knn<span class="sc">$</span>nn.index)</span>
-<span id="cb27-170"><a href="#cb27-170" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(sj_pts_knn<span class="sc">$</span>nn.index)</span>
-<span id="cb27-171"><a href="#cb27-171" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-172"><a href="#cb27-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-173"><a href="#cb27-173" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb27-165"><a href="#cb27-165" aria-hidden="true" tabindex="-1"></a>Now for each point, we can find the nearest 4 CIMIS stations:</span>
+<span id="cb27-166"><a href="#cb27-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-169"><a href="#cb27-169" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-170"><a href="#cb27-170" aria-hidden="true" tabindex="-1"></a>sj_pts_knn <span class="ot">&lt;-</span> <span class="fu">get.knnx</span>(<span class="at">data =</span> cimis_stn_mat, <span class="at">query =</span> sj_pts_mat, <span class="at">k =</span> <span class="dv">4</span>)</span>
+<span id="cb27-171"><a href="#cb27-171" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sj_pts_knn<span class="sc">$</span>nn.index)</span>
+<span id="cb27-172"><a href="#cb27-172" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(sj_pts_knn<span class="sc">$</span>nn.index)</span>
+<span id="cb27-173"><a href="#cb27-173" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-174"><a href="#cb27-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-175"><a href="#cb27-175" aria-hidden="true" tabindex="-1"></a><span class="in">`get.knnx()`</span> returns indices. The CIMIS stations involved here include:</span>
+<span id="cb27-175"><a href="#cb27-175" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-176"><a href="#cb27-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-179"><a href="#cb27-179" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-180"><a href="#cb27-180" aria-hidden="true" tabindex="-1"></a>all_nbhds_stid <span class="ot">&lt;-</span> cimis_stn_sf <span class="sc">|&gt;</span> </span>
-<span id="cb27-181"><a href="#cb27-181" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb27-182"><a href="#cb27-182" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="fu">unique</span>(<span class="fu">as.numeric</span>(sj_pts_knn<span class="sc">$</span>nn.index))) <span class="sc">|&gt;</span> </span>
-<span id="cb27-183"><a href="#cb27-183" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(stid)</span>
-<span id="cb27-184"><a href="#cb27-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-185"><a href="#cb27-185" aria-hidden="true" tabindex="-1"></a>all_nbhds_stid <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">format =</span> <span class="st">"html"</span>)</span>
-<span id="cb27-186"><a href="#cb27-186" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-187"><a href="#cb27-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-188"><a href="#cb27-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-189"><a href="#cb27-189" aria-hidden="true" tabindex="-1"></a><span class="fu">## Identify Unique Neighboroods</span></span>
+<span id="cb27-177"><a href="#cb27-177" aria-hidden="true" tabindex="-1"></a><span class="in">`get.knnx()`</span> returns indices. The CIMIS stations involved here include:</span>
+<span id="cb27-178"><a href="#cb27-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-181"><a href="#cb27-181" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-182"><a href="#cb27-182" aria-hidden="true" tabindex="-1"></a>all_nbhds_stid <span class="ot">&lt;-</span> cimis_stn_sf <span class="sc">|&gt;</span> </span>
+<span id="cb27-183"><a href="#cb27-183" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_drop_geometry</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb27-184"><a href="#cb27-184" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="fu">unique</span>(<span class="fu">as.numeric</span>(sj_pts_knn<span class="sc">$</span>nn.index))) <span class="sc">|&gt;</span> </span>
+<span id="cb27-185"><a href="#cb27-185" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(stid)</span>
+<span id="cb27-186"><a href="#cb27-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-187"><a href="#cb27-187" aria-hidden="true" tabindex="-1"></a>all_nbhds_stid <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">format =</span> <span class="st">"html"</span>)</span>
+<span id="cb27-188"><a href="#cb27-188" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-189"><a href="#cb27-189" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-190"><a href="#cb27-190" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-191"><a href="#cb27-191" aria-hidden="true" tabindex="-1"></a>Next, we create a factor object representing all unique combinations of 4 nearest stations (i.e., a "CIMIS Neighborhood").</span>
+<span id="cb27-191"><a href="#cb27-191" aria-hidden="true" tabindex="-1"></a><span class="fu">## Identify Unique Neighboroods</span></span>
 <span id="cb27-192"><a href="#cb27-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-195"><a href="#cb27-195" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-196"><a href="#cb27-196" aria-hidden="true" tabindex="-1"></a>cimis_stid_grps_fct <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">apply</span>(sj_pts_knn<span class="sc">$</span>nn.index, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">paste</span>(<span class="fu">sort</span>(cimis_stn_sf<span class="sc">$</span>stid[x]), <span class="at">collapse =</span> <span class="st">"|"</span>)))</span>
-<span id="cb27-197"><a href="#cb27-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-198"><a href="#cb27-198" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(cimis_stid_grps_fct)</span>
-<span id="cb27-199"><a href="#cb27-199" aria-hidden="true" tabindex="-1"></a><span class="fu">nlevels</span>(cimis_stid_grps_fct)</span>
-<span id="cb27-200"><a href="#cb27-200" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(cimis_stid_grps_fct)</span>
-<span id="cb27-201"><a href="#cb27-201" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-202"><a href="#cb27-202" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-203"><a href="#cb27-203" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb27-193"><a href="#cb27-193" aria-hidden="true" tabindex="-1"></a>Next, we create a factor object representing all unique combinations of 4 nearest stations (i.e., a "CIMIS Neighborhood").</span>
+<span id="cb27-194"><a href="#cb27-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-197"><a href="#cb27-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-198"><a href="#cb27-198" aria-hidden="true" tabindex="-1"></a>cimis_stid_grps_fct <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">apply</span>(sj_pts_knn<span class="sc">$</span>nn.index, <span class="dv">1</span>, <span class="cf">function</span>(x) <span class="fu">paste</span>(<span class="fu">sort</span>(cimis_stn_sf<span class="sc">$</span>stid[x]), <span class="at">collapse =</span> <span class="st">"|"</span>)))</span>
+<span id="cb27-199"><a href="#cb27-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-200"><a href="#cb27-200" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(cimis_stid_grps_fct)</span>
+<span id="cb27-201"><a href="#cb27-201" aria-hidden="true" tabindex="-1"></a><span class="fu">nlevels</span>(cimis_stid_grps_fct)</span>
+<span id="cb27-202"><a href="#cb27-202" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(cimis_stid_grps_fct)</span>
+<span id="cb27-203"><a href="#cb27-203" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-204"><a href="#cb27-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-205"><a href="#cb27-205" aria-hidden="true" tabindex="-1"></a><span class="fu">## Create Categorical Raster</span></span>
+<span id="cb27-205"><a href="#cb27-205" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-206"><a href="#cb27-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-207"><a href="#cb27-207" aria-hidden="true" tabindex="-1"></a>For the purpose of visualizing the neighborhoods, we next constructor a categorical raster of the CIMIS Neighborhoods</span>
+<span id="cb27-207"><a href="#cb27-207" aria-hidden="true" tabindex="-1"></a><span class="fu">## Create Categorical Raster</span></span>
 <span id="cb27-208"><a href="#cb27-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-211"><a href="#cb27-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-212"><a href="#cb27-212" aria-hidden="true" tabindex="-1"></a><span class="do">## Start by making a factor copy of the raster that was used to generate the points</span></span>
-<span id="cb27-213"><a href="#cb27-213" aria-hidden="true" tabindex="-1"></a>sj_4nnzones_rst <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(sj_bnd_rst)</span>
-<span id="cb27-214"><a href="#cb27-214" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-215"><a href="#cb27-215" aria-hidden="true" tabindex="-1"></a><span class="do">## Replace the non-NA values with the cimis_stid_grps_fct (as an integer)</span></span>
-<span id="cb27-216"><a href="#cb27-216" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(sj_4nnzones_rst)[<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">values</span>(sj_4nnzones_rst))] <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(cimis_stid_grps_fct)</span>
-<span id="cb27-217"><a href="#cb27-217" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-218"><a href="#cb27-218" aria-hidden="true" tabindex="-1"></a><span class="do">## Assign the levels</span></span>
-<span id="cb27-219"><a href="#cb27-219" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(sj_4nnzones_rst) <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">value=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nlevels</span>(cimis_stid_grps_fct), </span>
-<span id="cb27-220"><a href="#cb27-220" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">cimis_group =</span> <span class="fu">levels</span>(cimis_stid_grps_fct))</span>
-<span id="cb27-221"><a href="#cb27-221" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-222"><a href="#cb27-222" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb27-209"><a href="#cb27-209" aria-hidden="true" tabindex="-1"></a>For the purpose of visualizing the neighborhoods, we next constructor a categorical raster of the CIMIS Neighborhoods</span>
+<span id="cb27-210"><a href="#cb27-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-213"><a href="#cb27-213" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-214"><a href="#cb27-214" aria-hidden="true" tabindex="-1"></a><span class="do">## Start by making a factor copy of the raster that was used to generate the points</span></span>
+<span id="cb27-215"><a href="#cb27-215" aria-hidden="true" tabindex="-1"></a>sj_4nnzones_rst <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(sj_bnd_rst)</span>
+<span id="cb27-216"><a href="#cb27-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-217"><a href="#cb27-217" aria-hidden="true" tabindex="-1"></a><span class="do">## Replace the non-NA values with the cimis_stid_grps_fct (as an integer)</span></span>
+<span id="cb27-218"><a href="#cb27-218" aria-hidden="true" tabindex="-1"></a><span class="fu">values</span>(sj_4nnzones_rst)[<span class="sc">!</span><span class="fu">is.na</span>(<span class="fu">values</span>(sj_4nnzones_rst))] <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(cimis_stid_grps_fct)</span>
+<span id="cb27-219"><a href="#cb27-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-220"><a href="#cb27-220" aria-hidden="true" tabindex="-1"></a><span class="do">## Assign the levels</span></span>
+<span id="cb27-221"><a href="#cb27-221" aria-hidden="true" tabindex="-1"></a><span class="fu">levels</span>(sj_4nnzones_rst) <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">value=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nlevels</span>(cimis_stid_grps_fct), </span>
+<span id="cb27-222"><a href="#cb27-222" aria-hidden="true" tabindex="-1"></a>                                     <span class="at">cimis_group =</span> <span class="fu">levels</span>(cimis_stid_grps_fct))</span>
 <span id="cb27-223"><a href="#cb27-223" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-224"><a href="#cb27-224" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb27-224"><a href="#cb27-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-225"><a href="#cb27-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-226"><a href="#cb27-226" aria-hidden="true" tabindex="-1"></a>Assign a color table:</span>
+<span id="cb27-226"><a href="#cb27-226" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-227"><a href="#cb27-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-230"><a href="#cb27-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-231"><a href="#cb27-231" aria-hidden="true" tabindex="-1"></a>cols_chr <span class="ot">&lt;-</span> <span class="fu">rainbow</span>(<span class="fu">nlevels</span>(cimis_stid_grps_fct), <span class="at">end=</span><span class="dv">5</span><span class="sc">/</span><span class="dv">6</span>)[<span class="fu">order</span>(<span class="fu">rnorm</span>(<span class="fu">nlevels</span>(cimis_stid_grps_fct)))]</span>
-<span id="cb27-232"><a href="#cb27-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-233"><a href="#cb27-233" aria-hidden="true" tabindex="-1"></a><span class="fu">coltab</span>(sj_4nnzones_rst) <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">value=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nlevels</span>(cimis_stid_grps_fct), <span class="at">col =</span> cols_chr)</span>
+<span id="cb27-228"><a href="#cb27-228" aria-hidden="true" tabindex="-1"></a>Assign a color table:</span>
+<span id="cb27-229"><a href="#cb27-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-232"><a href="#cb27-232" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-233"><a href="#cb27-233" aria-hidden="true" tabindex="-1"></a>cols_chr <span class="ot">&lt;-</span> <span class="fu">rainbow</span>(<span class="fu">nlevels</span>(cimis_stid_grps_fct), <span class="at">end=</span><span class="dv">5</span><span class="sc">/</span><span class="dv">6</span>)[<span class="fu">order</span>(<span class="fu">rnorm</span>(<span class="fu">nlevels</span>(cimis_stid_grps_fct)))]</span>
 <span id="cb27-234"><a href="#cb27-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-235"><a href="#cb27-235" aria-hidden="true" tabindex="-1"></a><span class="fu">has.colors</span>(sj_4nnzones_rst)</span>
-<span id="cb27-236"><a href="#cb27-236" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-237"><a href="#cb27-237" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-238"><a href="#cb27-238" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb27-235"><a href="#cb27-235" aria-hidden="true" tabindex="-1"></a><span class="fu">coltab</span>(sj_4nnzones_rst) <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">value=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">nlevels</span>(cimis_stid_grps_fct), <span class="at">col =</span> cols_chr)</span>
+<span id="cb27-236"><a href="#cb27-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-237"><a href="#cb27-237" aria-hidden="true" tabindex="-1"></a><span class="fu">has.colors</span>(sj_4nnzones_rst)</span>
+<span id="cb27-238"><a href="#cb27-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-239"><a href="#cb27-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-240"><a href="#cb27-240" aria-hidden="true" tabindex="-1"></a>Visualize:</span>
+<span id="cb27-240"><a href="#cb27-240" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-241"><a href="#cb27-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-244"><a href="#cb27-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb27-245"><a href="#cb27-245" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
-<span id="cb27-246"><a href="#cb27-246" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> sj_4nnzones_rst) <span class="sc">+</span></span>
-<span id="cb27-247"><a href="#cb27-247" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"CIMIS Neighborhoods: San Joaquin County"</span>,</span>
-<span id="cb27-248"><a href="#cb27-248" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Neighborhoods are defined by the four closest CIMIS stations"</span>)</span>
-<span id="cb27-249"><a href="#cb27-249" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb27-250"><a href="#cb27-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-251"><a href="#cb27-251" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb27-242"><a href="#cb27-242" aria-hidden="true" tabindex="-1"></a>Visualize:</span>
+<span id="cb27-243"><a href="#cb27-243" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-246"><a href="#cb27-246" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb27-247"><a href="#cb27-247" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>() <span class="sc">+</span> </span>
+<span id="cb27-248"><a href="#cb27-248" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_spatraster</span>(<span class="at">data =</span> sj_4nnzones_rst) <span class="sc">+</span></span>
+<span id="cb27-249"><a href="#cb27-249" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"CIMIS Neighborhoods: San Joaquin County"</span>,</span>
+<span id="cb27-250"><a href="#cb27-250" aria-hidden="true" tabindex="-1"></a>       <span class="at">caption =</span> <span class="st">"Neighborhoods are defined by the four closest CIMIS stations"</span>)</span>
+<span id="cb27-251"><a href="#cb27-251" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb27-252"><a href="#cb27-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-253"><a href="#cb27-253" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusions</span></span>
+<span id="cb27-253"><a href="#cb27-253" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-254"><a href="#cb27-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-255"><a href="#cb27-255" aria-hidden="true" tabindex="-1"></a>There are <span class="in">`r nlevels(cimis_stid_grps_fct)`</span> 'neighborhoods of 4 CIMIS stations' in the county. For best results, we  need to 'clean' (i.e., fill in missing and 'bad' values) using these groups of 4. Cleaning ~8 years worth of hourly data for one group of 4 stations takes about &lt;10 minutes, so doing <span class="in">`r nlevels(cimis_stid_grps_fct)`</span> of them is definitely manageable.</span>
+<span id="cb27-255"><a href="#cb27-255" aria-hidden="true" tabindex="-1"></a><span class="fu">## Conclusions</span></span>
 <span id="cb27-256"><a href="#cb27-256" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-257"><a href="#cb27-257" aria-hidden="true" tabindex="-1"></a>\</span>
+<span id="cb27-257"><a href="#cb27-257" aria-hidden="true" tabindex="-1"></a>There are <span class="in">`r nlevels(cimis_stid_grps_fct)`</span> 'neighborhoods of 4 CIMIS stations' in the county. For best results, we  need to 'clean' (i.e., fill in missing and 'bad' values) using these groups of 4. Cleaning ~8 years worth of hourly data for one group of 4 stations takes about &lt;10 minutes, so doing <span class="in">`r nlevels(cimis_stid_grps_fct)`</span> of them is definitely manageable.</span>
 <span id="cb27-258"><a href="#cb27-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-259"><a href="#cb27-259" aria-hidden="true" tabindex="-1"></a><span class="fu">## Questions</span></span>
+<span id="cb27-259"><a href="#cb27-259" aria-hidden="true" tabindex="-1"></a>\</span>
 <span id="cb27-260"><a href="#cb27-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-261"><a href="#cb27-261" aria-hidden="true" tabindex="-1"></a>However...</span>
+<span id="cb27-261"><a href="#cb27-261" aria-hidden="true" tabindex="-1"></a><span class="fu">## Questions</span></span>
 <span id="cb27-262"><a href="#cb27-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-263"><a href="#cb27-263" aria-hidden="true" tabindex="-1"></a>Cleaning weather station data in groups of 4 works really well, but results in the the same weather station having slightly different weather data time series depending what group it's with. For example the 'bad' values for station 131 will have slightly different values when corrected using the combined data for 131-227-228-262 than when it was cleaned with combined data from 131-227-242-262. This isn't a problem for the chill model, because we can select the correct time series based on the location being modeled, but seems inefficient and non-intuitive to have multiple "corrected" time series for the same station.</span>
+<span id="cb27-263"><a href="#cb27-263" aria-hidden="true" tabindex="-1"></a>However...</span>
 <span id="cb27-264"><a href="#cb27-264" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-265"><a href="#cb27-265" aria-hidden="true" tabindex="-1"></a>As an alternative, what if we were to use the "group of 4" data cleaning method on each of the 17 CIMIS stations individually (i.e., clean data for each station using its own time series plus its 3 nearest stations), and then use these time series for subsequent steps (i.e., generating the derived variables for the GAM in neighborhoods of 3)? </span>
+<span id="cb27-265"><a href="#cb27-265" aria-hidden="true" tabindex="-1"></a>Cleaning weather station data in groups of 4 works really well, but results in the the same weather station having slightly different weather data time series depending what group it's with. For example the 'bad' values for station 131 will have slightly different values when corrected using the combined data for 131-227-228-262 than when it was cleaned with combined data from 131-227-242-262. This isn't a problem for the chill model, because we can select the correct time series based on the location being modeled, but seems inefficient and non-intuitive to have multiple "corrected" time series for the same station.</span>
 <span id="cb27-266"><a href="#cb27-266" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-267"><a href="#cb27-267" aria-hidden="true" tabindex="-1"></a>Another question for Emilio: how much of a gap in data can the RandomForest interpolation method handle? (e.g., if a station has a one-month gap in data / replaced by historical averages), can we still work with it?</span>
+<span id="cb27-267"><a href="#cb27-267" aria-hidden="true" tabindex="-1"></a>As an alternative, what if we were to use the "group of 4" data cleaning method on each of the 17 CIMIS stations individually (i.e., clean data for each station using its own time series plus its 3 nearest stations), and then use these time series for subsequent steps (i.e., generating the derived variables for the GAM in neighborhoods of 3)? </span>
+<span id="cb27-268"><a href="#cb27-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-269"><a href="#cb27-269" aria-hidden="true" tabindex="-1"></a>Another question for Emilio: how much of a gap in data can the RandomForest interpolation method handle? (e.g., if a station has a one-month gap in data / replaced by historical averages), can we still work with it?</span>
 </code><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
