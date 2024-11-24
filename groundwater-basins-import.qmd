@@ -1,0 +1,127 @@
+---
+title: "Import CA Groundwater Basins into R with arcgislayers"
+author:
+  - name: Andy Lyons
+    orcid: 0000-0002-7505-6709
+    affiliations:
+      - name: UC Division of Agriculture and Natural Resources
+        department: Informatics and GIS
+        url: https://igis.ucanr.edu/
+date: "September, 2024"
+format:
+  html:
+    theme: cosmo
+    df-print: paged
+    toc: true
+    toc-depth: 2
+    code-tools: false
+    code-link: true
+---
+
+\
+
+## Summary 
+
+The notebook demonstrates how to import the ["DWR Groundwater Basins 2016"](https://gis.data.ca.gov/maps/16c6d9866d634c1188913174130133f5) layer into R, using the [`arcgislayers`](https://r.esri.com/arcgislayers/) package. We will also extract one of the basins and save it to a geojson file.
+
+## Locate the Data
+
+First, we need to find the data. A Google Search of "CA Groundwater Basins GIS Data" quickly gets us to a list of [groundwater layers](https://gis.data.ca.gov/search?q=groundwater) hosted by CA DWR. Select one of the layers and view the full details. The "View Data Source" button gets us to the [MapServer page](https://gispublic.waterboards.ca.gov/portalserver/rest/services/GAMA/DWR_Groundwater_Basins_2016/MapServer) for this map.
+
+The layer from this MapServer have been made public, so we should be able to download it fairly easily. If it wasn't public, but we had an ArcGIS account that gave us permission to view it, we could still get it after authenticating with `arcgislayers`.
+
+## Setup
+
+Next, load the packages we'll need:
+
+```{r message = FALSE}
+library(arcgislayers)
+library(sf)
+library(dplyr)
+library(ggplot2)
+```
+
+## Connect to the MapServer
+
+The general sequence of steps to import data from ArcGIS servers using `arcgislayers` is
+
+1. authenticate (if needed)  
+2. create a connection to the MapServer or FeatureServer that has the data  
+3. list the FeatureLayers available  
+4. create a connection to the desired FeatureLayer  
+5. view the fields in the FeatureLayer (optional - if you want to construct a WHERE query when you import the data)  
+6. import the data  
+
+\
+
+First, we open a connection to the **MapServer**.
+
+```{r}
+grndwtr_basins2016_url <- "https://gispublic.waterboards.ca.gov/portalserver/rest/services/GAMA/DWR_Groundwater_Basins_2016/MapServer"
+grndwtr_basins2016_ms <- arc_open(grndwtr_basins2016_url)
+grndwtr_basins2016_ms
+```
+
+ArcGIS MapServers and FeatureServers are both set up to share multiple layers. So next, we view which FeatureLayer(s) this MapServer contains:
+
+```{r}
+list_items(grndwtr_basins2016_ms)
+```
+
+After taking note of the `id` of the layer we want to import, we can now create a connection to the **FeatureLayer** provided by this MapServer. (Note this still isn't importing the data, just creating the connection):
+
+```{r}
+grndwtr_basins2016_fl <- get_layer(grndwtr_basins2016_ms, id = 0)
+grndwtr_basins2016_fl
+```
+
+Now that we have the FeatureLayer object, we can look at the fields in the attribute table. This could be useful if for example we wanted to create a WHERE expression when we import the data.
+
+```{r}
+list_fields(grndwtr_basins2016_fl)
+```
+
+
+## Import the Spatial Data
+
+Up to now, all we've done is open connections to the data on DWR's ArcGIS Server. This is a bit like dialing a phone number and saying hello. We haven't yet actually imported **any** spatial data into R. 
+
+Finally, we have everything we need import the data using `arc_select()`. This function imports the layer and returns it as a simple feature (sf) object. It has optional arguments to specify attribute and/or spatial conditions, which can be extremely helpful with large datasets, but we don't need that here.
+
+```{r, paged.print=FALSE}
+grndwtr_basins2016_sf <- arc_select(grndwtr_basins2016_fl)
+grndwtr_basins2016_sf
+```
+
+\
+
+We now have the polygons as a sf object! Let's create a column of unique colors, and map them:
+
+```{r}
+grndwtr_basins2016_sf$color <- sample(rainbow(255, end=5/6), 
+                                      nrow(grndwtr_basins2016_sf), replace = TRUE)
+
+ggplot(grndwtr_basins2016_sf, aes(fillColor = color)) + 
+  geom_sf(alpha = 0.3, color = NA)
+```
+
+## Export One Basin to Disk
+
+Pull out the groundwater basin for Imperial Valley, and plot it:
+
+```{r}
+impval_2016_sf <- grndwtr_basins2016_sf |> 
+  filter(basin_name == "IMPERIAL VALLEY")
+
+ggplot() + geom_sf(data = impval_2016_sf)
+```
+
+Convert it to geographic coordinates, and save as geojson:
+
+```{r}
+st_write(impval_2016_sf |> st_transform(4326), 
+         dsn = "imperial-valley-groundwater-basin-2016.geojson",
+         delete_dsn = TRUE)
+```
+
+
