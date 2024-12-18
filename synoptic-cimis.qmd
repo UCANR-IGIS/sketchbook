@@ -370,6 +370,8 @@ latency_url <- paste0("https://api.synopticdata.com/v2/stations/latency?token=",
                       "&start=", start_dt_utc_chr,
                       "&end=", end_dt_utc_chr,
                       "&stats=mean")
+
+latency_url |> str_replace("(?<=token=).*(?=&)", "**********")
 ```
 
 Next, create the request object, perform the request, and parse the results into a list:

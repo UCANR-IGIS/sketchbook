@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Clean CIMIS Demo</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="clean_cimis_demo_files/libs/clipboard/clipboard.min.js"></script>
+<script src="clean_cimis_demo_files/libs/quarto-html/quarto.js"></script>
+<script src="clean_cimis_demo_files/libs/quarto-html/popper.min.js"></script>
+<script src="clean_cimis_demo_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="clean_cimis_demo_files/libs/quarto-html/anchor.min.js"></script>
+<link href="clean_cimis_demo_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="clean_cimis_demo_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="clean_cimis_demo_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="clean_cimis_demo_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="clean_cimis_demo_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Clean CIMIS Demo</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="do">## pak::pkg_install("ajlyons/cleancimis")</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cleancimis)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'tsibble':
+  method               from 
+  as_tibble.grouped_df dplyr</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">packageVersion</span>(<span class="st">"cleancimis"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] '0.0.0.9000'</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Linking to GEOS 3.12.1, GDAL 3.8.4, PROJ 9.3.1; sf_use_s2() is TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Import the active CIMIS Stations:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>stns_sf <span class="ot">&lt;-</span> <span class="fu">cc_stn_active</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - loading stored copy of cimis stations</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(stns_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 145   6</code></pre>
+</div>
+</div>
+<p>Plot active stations</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(stns_sf) <span class="sc">+</span> <span class="fu">geom_sf</span>(<span class="at">shape =</span> <span class="dv">16</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="clean_cimis_demo_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Generate a list of each station’s nearest neighbors:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>nn <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>stn_all_nn_lst <span class="ot">&lt;-</span> <span class="fu">cc_stn_nn</span>(<span class="at">cimis_sf =</span> stns_sf, <span class="at">nn =</span> nn)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(stn_all_nn_lst)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] "2"   "5"   "6"   "7"   "12"  "13"  "15"  "35"  "39"  "41"  "43"  "44" 
+ [13] "47"  "52"  "62"  "64"  "68"  "70"  "71"  "75"  "77"  "78"  "80"  "83" 
+ [25] "84"  "87"  "88"  "90"  "91"  "99"  "103" "104" "105" "106" "107" "113"
+ [37] "114" "116" "117" "124" "125" "126" "129" "131" "135" "136" "139" "140"
+ [49] "143" "144" "146" "147" "150" "151" "152" "153" "157" "158" "159" "160"
+ [61] "163" "165" "170" "171" "173" "174" "175" "178" "179" "181" "182" "183"
+ [73] "184" "187" "189" "191" "192" "193" "194" "195" "197" "199" "200" "202"
+ [85] "204" "205" "206" "207" "208" "209" "210" "211" "212" "213" "214" "215"
+ [97] "216" "217" "218" "219" "220" "221" "222" "223" "224" "225" "226" "227"
+[109] "228" "229" "231" "232" "233" "235" "236" "237" "239" "240" "241" "242"
+[121] "243" "244" "245" "246" "247" "248" "249" "250" "251" "252" "253" "254"
+[133] "256" "257" "258" "259" "260" "261" "262" "263" "264" "265" "266" "267"
+[145] "268"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>stn_all_nn_lst[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>$stid
+[1] 2
+
+$nn
+[1] 205  15 105</code></pre>
+</div>
+</div>
+</section>
+<section id="define-a-study-area" class="level2">
+<h2 class="anchored" data-anchor-id="define-a-study-area">Define a Study Area</h2>
+<p>Get the boundary for San Joaquin County</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>sj_bnd_sf <span class="ot">&lt;-</span> tigris<span class="sc">::</span><span class="fu">counties</span>(<span class="at">state =</span> <span class="st">"CA"</span>, <span class="at">cb =</span> <span class="cn">TRUE</span>, <span class="at">resolution =</span> <span class="st">"5m"</span>) <span class="sc">|&gt;</span> <span class="fu">filter</span>(COUNTYFP <span class="sc">==</span> <span class="st">"077"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Retrieving data for the year 2022</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  |                                                                            
+  |                                                                      |   0%
+  |                                                                            
+  |                                                                      |   1%
+  |                                                                            
+  |=                                                                     |   1%
+  |                                                                            
+  |=                                                                     |   2%
+  |                                                                            
+  |==                                                                    |   2%
+  |                                                                            
+  |==                                                                    |   3%
+  |                                                                            
+  |===                                                                   |   4%
+  |                                                                            
+  |===                                                                   |   5%
+  |                                                                            
+  |====                                                                  |   6%
+  |                                                                            
+  |=====                                                                 |   7%
+  |                                                                            
+  |======                                                                |   8%
+  |                                                                            
+  |======                                                                |   9%
+  |                                                                            
+  |=======                                                               |  11%
+  |                                                                            
+  |========                                                              |  12%
+  |                                                                            
+  |=========                                                             |  12%
+  |                                                                            
+  |==========                                                            |  14%
+  |                                                                            
+  |===========                                                           |  16%
+  |                                                                            
+  |============                                                          |  17%
+  |                                                                            
+  |============                                                          |  18%
+  |                                                                            
+  |=================                                                     |  24%
+  |                                                                            
+  |====================                                                  |  28%
+  |                                                                            
+  |====================                                                  |  29%
+  |                                                                            
+  |=====================                                                 |  30%
+  |                                                                            
+  |======================                                                |  31%
+  |                                                                            
+  |=======================                                               |  32%
+  |                                                                            
+  |=======================                                               |  33%
+  |                                                                            
+  |========================                                              |  34%
+  |                                                                            
+  |=========================                                             |  35%
+  |                                                                            
+  |=========================                                             |  36%
+  |                                                                            
+  |==========================                                            |  37%
+  |                                                                            
+  |============================                                          |  40%
+  |                                                                            
+  |=============================                                         |  42%
+  |                                                                            
+  |==============================                                        |  42%
+  |                                                                            
+  |==============================                                        |  43%
+  |                                                                            
+  |===============================                                       |  44%
+  |                                                                            
+  |================================                                      |  45%
+  |                                                                            
+  |================================                                      |  46%
+  |                                                                            
+  |==================================                                    |  48%
+  |                                                                            
+  |==================================                                    |  49%
+  |                                                                            
+  |===================================                                   |  50%
+  |                                                                            
+  |====================================                                  |  52%
+  |                                                                            
+  |======================================                                |  55%
+  |                                                                            
+  |=======================================                               |  55%
+  |                                                                            
+  |========================================                              |  56%
+  |                                                                            
+  |========================================                              |  58%
+  |                                                                            
+  |=========================================                             |  58%
+  |                                                                            
+  |==========================================                            |  60%
+  |                                                                            
+  |===========================================                           |  61%
+  |                                                                            
+  |============================================                          |  63%
+  |                                                                            
+  |============================================                          |  64%
+  |                                                                            
+  |=============================================                         |  64%
+  |                                                                            
+  |==============================================                        |  65%
+  |                                                                            
+  |===============================================                       |  67%
+  |                                                                            
+  |===============================================                       |  68%
+  |                                                                            
+  |================================================                      |  68%
+  |                                                                            
+  |=================================================                     |  69%
+  |                                                                            
+  |=================================================                     |  71%
+  |                                                                            
+  |==================================================                    |  71%
+  |                                                                            
+  |===================================================                   |  72%
+  |                                                                            
+  |====================================================                  |  74%
+  |                                                                            
+  |=====================================================                 |  76%
+  |                                                                            
+  |=======================================================               |  78%
+  |                                                                            
+  |=======================================================               |  79%
+  |                                                                            
+  |========================================================              |  80%
+  |                                                                            
+  |=========================================================             |  81%
+  |                                                                            
+  |=========================================================             |  82%
+  |                                                                            
+  |==========================================================            |  83%
+  |                                                                            
+  |===========================================================           |  84%
+  |                                                                            
+  |===========================================================           |  85%
+  |                                                                            
+  |============================================================          |  86%
+  |                                                                            
+  |=============================================================         |  87%
+  |                                                                            
+  |==============================================================        |  88%
+  |                                                                            
+  |==============================================================        |  89%
+  |                                                                            
+  |================================================================      |  91%
+  |                                                                            
+  |================================================================      |  92%
+  |                                                                            
+  |=================================================================     |  93%
+  |                                                                            
+  |==================================================================    |  94%
+  |                                                                            
+  |===================================================================   |  95%
+  |                                                                            
+  |===================================================================   |  96%
+  |                                                                            
+  |====================================================================  |  97%
+  |                                                                            
+  |===================================================================== |  98%
+  |                                                                            
+  |======================================================================|  99%
+  |                                                                            
+  |======================================================================| 100%</code></pre>
+</div>
+</div>
+<p>Get all the CIMIS stations for the San Joaquin County</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>sj_stn_w2w <span class="ot">&lt;-</span> <span class="fu">cc_stn_wall2wall</span>(<span class="at">poly =</span> sj_bnd_sf, <span class="at">cimis_sf =</span> stns_sf, <span class="at">nn =</span> <span class="dv">1</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(sj_stn_w2w)   <span class="do">## 12</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 12</code></pre>
+</div>
+</div>
+<p>Identify all stations needed, including all the stations for wall-to-wall coverage within our study area, plus their nearest neighbors.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>sj_stn_w2w_plusnn <span class="ot">&lt;-</span> stn_all_nn_lst[<span class="fu">as.character</span>(sj_stn_w2w)] <span class="sc">|&gt;</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unlist</span>() <span class="sc">|&gt;</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sort</span>()</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>sj_stn_w2w_plusnn</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  47  70  71 140 171 178 191 194 206 212 242 243 247 248 249 254 262</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(sj_stn_w2w_plusnn)  <span class="do">## 17</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 17</code></pre>
+</div>
+</div>
+</section>
+<section id="download-data" class="level2">
+<h2 class="anchored" data-anchor-id="download-data">Download data</h2>
+<p>Download annual compilations of hourly temperature</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>year <span class="ot">&lt;-</span> <span class="dv">2016</span><span class="sc">:</span><span class="dv">2023</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>files_dwn_lst <span class="ot">&lt;-</span> <span class="fu">cc_dwnhly_yr</span>(year, <span class="at">unzip =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>                              <span class="at">stations =</span> sj_stn_w2w_plusnn,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>                              <span class="at">keep_zip =</span> <span class="cn">TRUE</span>, <span class="at">overwrite =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - reading the FTP directory</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: hourlyStns2016.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - stations missing from 2016: hlymet254.csv, hlymet262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 15 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 15 csv files renamed for uniformity</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: hourlyStns2017.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - stations missing from 2017: 2017hourly254.csv, 2017hourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 15 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: hourlyStns2018.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - stations missing from 2018: 2018hourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 16 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: hourlyStns2019.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - stations missing from 2019: 2019hourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 16 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: hourlyStns2020.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: hourlyStns2021.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csv files renamed for uniformity</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: hourlyStns2022.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csv files renamed for uniformity</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - stations missing from 2023: 2023hourly254.csv, 2023hourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 15 files already downloaded</code></pre>
+</div>
+</div>
+<p><br>
+</p>
+<p>Download monthly compilations of hourly temperature for this year</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="do">## We are in December, so we need Jan:Nov, 2024</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>month <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">11</span></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>monthly_fn <span class="ot">&lt;-</span> <span class="fu">cc_dwnhly_mth</span>(<span class="at">month =</span> month,</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">unzip =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>                       <span class="at">overwrite =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">stations =</span> sj_stn_w2w_plusnn,</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">keep_zip =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Package sftp v 2.0.11 by Theodor Stenevang Klemming
+Use ?sftp or sftp() for a menu of functions</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - reading the FTP directory</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnsjan.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnsfeb.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnsmar.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnsapr.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnsmay.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnsjun.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnsjul.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnsaug.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnssep.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnsoct.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - Zip file found: D:/GitHub/cherry_chill/data_test/zips/monthlyMetric/2024_hourlyStnsnov.zip</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - 17 csvs unzipped</code></pre>
+</div>
+</div>
+</section>
+<section id="stack-the-csvs" class="level2">
+<h2 class="anchored" data-anchor-id="stack-the-csvs">Stack the CSVs</h2>
+<p>Stack the annual CSVs of individual stations into a single csv for each year:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a>year <span class="ot">&lt;-</span> <span class="dv">2016</span><span class="sc">:</span><span class="dv">2023</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cc_stack_hly_yr</span>(<span class="at">year =</span> year,</span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">stations =</span> sj_stn_w2w_plusnn,</span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>                <span class="at">proj_subdir =</span> <span class="st">"sanjoaquin"</span>,</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a>                <span class="at">overwrite =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - D:/GitHub/cherry_chill/data_test/sanjoaquin/01_annual_csvs/hourly2016.csv already exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - D:/GitHub/cherry_chill/data_test/sanjoaquin/01_annual_csvs/hourly2017.csv already exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - D:/GitHub/cherry_chill/data_test/sanjoaquin/01_annual_csvs/hourly2018.csv already exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - D:/GitHub/cherry_chill/data_test/sanjoaquin/01_annual_csvs/hourly2019.csv already exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - D:/GitHub/cherry_chill/data_test/sanjoaquin/01_annual_csvs/hourly2020.csv already exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - D:/GitHub/cherry_chill/data_test/sanjoaquin/01_annual_csvs/hourly2021.csv already exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - D:/GitHub/cherry_chill/data_test/sanjoaquin/01_annual_csvs/hourly2022.csv already exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - D:/GitHub/cherry_chill/data_test/sanjoaquin/01_annual_csvs/hourly2023.csv already exists, skipping</code></pre>
+</div>
+</div>
+<p>Stack the monthly csvs of individual stations into a single csv for the current calendar year</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a>year <span class="ot">&lt;-</span> <span class="dv">2024</span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb89-3"><a href="#cb89-3" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">cc_stack_hly_mth</span>(<span class="at">year =</span> <span class="dv">2024</span>,</span>
+<span id="cb89-4"><a href="#cb89-4" aria-hidden="true" tabindex="-1"></a>                      <span class="at">month =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">11</span>,</span>
+<span id="cb89-5"><a href="#cb89-5" aria-hidden="true" tabindex="-1"></a>                      <span class="at">stations =</span> sj_stn_w2w_plusnn,</span>
+<span id="cb89-6"><a href="#cb89-6" aria-hidden="true" tabindex="-1"></a>                      <span class="at">proj_subdir =</span> <span class="st">"sanjoaquin"</span>,</span>
+<span id="cb89-7"><a href="#cb89-7" aria-hidden="true" tabindex="-1"></a>                      <span class="at">overwrite =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - concatenating 187 CSVs for 2024</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aprhourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_aughourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_febhourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_janhourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_julhourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_junhourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_marhourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_mayhourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_novhourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_octhourly262.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly047.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly070.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly071.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly140.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly171.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly178.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly191.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly194.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly206.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly212.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly242.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly243.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly247.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly248.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly249.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly254.csv</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>    - 2024_sephourly262.csv</code></pre>
+</div>
+</div>
+</section>
+<section id="standardize-the-csvs" class="level2">
+<h2 class="anchored" data-anchor-id="standardize-the-csvs">Standardize the CSVs</h2>
+<p>Next, we standardize the csvs, which includes making the column names the same, setting the data type for each column. We also convert values with a QC code as missing:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb278"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb278-1"><a href="#cb278-1" aria-hidden="true" tabindex="-1"></a>year <span class="ot">&lt;-</span> <span class="dv">2016</span><span class="sc">:</span><span class="dv">2024</span></span>
+<span id="cb278-2"><a href="#cb278-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cc_stndrze_csv</span>(year, <span class="at">proj_subdir =</span> <span class="st">"sanjoaquin"</span>, <span class="at">overwrite =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - hourly2016.rds exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - hourly2017.rds exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - hourly2018.rds exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - hourly2019.rds exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - hourly2020.rds exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - hourly2021.rds exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - hourly2022.rds exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - hourly2023.rds exists, skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - hourly2024.rds exists, skipping</code></pre>
+</div>
+</div>
+<p><br>
+</p>
+</section>
+<section id="inspect-the-time-series" class="level2">
+<h2 class="anchored" data-anchor-id="inspect-the-time-series">Inspect the time series</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb288"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb288-1"><a href="#cb288-1" aria-hidden="true" tabindex="-1"></a>year <span class="ot">&lt;-</span> <span class="dv">2016</span><span class="sc">:</span><span class="dv">2024</span></span>
+<span id="cb288-2"><a href="#cb288-2" aria-hidden="true" tabindex="-1"></a>sj_sum_tbl <span class="ot">&lt;-</span> <span class="fu">cc_stn_stats</span>(<span class="at">year =</span> year,</span>
+<span id="cb288-3"><a href="#cb288-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">stations =</span> sj_stn_w2w_plusnn,</span>
+<span id="cb288-4"><a href="#cb288-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">proj_subdir =</span> <span class="st">"sanjoaquin"</span>)</span>
+<span id="cb288-5"><a href="#cb288-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb288-6"><a href="#cb288-6" aria-hidden="true" tabindex="-1"></a>sj_sum_4ggplot_tbl <span class="ot">&lt;-</span> sj_sum_tbl <span class="sc">|&gt;</span></span>
+<span id="cb288-7"><a href="#cb288-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">recs_yn =</span> <span class="fu">as.integer</span>(num_recs <span class="sc">&gt;</span> <span class="dv">0</span>),</span>
+<span id="cb288-8"><a href="#cb288-8" aria-hidden="true" tabindex="-1"></a>         <span class="at">station =</span> <span class="fu">factor</span>(station, <span class="at">levels =</span> <span class="fu">sort</span>(<span class="fu">unique</span>(sj_sum_tbl<span class="sc">$</span>station), <span class="at">decreasing =</span> <span class="cn">TRUE</span>)))</span>
+<span id="cb288-9"><a href="#cb288-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb288-10"><a href="#cb288-10" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sj_sum_4ggplot_tbl, <span class="fu">aes</span>(<span class="at">x =</span> year_month, <span class="at">y =</span> station, <span class="at">col =</span> recs_yn)) <span class="sc">+</span></span>
+<span id="cb288-11"><a href="#cb288-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">16</span>) <span class="sc">+</span></span>
+<span id="cb288-12"><a href="#cb288-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position=</span><span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb288-13"><a href="#cb288-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"CIMIS Data Availability"</span>,</span>
+<span id="cb288-14"><a href="#cb288-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"For 17 Stations in and around San Joaquin County, CA"</span>) <span class="sc">+</span></span>
+<span id="cb288-15"><a href="#cb288-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"CIMIS Station"</span>) <span class="sc">+</span></span>
+<span id="cb288-16"><a href="#cb288-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="cn">NULL</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="clean_cimis_demo_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="find-the-closest-station-to-an-orchard" class="level2">
+<h2 class="anchored" data-anchor-id="find-the-closest-station-to-an-orchard">Find the Closest Station to an Orchard</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb289"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb289-1"><a href="#cb289-1" aria-hidden="true" tabindex="-1"></a>orch_coords <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">121.41</span>, <span class="fl">37.85</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Test if it falls within the county:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb290"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb290-1"><a href="#cb290-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cc_pointinpoly</span>(orch_coords, sj_bnd_sf)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p>Get the closest station</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb292"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb292-1"><a href="#cb292-1" aria-hidden="true" tabindex="-1"></a>(orch_closest_stid <span class="ot">&lt;-</span> <span class="fu">cc_stn_closest</span>(<span class="at">pt =</span> orch_coords, <span class="at">cimis_sf =</span> stns_sf))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 248</code></pre>
+</div>
+</div>
+<p>Verify this station is one of the ones we have identified</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb294"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb294-1"><a href="#cb294-1" aria-hidden="true" tabindex="-1"></a>orch_closest_stid <span class="sc">%in%</span> sj_stn_w2w</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+</section>
+<section id="gap-fill" class="level2">
+<h2 class="anchored" data-anchor-id="gap-fill">Gap Fill</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb296"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb296-1"><a href="#cb296-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cc_fillgaps</span>(<span class="at">stations =</span> orch_closest_stid,</span>
+<span id="cb296-2"><a href="#cb296-2" aria-hidden="true" tabindex="-1"></a>            <span class="at">nn_list =</span> stn_all_nn_lst,</span>
+<span id="cb296-3"><a href="#cb296-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">nn =</span> <span class="dv">4</span>,</span>
+<span id="cb296-4"><a href="#cb296-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">start_year =</span> <span class="dv">2017</span>,</span>
+<span id="cb296-5"><a href="#cb296-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">end_year =</span> <span class="dv">2024</span>,</span>
+<span id="cb296-6"><a href="#cb296-6" aria-hidden="true" tabindex="-1"></a>            <span class="at">proj_subdir =</span> <span class="st">"sanjoaquin"</span>,</span>
+<span id="cb296-7"><a href="#cb296-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">save_forest =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb296-8"><a href="#cb296-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">overwrite =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+ - Gap filling the data for CIMIS station #248</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - found gap filled data for #248. Skipping</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> - DONE</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TODO: return a ggplot or some other summary of the input data availability </code></pre>
+</div>
+</div>
+</section>
+<section id="compute-variables-for-gam-and-apply-the-prediction" class="level2">
+<h2 class="anchored" data-anchor-id="compute-variables-for-gam-and-apply-the-prediction">Compute variables for gam and apply the prediction</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb301"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb301-1"><a href="#cb301-1" aria-hidden="true" tabindex="-1"></a>treetempgam_rds <span class="ot">&lt;-</span> <span class="fu">Sys.getenv</span>(<span class="st">"CC_GAM_RDS"</span>); <span class="fu">file.exists</span>(treetempgam_rds)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb303"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb303-1"><a href="#cb303-1" aria-hidden="true" tabindex="-1"></a>treetemp_chill_tbl <span class="ot">&lt;-</span> <span class="fu">cc_treetemp</span>(<span class="at">station =</span> orch_closest_stid,</span>
+<span id="cb303-2"><a href="#cb303-2" aria-hidden="true" tabindex="-1"></a>                     <span class="at">nn_list =</span> stn_all_nn_lst,</span>
+<span id="cb303-3"><a href="#cb303-3" aria-hidden="true" tabindex="-1"></a>                     <span class="at">nn =</span> <span class="dv">4</span>,</span>
+<span id="cb303-4"><a href="#cb303-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">start_dt =</span> <span class="fu">as.Date</span>(<span class="st">"2020-09-01"</span>),</span>
+<span id="cb303-5"><a href="#cb303-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">end_dt =</span> <span class="fu">as.Date</span>(<span class="st">"2024-08-30"</span>),</span>
+<span id="cb303-6"><a href="#cb303-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">pt =</span> orch_coords,</span>
+<span id="cb303-7"><a href="#cb303-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">treetempgam_rds =</span> treetempgam_rds,</span>
+<span id="cb303-8"><a href="#cb303-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">proj_subdir =</span> <span class="st">"sanjoaquin"</span>,</span>
+<span id="cb303-9"><a href="#cb303-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">all_cols =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 2 warnings in `mutate()`.
+The first warning was:
+ℹ In argument: `pred_avg_t_tree = `%&gt;%`(...)`.
+Caused by warning in `predict.gam()`:
+! factor levels any_orch not in original fit
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb305"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb305-1"><a href="#cb305-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(treetemp_chill_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 6
+  station crop_year date_time           pred_avg_t_tree chillp_pred_Ttree
+    &lt;int&gt; &lt;fct&gt;     &lt;dttm&gt;                        &lt;dbl&gt;             &lt;dbl&gt;
+1     248 any_year  2020-09-01 02:00:00            16.6                 0
+2     248 any_year  2020-09-01 02:30:00            16.4                 0
+3     248 any_year  2020-09-01 03:00:00            16.4                 0
+4     248 any_year  2020-09-01 03:30:00            16.4                 0
+5     248 any_year  2020-09-01 04:00:00            16.3                 0
+6     248 any_year  2020-09-01 04:30:00            16.3                 0
+# ℹ 1 more variable: cum_chill_pTtree &lt;dbl&gt;</code></pre>
+</div>
+</div>
+<p>Visualize 30-minute chill portions</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb307"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb307-1"><a href="#cb307-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(treetemp_chill_tbl, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> date_time, <span class="at">y =</span> chillp_pred_Ttree)) <span class="sc">+</span></span>
+<span id="cb307-2"><a href="#cb307-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">cex =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb307-3"><a href="#cb307-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Predicted Tree Chill"</span>,</span>
+<span id="cb307-4"><a href="#cb307-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="fu">paste0</span>(<span class="st">"Orchard location: ("</span>,</span>
+<span id="cb307-5"><a href="#cb307-5" aria-hidden="true" tabindex="-1"></a>                         <span class="fu">paste</span>(orch_coords, <span class="at">collapse=</span><span class="st">", "</span>),</span>
+<span id="cb307-6"><a href="#cb307-6" aria-hidden="true" tabindex="-1"></a>                         <span class="st">"). CIMIS Station "</span>,</span>
+<span id="cb307-7"><a href="#cb307-7" aria-hidden="true" tabindex="-1"></a>                         orch_closest_stid))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="clean_cimis_demo_files/figure-html/unnamed-chunk-20-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Visualize cummulated chill portions:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb308"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb308-1"><a href="#cb308-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(treetemp_chill_tbl, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> date_time, <span class="at">y =</span> cum_chill_pTtree)) <span class="sc">+</span></span>
+<span id="cb308-2"><a href="#cb308-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">cex =</span> <span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="clean_cimis_demo_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

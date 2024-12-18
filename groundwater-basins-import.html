@@ -5,8 +5,8 @@
 <meta name="generator" content="quarto-1.5.57">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="author" content="Andy Lyons">
-<meta name="dcterms.date" content="2024-09-01">
-<title>Import CA Groundwater Basins into R with arcgislayers</title>
+<meta name="dcterms.date" content="2024-09-13">
+<title>How to Import CA Groundwater Basins into R with arcgislayers</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -83,7 +83,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></nav>
 </div>
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title">Import CA Groundwater Basins into R with arcgislayers</h1>
+<h1 class="title">How to Import CA Groundwater Basins into R with arcgislayers</h1>
 </div>
 
 
@@ -109,7 +109,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">September 1, 2024</p>
+      <p class="date">September 13, 2024</p>
     </div>
   </div>
   
@@ -120,7 +120,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header><p><br></p>
 <section id="summary" class="level2"><h2 class="anchored" data-anchor-id="summary">Summary</h2>
-<p>The notebook demonstrates how to import the <a href="https://gis.data.ca.gov/maps/16c6d9866d634c1188913174130133f5">“DWR Groundwater Basins 2016”</a> layer into R, using the <a href="https://r.esri.com/arcgislayers/"><code>arcgislayers</code></a> package. We will also extract one of the basins and save it to a geojson file.</p>
+<p>The notebook demonstrates how to import the <a href="https://gis.data.ca.gov/maps/16c6d9866d634c1188913174130133f5">DWR Groundwater Basins 2016</a> layer into R, using the <a href="https://r.esri.com/arcgislayers/"><code>arcgislayers</code></a> package. We will also extract one of the basins and save it to a geojson file.</p>
 </section><section id="locate-the-data" class="level2"><h2 class="anchored" data-anchor-id="locate-the-data">Locate the Data</h2>
 <p>First, we need to find the data. A Google Search of “CA Groundwater Basins GIS Data” quickly gets us to a list of <a href="https://gis.data.ca.gov/search?q=groundwater">groundwater layers</a> hosted by CA DWR. Select one of the layers and view the full details. The “View Data Source” button gets us to the <a href="https://gispublic.waterboards.ca.gov/portalserver/rest/services/GAMA/DWR_Groundwater_Basins_2016/MapServer">MapServer page</a> for this map.</p>
 <p>The layer from this MapServer have been made public, so we should be able to download it fairly easily. If it wasn’t public, but we had an ArcGIS account that gave us permission to view it, we could still get it after authenticating with <code>arcgislayers</code>.</p>

@@ -1,5 +1,5 @@
 ---
-title: "Import CA Groundwater Basins into R with arcgislayers"
+title: "How to Import CA Groundwater Basins into R with arcgislayers"
 author:
   - name: Andy Lyons
     orcid: 0000-0002-7505-6709
@@ -7,7 +7,7 @@ author:
       - name: UC Division of Agriculture and Natural Resources
         department: Informatics and GIS
         url: https://igis.ucanr.edu/
-date: "September, 2024"
+date: "September 13, 2024"
 format:
   html:
     theme: cosmo
@@ -22,7 +22,7 @@ format:
 
 ## Summary 
 
-The notebook demonstrates how to import the ["DWR Groundwater Basins 2016"](https://gis.data.ca.gov/maps/16c6d9866d634c1188913174130133f5) layer into R, using the [`arcgislayers`](https://r.esri.com/arcgislayers/) package. We will also extract one of the basins and save it to a geojson file.
+The notebook demonstrates how to import the [DWR Groundwater Basins 2016](https://gis.data.ca.gov/maps/16c6d9866d634c1188913174130133f5) layer into R, using the [`arcgislayers`](https://r.esri.com/arcgislayers/) package. We will also extract one of the basins and save it to a geojson file.
 
 ## Locate the Data
 
