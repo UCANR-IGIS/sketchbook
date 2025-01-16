@@ -1,5 +1,4 @@
 library(rvest)
-library(xml2)
 library(dplyr)
 library(lubridate)
 library(stringr)
@@ -17,7 +16,7 @@ for (i in 1:58) {
   
   ## Get the county name
   county_name_chr <- one_county_xml |> 
-    html_elements("title") |> 
+    html_element("title") |> 
     xml_text() |> 
     str_extract(pattern = "(?<=DCH Information For ).*(?= County)")
   
@@ -34,7 +33,7 @@ for (i in 1:58) {
   
   ## Make sure it had at least one row
   if (nrow(first_table_tbl) == 0) {
-    stop(paste0("Empty table found in ", baseName(one_county_url)))
+    stop(paste0("Empty table found for ", county_name_chr, " (", baseName(one_county_url), ")"))
     
   ## Check for 'no sponors' 
   } else if (str_detect(first_table_tbl[1,1, drop = TRUE], pattern = "^There are currently no CACFP DCH sponsors operating")) {
@@ -57,7 +56,7 @@ for (i in 1:58) {
       mutate(county = county_name_chr, .before = "sponsor_name")
     
     ## Feedback
-    cat("County name: ", county_name_chr, ". Num recs = ", nrow(one_county_tbl), ".\n", sep = "")
+    cat(county_name_chr, ". Num recs = ", nrow(one_county_tbl), ".\n", sep = "")
     
     ## Append
     all_counties_tbl <- all_counties_tbl |> bind_rows(one_county_tbl)

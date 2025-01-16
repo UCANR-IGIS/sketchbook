@@ -1,0 +1,308 @@
+---
+title: "Web Scraping with R Overview"
+author: "Andy Lyons"
+date: "2025-01-15"
+date-format: long
+format: 
+  revealjs:
+    theme: default
+    smaller: false
+    fontsize: "28pt"
+    scrollable: false
+    logo: images/igis-logo_54x54.png
+    auto-stretch: false
+    footer: "Web Scraping with R"
+    code-block-height: 650px
+title-slide-attributes: 
+  data-background-image: images/igis-ucanr_horizontal_824x83.png
+  data-background-size: 50%
+  data-background-position: 3% 90%    
+---
+
+## {#about-igis data-menu-title="About IGIS"}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr); library(lubridate); library(rvest); library(stringr); library(xml2)
+```
+
+```{css echo=FALSE}
+div.compact {
+  line-height:1;
+}
+```
+
+![](images/about-igis_1806x1010.jpg)
+
+
+
+## Why Web Scrape?
+
+__Ans.__ Because you've exhausted all other options!
+
+\
+
+- you've scoured the internet for the source data in a structured format  
+- you've verified the data aren't available as an API  
+- you've contacted the publisher for the data and begged them for a CSV  
+- you've asked your colleagues and boss if they have any connections to the data providers
+
+## Why is Web Scraping a Last Resort?
+
+\
+
+Web scraping is one of the least efficient (and for normal people least fun) ways to get data.
+
+\
+
+The only thing possibly more painful than web scraping is extracting data from a PDF.
+
+## Why Web Scrape with <u>R</u>?
+
+__Ans.__ Because you have to do it more than once.
+
+\
+
+If its a one-off, you'd probably save time copy-pasting the content off the web page.
+
+If you have to scrape a lot of pages, and/or scrape them repeatedly over time, coding will probably pay off.
+
+## Web Scraping Takes a Toolkit
+
+![](images/toolbox_800x602.png){style="display:block; margin:1em auto; height:320px;"}
+
+- R packages: rvest, stringr, lubridate, dpylr  
+- Browser developer tools  
+
+## HTML Structure
+
+```{html, eval = FALSE}
+<html>
+<head>
+  <title>Page title</title>
+</head>
+<body>
+  <h1 id='first'>A heading</h1>
+  <p class='bodytext'>Some text &amp; <b>some bold text.</b></p>
+  <img src='myimg.png' width='100' height='100'>
+</body>
+```
+
+:::{.compact style="font-size:85%;"}
+
+Key concepts:
+
+- tags - usually come in **pairs**  
+- tags are often **nested**  
+- tag **attributes** - defined in the opening tag  
+- tag **content** - text between the pairs  
+- tag **id** - like a serial number for a tag (unique)  
+- **classes** - provide styling (but can also be used for selection)  
+
+:::
+
+## Example
+
+We need the data from:
+
+<!--- Extract and compile together the tables from the "DCH Sponsors" website. --->
+
+[![](images/dch-sponsors-website_900x440.png){.nostretch style="display:block; border:1px solid gray; margin:0em auto; height:380px;"}](https://cacfp.dss.ca.gov/DayCareHomeSponsors/PartialCounty?countyId=3)
+
+:::{.compact}
+
+- Each county is on a separate web page.
+- URLs look like: 
+<span style="font-size:80%;"><https://cacfp.dss.ca.gov/DayCareHomeSponsors/PartialCounty?countyId=3></span>
+
+:::
+
+## Inspect the HTML
+
+![](images/inspect_element_900x306.png){.nostretch style="display:block; border:1px solid gray; margin:1em auto; height:380px;"}
+
+Look for ids and classes of the elements you need
+
+## Construct the URL(s) You Need
+
+\
+
+```{r eval = FALSE}
+for (i in 1:58) {
+  one_county_url <- paste0("https://cacfp.dss.ca.gov/DayCareHomeSponsors/PartialCounty?countyId=", i)
+  cat(" - Processing ...", basename(one_county_url), ". \n", sep = "")
+  
+  ## More stuff
+  
+}
+```
+\
+
+## Set Up a Data Structure for the Results
+
+```{r eval = FALSE, echo = TRUE}
+library(dplyr)
+
+dch_sponsors_tbl <- tibble(
+  sponsor_name = character(0),
+  street = character(0),
+  city = character(0),
+  state = character(0),
+  zip = character(0),
+  phone = character(0),
+  partial_cov = character(0),
+  lang_othr = character(0),
+  last_updated = lubridate::ymd() 
+)
+
+for (i in 1:58) {
+  # Write code to pull the rows for one county
+  # thiscounty_sponsors_tbl <- ...
+
+  dch_sponsors_tbl <- dch_sponsors_tbl |> 
+    bind_rows(thiscounty_sponsors_tbl)
+}
+```
+
+## Import the Whole Thing
+
+\
+
+```{r eval = TRUE}
+one_county_url <- "https://cacfp.dss.ca.gov/DayCareHomeSponsors/PartialCounty?countyId=3"
+one_county_xml <- rvest::read_html(one_county_url)
+class(one_county_xml)
+```
+## Getting the Right Tag
+
+\
+
+`html_element()` - returns the first tag that matches
+
+`html_elements()` - returns all tags that match
+
+\
+
+You can select elements using **CSS selectors** or **XPath expressions**.
+
+
+## Extract Text Values from Tags
+
+```{r}
+#| eval: TRUE
+#| code-line-numbers: "2-3"
+county_name_chr <- one_county_xml |> 
+    rvest::html_element("title") |> 
+    rvest::html_text()
+
+county_name_chr
+```
+
+## Clean up text
+
+:::{style="font-size:90%;"}
+
+`rvest::html_text()` and `rvest::html_attr()` return **text**.
+
+If needed you can use functions from [`stringr`](https://stringr.tidyverse.org/)^[See also [stringr.plus](https://github.com/johncassil/stringr.plus) which has functions like `str_extract_between()` and `str_extract_before()`.]  to clean up the text. 
+
+\
+
+Example: From `"DCH Information For Amador County"` pull out just `"Amador"`:
+
+:::
+
+```{r}
+#| eval: TRUE
+#| code-line-numbers: "4"
+county_name_chr <- one_county_xml |> 
+    rvest::html_element("title") |> 
+    rvest::html_text() |> 
+    stringr::str_extract(pattern = "(?<=DCH Information For ).*(?= County)")
+
+county_name_chr
+```
+\
+
+
+
+## Convert Tables to Tibbles
+
+```{r}
+one_county_uncleaned_tbl <- one_county_xml |> 
+  html_element("table") |>     ## returns the first table in the document
+  html_table()
+
+one_county_uncleaned_tbl
+```
+
+## Clean Up Data Frames As Usual
+
+```{r}
+one_county_tbl <- one_county_uncleaned_tbl |> 
+  rename(sponsor_name = `Sponsor Name`,
+         street = Street,
+         city = City,
+         state = State,
+         zip = Zip,
+         phone = Phone,
+         partial_cov = `Partial County Coverage`,
+         lang_othr = `Other Languages Spoken`,
+         last_updated = `Last Updated`) |> 
+  mutate(last_updated = lubridate::mdy(last_updated))
+
+one_county_tbl
+```
+
+## Provide Feedback to Yourself While the Script is Running
+
+\
+
+```{r}
+cat(" - County name: ", county_name_chr, ". Num recs = ", nrow(one_county_tbl), ".\n", sep = "")
+```
+
+## Put the Whole Thing Together
+
+\
+
+<https://github.com/UCANR-IGIS/sketchbook/blob/main/dch-sponsors-webscrape.R>
+
+## More Advanced Techniques
+
+\
+
+- Selecting tags by class, parent container, etc.^[See also [SelectorGadget](https://rvest.tidyverse.org/articles/selectorgadget.html)]
+- Caching results - don't download the same data twice
+- Interact with the website before scraping it
+     - Sometimes you need to 'wait' for the page to finish loading, or you need to 'click' on something for the data to appear.  
+     - Look at packages like [selenider](https://ashbythorpe.github.io/selenider/) that creates a virtual (or 'headless') browser which you can interact with programmatically.  
+
+\
+
+## Summary
+
+\
+
+- Web scraping should be an option of last resort   
+- There's a time investment to writing code to web scrape - make sure its worth it  
+- R has a good set of tools to scrape web pages   
+- Understanding the structure of HTML documents, and how CSS selectors work, is very helpful
+
+## Additional Resources
+
+\
+
+[Web scraping 101](https://rvest.tidyverse.org/articles/rvest.html) - Vignette from rvest package
+
+[Scraping HTML Table Data](https://uc-r.github.io/scraping_HTML_tables) - tutorial from University of Cincinati  
+
+[Scraping a Table on https site using R](https://www.geeksforgeeks.org/scraping-a-table-on-https-site-using-r/) (Geeks for Geeks)
+
+Ask [ChatGPT](https://chatgpt.com/):  
+
+:::{style="font-style:italic; font-size:90%; margin:0 2em;"}
+
+Write me some R code that scrapes the following URL and extracts the first table on the page as a data frame. https://cacfp.dss.ca.gov/DayCareHomeSponsors/PartialCounty?countyId=3
+
+:::
