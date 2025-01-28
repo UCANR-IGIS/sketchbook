@@ -132,4 +132,10 @@ m <- leaflet(data = ac_homeloc_sf) |>
 m
 ```
 
+\
+
+See this map also on [RPubs](https://rpubs.com/ajlyons/ucanr-ac-map).
+
+\
+
 
