@@ -1,0 +1,135 @@
+---
+title: "Make a Leaflet Map of UC ANR Academic Coordinators"
+author:
+  - name: Andy Lyons
+    orcid: 0000-0002-7505-6709
+    affiliations:
+      - name: UC Division of Agriculture and Natural Resources
+        department: Informatics and GIS
+        url: https://igis.ucanr.edu/
+date: "January 28, 2025"
+format:
+  html:
+    theme: cosmo
+    df-print: paged
+    toc: true
+    toc-depth: 2
+    code-tools: false
+    code-link: true
+---
+
+\
+
+## Summary 
+
+This short notebook demonstrates how to:
+
+1) Import a public feature layer from ArcGIS.com into R as a sf object using the [`arcgislayers`](https://r.esri.com/arcgislayers/) package  
+2) Do a little wrangling to pull out just the locations of Academic Coordinators
+3) Generate HTML text for popups for a leaflet map
+4) Create the leaflet map
+
+The finished product can be seen below, also on [RPubs](https://rpubs.com/ajlyons/ucanr-ac-map).
+
+## Import the Data
+
+### Load Packages
+
+```{r message=FALSE}
+library(arcgislayers)
+library(sf)
+library(dplyr)
+```
+
+### Import the Feature Layer
+
+Our goal is to import a Feature Layer from AGOL showing the academic footprint of UC ANR researchers. After going to the [Item Details](https://ucanr.maps.arcgis.com/home/item.html?id=5725f6622a05449dbd7034cea3eed76b) page, we look for the URL for the feature server:
+
+```{r}
+footprint_url <- "https://services.arcgis.com/0xnwbwUttaTjns4i/arcgis/rest/services/AcademicFootprintLocData/FeatureServer"
+```
+
+To import the data into R as a point sf object, we need to i) open the URL to get the Feature Server, ii) grab the first layer, and iii) import it. We can do these steps in a single piped expression:
+
+```{r message=FALSE}
+fp_homeloc_sf <- footprint_url |> 
+  arc_open() |> 
+  get_layer(id = 0) |> 
+  arc_select()
+```
+
+### Extract the Academic Coordinators
+
+Next, we use standard `dplyr` functions to pull out just the Academic Coordinators, sort them by name, and transform the data into geographic coordinates (in preparation for leaflet).
+
+```{r}
+ac_homeloc_sf <- fp_homeloc_sf |> 
+  filter(AcademicTitle == "Academic Coordinator", AcademicName != "Under Recruitment") |> 
+  select(AcademicUserID, AcademicName, AcademicTitle, Location, WorkingTitle, FTE, Discipline) |> 
+  arrange(AcademicName) |> 
+  st_transform(4326)
+```
+
+If your goal was to work with these data in GIS software, you could at this point save them to disk as GeoJSON.
+
+```{r}
+# st_write(ac_homeloc_sf, dsn = "academic_coordinators.geojson", delete_dsn = TRUE)
+```
+
+## Build the leaflet map
+
+### Load Packages
+
+```{r}
+library(leaflet)
+library(leaflet.extras)
+library(stringr)
+library(glue)
+```
+
+### Create the HTML for the popups
+
+```{r}
+popup_html <- ac_homeloc_sf |> 
+  st_drop_geometry() |> 
+  mutate(lname = str_extract(AcademicName, ".*(?=,)"),
+         fname = str_extract(AcademicName, "(?<=, ).*")) |> 
+  glue_data("<p><a href=\"https://ucanr.edu/?facultyid={AcademicUserID}\" target=\"_blank\"><strong>{fname} {lname}</strong></a><br/><em>{WorkingTitle}</em><br/>{Location}</p><p style=\"text-align:center; margin-top:1em;\"><img src=\"https://ucanr.edu/DIRPhotos/{AcademicUserID}_original.jpg\" width=\"125\" onerror=\"this.style.display='none'\"/></p>")
+
+## Add it to the sf object as a column
+ac_homeloc_sf$popup <- popup_html
+```
+
+::: {.callout-tip title="Tips"}
+The expression above that generates the HTML for the popups uses the following methods:
+
+- The `AcademicName` column comes in formatted as 'Last, First' (e.g., `"Doe, Jane"`). The mutate function uses `str_extract()` functions with 'look ahead' and 'look behind' regex expressions to split the name into first and last names.
+
+- `glue::glue_data()` allows us to substitute values from the columns into an HTML expression with placeholders.
+
+- To prevent 'missing image' icons from appearing in the browser (which are hard to control) if there is no headshot for the AC, we add a teeny bit of JavaScript to the <img> tag: `onerror=\"this.style.display='none'\"`.
+:::
+
+
+### Create the leaflet object
+
+```{r}
+m <- leaflet(data = ac_homeloc_sf) |> 
+  addTiles() |> 
+  addCircleMarkers(radius = 6, stroke = FALSE, fillOpacity = 1,
+                   popup = ~popup,
+                   clusterOptions = markerClusterOptions(showCoverageOnHover = FALSE,
+                                                         zoomToBoundsOnClick = TRUE,
+                                                         maxClusterRadius = 10,
+                                                         singleMarkerMode = TRUE,
+                                                         spiderfyDistanceMultiplier=1.5)) |> 
+  addFullscreenControl()
+```
+
+### And finally - view it!
+
+```{r}
+m
+```
+
+
