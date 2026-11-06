@@ -192,7 +192,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="load-convenience-functions" class="level2">
 <h2 class="anchored" data-anchor-id="load-convenience-functions">Load Convenience Functions</h2>
-<p>To help you download the data, there are two convenience functions available on Github: <a href="https://github.com/UCANR-IGIS/sketchbook/blob/main/cleancimis_qry.R"><code>cleancimis_qry()</code></a> and <a href="https://github.com/UCANR-IGIS/sketchbook/blob/main/cleancimis_stn.R"><code>cleancimis_stn()</code></a>:</p>
+<p>To help you download the data, there are two convenience functions available on Github: <a href="https://github.com/UCANR-IGIS/sketchbook/blob/main/cleancimis_qry.R"><code>cleancimis_qry()</code></a> and <a href="https://github.com/UCANR-IGIS/sketchbook/blob/main/cleancimis_stn.R"><code>cleancimis_stn()</code></a>. We can load them into memory using <code>source()</code>:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"https://raw.githubusercontent.com/UCANR-IGIS/sketchbook/refs/heads/main/cleancimis_qry.R"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"https://raw.githubusercontent.com/UCANR-IGIS/sketchbook/refs/heads/main/cleancimis_stn.R"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -200,7 +200,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="get-the-stations" class="level2">
 <h2 class="anchored" data-anchor-id="get-the-stations">Get the Stations</h2>
-<p>Grab the list of stations that are saved in the database:</p>
+<p>Next let’s grab the list of CIMIS stations whose data are stored in the database:</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cimis_stn_tbl <span class="ot">&lt;-</span> <span class="fu">cleancimis_stn</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -228,6 +228,19 @@ HINT:  Rebuild all objects in this database that use the default collation and r
 <div class="cell-output cell-output-stdout">
 <pre><code> [1]   2   5   6  15  39  47  70  71  80 105 116 125 126 129 131 139 140 143 146
 [20] 182 194 195 205 209 211 212 214 226 229 235 242 243 247 248 249 252 262</code></pre>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled" title="Where are these stations?">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Tip</span>Where are these stations?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>To view a map of the CIMIS stations, you can goto the <a href="https://cimis.water.ca.gov/stations/station-location-map">CIMIS website</a> or check out the <a href="https://ucanr.app/cherrychill">Tree Chill Calculator for Cherry</a> app (click on the red dots on the map).</p>
 </div>
 </div>
 </section>
@@ -367,8 +380,8 @@ NULL</code></pre>
 </section>
 <section id="what-next" class="level2">
 <h2 class="anchored" data-anchor-id="what-next">What Next?</h2>
-<p>You can use <code>cleancimis_qry()</code> to query the cleaned CIMIS data by station and/or date range. What you get back is a tibble (data frame).</p>
-<p>Next, you can use any of the usual methods from the tidyverse to further filter the data, group rows, compute summaries, etc. You can also export it to csv or other format using <code>readr</code> or similiar packages.</p>
+<p>As we have seen in this notebook, you can use <code>cleancimis_qry()</code> to query the cleaned CIMIS data by station and/or date range. What you get back is a tibble (data frame).</p>
+<p>Next, you can use any of the usual methods from the tidyverse to further filter the data, group rows, compute summaries, etc. You can also export it to csv or other format using <code>readr</code> or similar packages.</p>
 </section>
 
 </main>

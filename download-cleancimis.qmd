@@ -52,7 +52,7 @@ library(ggplot2)
 
 ## Load Convenience Functions 
 
-To help you download the data, there are two convenience functions available on Github: [`cleancimis_qry()`](https://github.com/UCANR-IGIS/sketchbook/blob/main/cleancimis_qry.R) and [`cleancimis_stn()`](https://github.com/UCANR-IGIS/sketchbook/blob/main/cleancimis_stn.R): 
+To help you download the data, there are two convenience functions available on Github: [`cleancimis_qry()`](https://github.com/UCANR-IGIS/sketchbook/blob/main/cleancimis_qry.R) and [`cleancimis_stn()`](https://github.com/UCANR-IGIS/sketchbook/blob/main/cleancimis_stn.R). We can load them into memory using `source()`: 
 
 ```{r}
 source("https://raw.githubusercontent.com/UCANR-IGIS/sketchbook/refs/heads/main/cleancimis_qry.R")
@@ -61,7 +61,7 @@ source("https://raw.githubusercontent.com/UCANR-IGIS/sketchbook/refs/heads/main/
 
 ## Get the Stations
 
-Grab the list of stations that are saved in the database:
+Next let's grab the list of CIMIS stations whose data are stored in the database:
 
 ```{r}
 cimis_stn_tbl <- cleancimis_stn()
@@ -72,6 +72,11 @@ View the list of stations:
 ```{r}
 cimis_stn_tbl$station_n
 ```
+
+::: {.callout-tip title="Where are these stations?"}
+To view a map of the CIMIS stations, you can goto the [CIMIS website](https://cimis.water.ca.gov/stations/station-location-map) or check out the [Tree Chill Calculator for Cherry](https://ucanr.app/cherrychill) app (click on the red dots on the map).
+:::
+
 
 ## Download Data for Station #105
 
@@ -149,9 +154,11 @@ ggplot(stn105_jan26_tbl, aes(x = date_time, y = st_t_air_C)) +
 
 ## What Next?
 
-You can use `cleancimis_qry()` to query the cleaned CIMIS data by station and/or date range. What you get back is a tibble (data frame).
+As we have seen in this notebook, you can use `cleancimis_qry()` to query the cleaned CIMIS data by station and/or date range. What you get back is a tibble (data frame).
 
-Next, you can use any of the usual methods from the tidyverse to further filter the data, group rows, compute summaries, etc. You can also export it to csv or other format using `readr` or similiar packages.
+Next, you can use any of the usual methods from the tidyverse to further filter the data, group rows, compute summaries, etc. You can also export it to csv or other format using `readr` or similar packages.
+
+
 
 
 
